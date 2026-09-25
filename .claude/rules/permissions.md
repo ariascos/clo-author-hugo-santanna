@@ -131,20 +131,20 @@ Adding a new agent: create the agent file in `.claude/agents/`, add an entry her
 - **ESCALATION_TARGET:** Writer — talk narrative issues stem from paper structure
 - **QUALITY_WEIGHT:** Advisory (reported, non-blocking)
 
-## coherence-specification / coherence-claims / coherence-continuity / coherence-notation / coherence-theory
+## coherence-finder
 - **PHASE:** Any — runs standalone wherever a manuscript exists
-- **PARALLEL_GROUP:** coherence-finders (all five dispatch concurrently)
-- **REQUIRES:** `quality_reports/coherence/slices/{name}.json`, produced by `scripts/paper_coherence.py --slices`
+- **PARALLEL_GROUP:** coherence-finders (one dispatch per check group, all concurrent)
+- **REQUIRES:** `quality_reports/coherence/slices/{group}.json`, produced by `scripts/paper_coherence.py --slices`
 - **PRODUCES:** candidate findings (JSON, in-memory) — no files
-- **CRITIC:** coherence-skeptic — one instance per candidate finding, prompted to refute
+- **CRITIC:** coherence-skeptic — one instance per group with findings, prompted to refute each
 - **ESCALATION_TARGET:** coherence-consolidator
 - **QUALITY_WEIGHT:** None — advisory layer, never blocks
-- **CONDITIONAL:** Each agent is skipped when its slice is empty. `coherence-theory` produces nothing on applied papers using off-the-shelf estimators, which is the correct result.
+- **CONDITIONAL:** A group is skipped when its slice is empty. The theory group produces nothing on applied papers using off-the-shelf estimators, which is the correct result.
 
 ## coherence-skeptic
 - **PHASE:** Any
-- **PARALLEL_GROUP:** coherence-verify (one instance per candidate finding)
-- **REQUIRES:** One candidate finding from a coherence finder
+- **PARALLEL_GROUP:** coherence-verify (one instance per check group with findings)
+- **REQUIRES:** The candidate findings from one coherence-finder group
 - **PRODUCES:** A refutation verdict, optionally a corrected finding
 - **CRITIC:** None — this agent *is* the verification step
 - **ESCALATION_TARGET:** coherence-consolidator

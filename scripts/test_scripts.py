@@ -121,7 +121,7 @@ def test_pipeline():
         fh.write(entry("strategist-critic", "N/A", "SOUND", phase="Strategy", when="2026-09-26 10:00"))
     code, out, _ = run("pipeline.py", "check-pre", "coder", root=root)
     check("coder unblocked after a SOUND verdict", code == 0, out)
-    code, out, _ = run("pipeline.py", "check-pre", "coherence-claims", root=root)
+    code, out, _ = run("pipeline.py", "check-pre", "coherence-finder", root=root)
     check("unfillable placeholder is MANUAL, not FAIL", code == 0 and "MANUAL" in out, out)
 
     code, out, _ = run("pipeline.py", "status", root=root)

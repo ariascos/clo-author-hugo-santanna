@@ -98,21 +98,21 @@ than inventing findings about tables they could not read.
 
 ## Layer 2 — Reasoning fan-out (`--deep`)
 
-Five specialists in parallel, adversarial verification per finding, then a merge
-stage. Same shape as `/review --peer` (editor → parallel referees → decision),
+One finder definition dispatched once per check group, in parallel; an adversarial
+skeptic per group; then a merge stage. Same shape as `/review --peer` (editor → parallel referees → decision),
 and the same shape Refine uses (commenters → skeptic → dedup → consolidate).
 
 ```
 paper_coherence.py --slices           ← pre-filter: each agent gets its own slice
         │
    ┌────┼────┬────────┬─────────┬────────┐
-   ▼    ▼    ▼        ▼         ▼        │  PARALLEL
+   ▼    ▼    ▼        ▼         ▼        │  coherence-finder × group, PARALLEL
  spec  claims continuity notation theory │
   R1    R2+R6    R3        R4      R5    │
    └────┴────┴────────┴─────────┴────────┘
-        │  union of candidate findings
+        │  candidate findings, per group
         ▼
-   coherence-skeptic  × one per finding, in parallel — tries to REFUTE
+   coherence-skeptic  × one per group with findings — tries to REFUTE each
         │  survivors
         ▼
    coherence-consolidator  ← dedup across checks, merge clusters, rank
@@ -126,18 +126,23 @@ paper_coherence.py --slices           ← pre-filter: each agent gets its own sl
 **Slicing.** `--slices` writes one candidate file per check. The specification
 auditor gets equation bodies and the paragraphs citing them; the notation auditor
 gets symbols used in more than one file. Nobody reads the whole paper — that is
-what makes five agents affordable. Typical counts on a 40-page applied paper:
+what makes five dispatches affordable. Typical counts on a 40-page applied paper:
 specification 3, claims 15, continuity 48, notation 1, theory 0.
 
-**Separate agents, not one agent with six checks.** Each check is a different
+**Separate contexts, not one context with six checks.** Each check is a different
 kind of reading, and one context holding all six attends to the later ones
-worse. Independent agents also do not anchor on each other: an agent that just
-found an estimand drift is primed to find more.
+worse. Independent dispatches also do not anchor on each other: a finder that just
+found an estimand drift is primed to find more. The contexts are separate; the
+definition is one file (`coherence-finder` plus `checks/reasoning-checks.md`), so
+the five groups can't drift apart the way five copies of the same instructions did.
 
-**The skeptic.** Fan-out multiplies the false-positive surface — five agents
-each licensed to report, none able to see the others. One skeptic per finding,
-prompted to refute and defaulting to refuted when uncertain, is what keeps the
-precision the deterministic layer earned.
+**The skeptic.** Fan-out multiplies the false-positive surface — five finders
+each licensed to report, none able to see the others. A skeptic prompted to refute
+each finding independently, defaulting to refuted when uncertain, is what keeps the
+precision the deterministic layer earned. It runs once per group rather than once
+per finding: `/deepread` measured per-comment verifiers (403 comments meant ~300
+verifier agents) exhausting a session, and a group's findings share the slice the
+skeptic has to read anyway.
 
 **The consolidator.** Overlapping slices produce the same defect from different
 angles: a sign flip surfaces as both R6 and R1. Without a merge stage the fan-out
@@ -148,17 +153,18 @@ standard way fan-out goes wrong.
 ### Dispatch
 
 1. Run Layer 1 with `--slices quality_reports/coherence/slices`
-2. Dispatch the five specialists in parallel, one Task each, passing only its
-   slice path. **Skip any agent whose slice is empty** — an applied paper with no
-   theorem environments must not spawn a theory auditor.
-3. Union the returned findings. Dispatch one `coherence-skeptic` per finding, in
-   parallel. Drop everything refuted; substitute any `corrected_finding`.
+2. Dispatch `coherence-finder` once per group in parallel, passing the group name
+   and its slice path. **Skip any group whose slice is empty** — an applied paper
+   with no theorem environments must not spawn a theory pass.
+3. Dispatch one `coherence-skeptic` per group that returned findings, in parallel,
+   passing that group's findings. Drop everything refuted; substitute any
+   `corrected_finding`.
 4. Dispatch `coherence-consolidator` once over the survivors plus the Layer 1
    findings.
 5. Append its `## Reasoning layer` section to the report.
 
-Agent count: 5 finders (fewer when slices are empty) + one skeptic per candidate
-+ 1 consolidator. On a clean applied paper that is typically 4 + 2 + 1.
+Agent count: up to 5 finder dispatches (fewer when slices are empty) + up to 5
+skeptics + 1 consolidator. On a clean applied paper that is typically 4 + 2 + 1.
 
 Checks are specified in `checks/reasoning-checks.md`. Reasoning findings are
 **advisory and never block**, and are kept visually separate in the report — they
