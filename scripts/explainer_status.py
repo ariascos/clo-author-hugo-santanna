@@ -37,8 +37,21 @@ from pathlib import Path
 SCRIPT_SUFFIXES = {".R", ".r", ".py", ".jl", ".do"}
 SKIP_DIRS = {"output", "outputs", "logs", "__pycache__", ".ipynb_checkpoints", "renv"}
 # Infrastructure scripts live in scripts/ too; they are not analysis and need no explainer.
+# Older ones are listed by name; newer ones carry INFRA_MARKER in their first lines.
 SKIP_NAMES = {"explainer_status.py", "generate_dashboard.py", "generate_html_report.py",
               "paper_coherence.py", "deepread.py"}
+INFRA_MARKER = "clo-author: infrastructure"
+
+
+def is_infrastructure(path: Path) -> bool:
+    if path.name in SKIP_NAMES:
+        return True
+    try:
+        with path.open(encoding="utf-8", errors="replace") as fh:
+            head = "".join(fh.readline() for _ in range(15))
+    except OSError:
+        return False
+    return INFRA_MARKER in head
 
 ROOT = Path(__file__).resolve().parent.parent
 SCRIPTS_DIR = ROOT / "scripts"
@@ -62,7 +75,7 @@ def find_scripts() -> list[Path]:
     for p in sorted(SCRIPTS_DIR.rglob("*")):
         if not p.is_file() or p.suffix not in SCRIPT_SUFFIXES:
             continue
-        if p.name in SKIP_NAMES or set(p.relative_to(SCRIPTS_DIR).parts) & SKIP_DIRS:
+        if is_infrastructure(p) or set(p.relative_to(SCRIPTS_DIR).parts) & SKIP_DIRS:
             continue
         out.append(p)
     return out

@@ -2,6 +2,8 @@
 """
 Smoke tests for the Claude Code hooks in .claude/hooks/.
 
+clo-author: infrastructure (not analysis code; explainer_status.py skips it)
+
 Each hook is fed a synthetic payload in a throwaway project directory and
 checked for the three outcomes the hooks promise: it acts when it should,
 stays silent when there is nothing to do, and fails visibly (exit 1, one line

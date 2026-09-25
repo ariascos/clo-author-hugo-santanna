@@ -1,0 +1,74 @@
+#!/usr/bin/env bash
+#
+# clo-author pre-commit gate. Install once per clone:  scripts/install-hooks.sh
+#
+# A plain `git commit` used to skip every check that lived only in prose or in
+# /tools commit. This hook runs the deterministic ones on every commit.
+#
+#   Blocking
+#     - scripts/check_scaffold.py   when .claude/, CLAUDE.md, or scripts/*.py change
+#     - scripts/test_hooks.py       when .claude/hooks/ or .claude/settings*.json change
+#     - scripts/test_scripts.py     when scripts/*.py, permissions.md, or quality-gates.json change
+#     - lint-scripts.sh [HIGH]      on staged analysis scripts (INV-14/15/16/19:
+#                                   setwd, absolute paths, rm(list=ls()), ...)
+#   Advisory (printed, never blocks a commit)
+#     - scripts/paper_coherence.py  when paper/**/*.tex changes; it blocks at /submit
+#
+# The quality score (>= 80) is enforced by /tools commit via scripts/score.py,
+# not here: a new project has no critic scores yet, and a gate that fails
+# every early commit teaches people to reach for --no-verify.
+#
+# Checks read the working tree, so stage what you want checked.
+# Escape hatches (say why in the commit message):
+#   SKIP_GATE=1 git commit ...     skip this hook's checks
+#   git commit --no-verify ...     skip all hooks
+
+set -uo pipefail
+[ "${SKIP_GATE:-0}" = "1" ] && { echo "pre-commit: SKIP_GATE=1, checks skipped"; exit 0; }
+
+ROOT="$(git rev-parse --show-toplevel)" || exit 2
+cd "$ROOT" || exit 2
+STAGED="$(git diff --cached --name-only --diff-filter=ACMR)"
+[ -z "$STAGED" ] && exit 0
+FAIL=0
+has() { grep -qE "$1" <<<"$STAGED"; }
+
+if has '^(\.claude/|CLAUDE\.md$|scripts/[^/]+\.py$)'; then
+  echo "── pre-commit: scaffold integrity ──"
+  python3 scripts/check_scaffold.py --quiet || FAIL=1
+fi
+
+if has '^\.claude/(hooks/|settings)'; then
+  echo "── pre-commit: hook tests ──"
+  python3 scripts/test_hooks.py || FAIL=1
+fi
+
+if has '^scripts/[^/]+\.py$|^\.claude/(rules/permissions\.md|skills/new-project/config/)'; then
+  echo "── pre-commit: enforcement-script tests ──"
+  python3 scripts/test_scripts.py || FAIL=1
+fi
+
+ANALYSIS="$(grep -E '^scripts/.+/.+\.(R|r|py|jl)$' <<<"$STAGED" || true)"
+if [ -n "$ANALYSIS" ]; then
+  echo "── pre-commit: lint staged analysis scripts ──"
+  while IFS= read -r f; do
+    [ -f "$f" ] || continue
+    OUT="$(bash .claude/hooks/lint-scripts.sh "$f" 2>/dev/null)"
+    if grep -q '\[HIGH\]' <<<"$OUT"; then
+      echo "$OUT" | grep -E '\[HIGH\]|^/|^[a-z]' | head -20
+      FAIL=1
+    fi
+  done <<<"$ANALYSIS"
+fi
+
+if has '^paper/.+\.tex$' && [ -f scripts/paper_coherence.py ]; then
+  echo "── pre-commit: paper coherence (advisory) ──"
+  python3 scripts/paper_coherence.py --min-severity major 2>/dev/null | tail -15 || true
+fi
+
+if [ "$FAIL" -ne 0 ]; then
+  echo ""
+  echo "pre-commit: blocked. Fix the ERROR/HIGH items above, or commit with SKIP_GATE=1 and say why."
+  exit 1
+fi
+exit 0

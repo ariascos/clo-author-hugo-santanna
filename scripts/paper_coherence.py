@@ -1250,8 +1250,75 @@ def check_significance(idx: Index) -> List[Finding]:
     return out
 
 
+ABSTRACT_WORD_LIMIT = 150
+TABLE1_EXTRA_HEADER_RE = re.compile(
+    r"\b(diff(?:erence)?|s\.?\s?d\.?|std\.?|standard\s+deviation|p[-\s]?val(?:ue)?|t[-\s]?stat(?:istic)?)\b",
+    re.IGNORECASE,
+)
+
+
+def _word_count(text: str) -> int:
+    """Words in prose, ignoring LaTeX commands, braces, and inline-math markup."""
+    text = re.sub(r"\\[a-zA-Z@]+\*?", " ", text)
+    text = re.sub(r"[{}$~]", " ", text)
+    return sum(1 for tok in text.split() if re.search(r"[A-Za-z0-9]", tok))
+
+
+def check_abstract_length(idx: Index, limit: int = ABSTRACT_WORD_LIMIT) -> List[Finding]:
+    """INV-5: the abstract is at most `limit` words."""
+    paras = [p for p in idx.paragraphs if p.zone == "abstract"]
+    if not paras:
+        return []
+    words = sum(_word_count(p.text) for p in paras)
+    if words <= limit:
+        return []
+    return [
+        Finding(
+            check="abstract-too-long",
+            severity="major",
+            file=paras[0].file,
+            line=paras[0].line,
+            message="Abstract is %d words; the limit is %d (INV-5)." % (words, limit),
+            suggestion="Keep the question, the design, the main estimate, and what it implies.",
+        )
+    ]
+
+
+def check_table1_columns(idx: Index) -> List[Finding]:
+    """INV-24: Table 1 has a label column plus treated and control columns only."""
+    first = next((lab for lab, kind in idx.label_kind.items() if kind == "table"), None)
+    if first is None or first not in idx.label_to_table:
+        return []
+    rel = idx.label_to_table[first]
+    doc = idx.tables.get(rel)
+    if doc is None or not doc.rows:
+        return []
+    width = max(len(r) for r in doc.rows)
+    extra_headers = [c for row in doc.rows[:3] for c in row[1:] if TABLE1_EXTRA_HEADER_RE.search(c)]
+    if width <= 3 and not extra_headers:
+        return []
+    detail = []
+    if width > 3:
+        detail.append("%d value columns" % (width - 1))
+    if extra_headers:
+        detail.append("header cells " + ", ".join(repr(c) for c in extra_headers[:3]))
+    return [
+        Finding(
+            check="table1-extra-columns",
+            severity="major",
+            file=rel,
+            line=1,
+            message="Table 1 (%s) has %s; it should show only treated and control columns (INV-24)."
+            % (first, " and ".join(detail)),
+            suggestion="Move difference, SD, or p-value columns to an appendix balance table.",
+        )
+    ]
+
+
 def run_checks(idx: Index) -> List[Finding]:
     findings: List[Finding] = []
+    findings += check_abstract_length(idx, getattr(idx, "abstract_limit", ABSTRACT_WORD_LIMIT))
+    findings += check_table1_columns(idx)
     findings += check_references(idx)
     findings += check_citations(idx)
     findings += check_files(idx)
@@ -1281,6 +1348,8 @@ CHECK_TITLES = {
     "abstract-number-unsourced": "Abstract number not found in any table (INV-11)",
     "derived-arithmetic": "Derived percentage does not follow",
     "significance-mismatch": "Stars and reported p-value disagree",
+    "abstract-too-long": "Abstract over the word limit (INV-5)",
+    "table1-extra-columns": "Table 1 has more than treated and control columns (INV-24)",
 }
 
 
@@ -1795,6 +1864,12 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
         action="store_true",
         help="Include the adversarial twin reader in the cost estimate (off by default)",
     )
+    ap.add_argument(
+        "--abstract-limit",
+        type=int,
+        default=ABSTRACT_WORD_LIMIT,
+        help="Abstract word limit for INV-5 (default %d; some journals set 100)" % ABSTRACT_WORD_LIMIT,
+    )
     ap.add_argument("--fix", action="store_true", help="Apply unambiguous mechanical fixes")
     ap.add_argument("--quiet", action="store_true", help="Suppress stdout report")
     args = ap.parse_args(argv)
@@ -1820,6 +1895,7 @@ def main(argv: Optional[Sequence[str]] = None) -> int:
 
     idx = Index(root=root, main=main_tex)
     idx.build()
+    idx.abstract_limit = args.abstract_limit
     findings = run_checks(idx)
 
     if args.scope:
