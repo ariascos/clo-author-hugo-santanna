@@ -1,12 +1,9 @@
 # Paper Organization — House Style (Tables, Figures, Structure)
 
-> **MANDATORY — non-negotiable.** Every agent, and Claude itself, MUST follow this rule whenever a
-> paper is drafted, edited, or reviewed. It is enforced as blocking content invariants **INV-23,
-> INV-24, INV-25** (`content-invariants.md`): the writer-critic deducts on violations and the verifier
-> FAILs on them. This is not advisory style guidance. Do not deviate without explicit user instruction.
-
-The canonical organization for tables, figures, and paper structure. Where this rule and
-`working-paper-format.md` disagree on float placement, **this rule wins**.
+This is the house layout for every paper in this project (content invariants INV-23, INV-24, INV-25).
+Follow it unless the user asks otherwise: coauthors and target journals expect it, the writer-critic
+deducts for deviations, and the verifier fails on them. It is the single source for float placement,
+Table 1, the table and figure wrappers, and section order; other rules point here for those topics.
 
 **Reference exemplars.** Keep one or two well-organized prior papers as the local gold standard and open
 them when a case isn't covered here (set the paths in `.claude/state/` if you want them remembered).

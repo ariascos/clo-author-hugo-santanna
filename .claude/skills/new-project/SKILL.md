@@ -87,7 +87,7 @@ Before any work begins:
 
    Skip this step for applied papers using off-the-shelf estimators.
 
-**Gate:** Strategy memo must pass strategist-critic review (score >= 80). If theory section exists, theorist-critic must also pass (score >= 80).
+**Gate:** Strategy memo must pass strategist-critic review (verdict SOUND or MINOR ISSUES). If theory section exists, theorist-critic must also pass (score >= 80).
 
 ### Step 3: Execution Phase
 
@@ -111,9 +111,9 @@ Before any work begins:
 8. **Run `/review --peer`** for simulated peer review:
    - domain-referee (subject expertise) + methods-referee (econometrics)
    - Independent, blind reports
-   - Orchestrator synthesizes editorial decision
+   - Editor synthesizes the reports into an editorial decision
 
-**Gate:** Aggregate score >= 80 (commit-ready). Score >= 90 for submission.
+**Gate:** Aggregate score >= 80 (commit-ready). Submission requires >= 95 and every component >= 80.
 
 ### Step 5: Submission Phase (optional, user-triggered)
 

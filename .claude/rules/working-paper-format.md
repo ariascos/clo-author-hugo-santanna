@@ -143,8 +143,8 @@ The following preamble is the project standard. New papers should use this struc
 | `biblatex` + `biber` | Required | Replaces `natbib` + `bibtex`. More flexible, better Unicode, `natbib=true` preserves `\citet`/`\citep` |
 | `fancyhdr` | Required | Clean centered page numbers, no header rule |
 | `\doublespacing` | Required | Standard for working paper submissions |
-| `booktabs` + `threeparttable` | Required | Professional tables with proper notes — see content-standards.md |
-| `tabularray` | Required | Modern table engine with key-value interface. Use `tblr`/`talltblr` for new tables; `tabular` + `threeparttable` still accepted for R-generated output |
+| `booktabs` + `threeparttable` | Required | Professional tables with proper notes — canonical wrapper in `paper-organization.md` §3 |
+| `tabularray` | Loaded | Available for hand-written multi-panel tables (the variant in `paper-organization.md` §3) |
 | `hyperref` loaded second-to-last | Required | Avoids conflicts with other packages |
 | `cleveref` loaded after `hyperref` | Required | Auto-generates "Figure 1", "Table 2" from `\cref{}` — eliminates `Figure~\ref{}` boilerplate |
 | `lmodern` | Recommended | Clean Latin Modern font; Computer Modern also acceptable |
@@ -196,23 +196,11 @@ Abstract text here.
 
 ## Section Structure
 
-Standard economics paper order:
-1. Introduction
-2. Background / Institutional Setting (if needed)
-3. Literature Review (or combined with Introduction)
-4. Data
-5. Empirical Strategy / Methodology
-6. Results
-7. Discussion (if separate from Results)
-8. Robustness (if separate section)
-9. Conclusion
-
-Each section uses `\section{}` with `\label{sec:name}`. Subsections use `\subsection{}`.
+Section order follows `paper-organization.md` §5. Each section uses `\section{}` with `\label{sec:name}`. Subsections use `\subsection{}`.
 
 ## Tables and Figures
 
 - Tables and figures are **collected at the end of `main.tex`** in dedicated TABLES and FIGURES blocks (after the bibliography), NOT inline — see `.claude/rules/paper-organization.md` (house style; it governs all float placement, Table 1, and the table/figure wrappers)
-- **Hand-written tables:** prefer `tblr` / `talltblr` (tabularray) with key-value interface for captions, notes, and rules
 - **R/Python/Julia-generated tables:** continue exporting bare `tabular` (booktabs rules). Wrap with `threeparttable` in `main.tex`
 - `\captionsetup` handles caption styling globally — no manual `\small` on captions
 - Use `booktabs` rules (`\toprule`, `\midrule`, `\bottomrule`) — never `\hline`

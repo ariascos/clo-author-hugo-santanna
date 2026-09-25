@@ -17,10 +17,11 @@ paths:
 
 ## 1. Table Standards
 
-**Target:** Publication-quality tables using standard economics formatting (booktabs rules, no vertical rules). Two approaches are supported:
+**Target:** Publication-quality tables using standard economics formatting (booktabs rules, no vertical rules).
 
-- **tabularray (`tblr` / `talltblr`)** — modern key-value interface. Preferred for hand-written tables in `main.tex`.
-- **`tabular` + `booktabs` + `threeparttable`** — traditional stack. Required for R/Python/Julia-generated output (scripts export bare `tabular`).
+Table 1, the table and figure wrappers, and float placement follow `.claude/rules/paper-organization.md`
+(house style). This section covers the tabular body: rules, coefficient display, labels, panels, and
+export. R/Python/Julia scripts export a bare `tabular`; `main.tex` wraps it.
 
 Journal-specific conventions (significance stars, note format) adapt to the target journal — see journal-profiles.md.
 
@@ -35,12 +36,7 @@ Journal-specific conventions (significance stars, note format) adapt to the targ
 
 Every table uses exactly three horizontal rules and **zero vertical lines**:
 
-**Traditional (R/Python/Julia output):**
 ```latex
-\begin{table}[htbp]
-\centering
-\begin{threeparttable}
-\caption{Effect of X on Y}\label{tab:main}
 \begin{tabular}{lcccc}
 \toprule
             & (1)     & (2)     & (3)     & (4)     \\
@@ -48,34 +44,15 @@ Every table uses exactly three horizontal rules and **zero vertical lines**:
 ...coefficients...
 \bottomrule
 \end{tabular}
-\begin{tablenotes}\small
-\item \textit{Notes:} Standard errors in parentheses.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
 ```
 
-**Modern (hand-written in main.tex):**
-```latex
-\begin{talltblr}[
-  caption = {Effect of X on Y},
-  label = {tab:main},
-  note{*} = {Standard errors in parentheses.},
-]{colspec = {lcccc}, rowsep = 4pt}
-\toprule
-            & (1)     & (2)     & (3)     & (4)     \\
-\midrule
-...coefficients...
-\bottomrule
-\end{talltblr}
-```
+The float, caption, and notes around this body come from the canonical wrapper in
+`paper-organization.md` §3.
 
 - `\toprule` above column headers
 - `\midrule` below column headers (and to separate panels)
 - `\bottomrule` at the very end
 - `\cmidrule(lr){2-4}` for partial rules spanning column groups
-- **R/Python/Julia output:** wrap with `threeparttable` for notes via `\begin{tablenotes}`
-- **Hand-written tables:** prefer `talltblr` with `note{}` keys — unifies caption, label, and notes
 - **Never** use `\hline`, `|`, or any vertical rules
 
 ### Coefficient Display
@@ -237,7 +214,7 @@ Pattern: `{table_type}_{content_description}.tex`
 
 Use these as defaults. Adapt columns based on the paper's needs (e.g., add Min/Max, percentiles, or subgroup columns when substantively important).
 
-**Descriptive Statistics:**
+**Descriptive Statistics** (full-sample or appendix summary statistics; Table 1 follows `paper-organization.md` §2):
 ```
 \toprule
                         &  Mean   &  SD     \\
@@ -300,7 +277,7 @@ Observations            &  10,000 &  10,000 &  10,000 &  10,000 \\
 - Panel labels in italics, left-aligned, spanning all columns
 - Controls/FE/Observations rows appear once at the bottom (shared across panels)
 
-**Balance Table:**
+**Appendix balance tests** (not Table 1, which has only treated and control columns — INV-24):
 ```
 \toprule
 Variable                &  Treatment &  Control &  Difference &  SE     &  p-value \\

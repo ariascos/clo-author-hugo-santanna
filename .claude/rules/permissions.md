@@ -51,7 +51,7 @@ Adding a new agent: create the agent file in `.claude/agents/`, add an entry her
 ## data-engineer
 - **PHASE:** Execution
 - **PARALLEL_GROUP:** execution-data
-- **REQUIRES:** `quality_reports/strategy/{project}/strategy_memo.md` AND strategist-critic score >= 80
+- **REQUIRES:** `quality_reports/strategy/{project}/strategy_memo.md` AND strategist-critic verdict SOUND or MINOR ISSUES
 - **PRODUCES:** `data/cleaned/`, `paper/figures/` (data visualization), data codebooks
 - **CRITIC:** coder-critic
 - **ESCALATION_TARGET:** strategist-critic — re-evaluates whether the data specification is tractable
@@ -60,7 +60,7 @@ Adding a new agent: create the agent file in `.claude/agents/`, add an entry her
 ## coder
 - **PHASE:** Execution
 - **PARALLEL_GROUP:** execution-code
-- **REQUIRES:** `quality_reports/strategy/{project}/strategy_memo.md` AND strategist-critic score >= 80
+- **REQUIRES:** `quality_reports/strategy/{project}/strategy_memo.md` AND strategist-critic verdict SOUND or MINOR ISSUES
 - **PRODUCES:** `scripts/`, `paper/tables/`, `paper/figures/`, `quality_reports/results_summary.md`
 - **CRITIC:** coder-critic
 - **ESCALATION_TARGET:** strategist-critic — re-evaluates whether the strategy memo is implementable
@@ -91,8 +91,8 @@ Adding a new agent: create the agent file in `.claude/agents/`, add an entry her
 - **PARALLEL_GROUP:** peer-review
 - **REQUIRES:** writer-critic score >= 80 AND coder-critic score >= 80
 - **PRODUCES:** `quality_reports/reviews/editorial_decision.md`
-  - Dispatches domain-referee and methods-referee (see below)
-  - Synthesizes referee reports into editorial decision
+  - Desk-reviews the paper and synthesizes the referee reports into an editorial decision
+  - The `/review --peer` skill dispatches domain-referee and methods-referee; the editor does not
 - **CRITIC:** None — the editor IS the review coordinator
 - **ESCALATION_TARGET:** User — editorial judgment calls
 - **QUALITY_WEIGHT:** None (manages the peer review process, not scored directly)

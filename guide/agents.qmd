@@ -101,7 +101,7 @@ The **writer** drafts the manuscript after code is approved. It refuses to write
 
 The **coder-critic** reviews both the data-engineer and coder across 16 categories: strategic alignment (does the code match the memo?), code quality (reproducibility, numerics, function design), and infrastructure (checkpointing, error handling, prohibited patterns). The **writer-critic** runs 8 checks: structure, claims-evidence, identification fidelity, AI-pattern detection, LaTeX format, compilation, voice fidelity, and notation consistency.
 
-**Activates:** Data-engineer and coder after strategist-critic score >= 80. Writer after coder-critic score >= 80.
+**Activates:** Data-engineer and coder after a strategist-critic verdict of SOUND or MINOR ISSUES. Writer after coder-critic score >= 80.
 **Produces:** `data/cleaned/`, `scripts/R/`, `paper/tables/`, `paper/figures/`, `paper/sections/`
 **Quality gate:** Coder-critic and writer-critic both >= 80 before Peer Review.
 

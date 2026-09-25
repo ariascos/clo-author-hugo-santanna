@@ -17,7 +17,9 @@ Generate or refresh `project_dashboard.html` — a single scrollable HTML page w
 
 ### `/dashboard` or `/dashboard refresh` — Rebuild from current state
 
-Scan the project and regenerate all sections of `project_dashboard.html`:
+If `project_dashboard.html` does not exist yet, run `python3 scripts/generate_dashboard.py` first — it scans
+the project and writes the operational skeleton, so you only author the research sections. The script
+never overwrites an existing dashboard (use `--fresh` to force), so a refresh updates the file in place:
 
 1. **Scan data:** `find data/ -type f` — count files, sizes, categories. Classify each as `downloaded` or `manual download`.
 2. **Scan scripts:** `find scripts/ -type f -name "*.R" -o -name "*.py" -o -name "*.jl"` — list with status.
@@ -32,7 +34,7 @@ Output: Write/update `project_dashboard.html` in project root.
 
 ### `/dashboard create` — Generate from scratch
 
-Full generation including research design sections. Use after `/discover` and `/strategize` have produced outputs. Prompts user for:
+Run `python3 scripts/generate_dashboard.py --fresh` for the operational sections, then write the research design sections. Use after `/discover` and `/strategize` have produced outputs. Prompts user for:
 - Research question (one sentence)
 - Causal chain (nodes)
 - Contributions (2-4 bullets)

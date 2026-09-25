@@ -77,6 +77,6 @@ These are non-negotiable. Every agent checks against them. Violations are deduct
 | **storyteller-critic** | INV-20, INV-21 | Deduct per scoring rubric |
 | **verifier** | INV-9, INV-10, INV-14, INV-15, INV-16, INV-19, INV-23, INV-24, INV-25, INV-26 | FAIL if present |
 | **explainer** | INV-26 | Produces the artifacts the invariant requires |
-| **/coherence** (deterministic) | INV-7, INV-11, INV-13, INV-23 | Blocking finding — mechanically detected, zero tolerance |
-| **coherence-auditor** (reasoning) | INV-7, INV-8, INV-11 | Advisory finding — never blocks |
+| **/coherence** (deterministic) | INV-7, INV-11, INV-13, INV-23 | Major findings block; minor findings block only under `--strict` |
+| **/coherence --deep** finders (reasoning) | INV-7, INV-8, INV-11 | Advisory finding — never blocks |
 | **lint hook** | INV-14, INV-15, INV-16, INV-19 | Advisory warning |

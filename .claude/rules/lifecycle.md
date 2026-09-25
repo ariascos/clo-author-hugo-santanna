@@ -10,7 +10,7 @@ Before dispatching any agent, the Orchestrator reads the agent's entry in `permi
 
 1. **REQUIRES artifacts exist:**
    - For file paths: `Glob` the path, confirm at least one match
-   - For score gates (e.g., "strategist-critic score >= 80"): read the research journal for the most recent critic score
+   - For score or verdict gates (e.g., "coder-critic score >= 80", "strategist-critic verdict SOUND or MINOR ISSUES"): read the research journal for the most recent critic result
    - For directories: confirm the directory is non-empty
 
 2. **REQUIRES sections present** (when specified):

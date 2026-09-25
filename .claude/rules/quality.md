@@ -14,6 +14,10 @@ The Orchestrator reads the registry to compute the weighted average:
 - Sum each agent's critic score multiplied by its declared weight
 - Theory weight applies only when the theorist agent was dispatched (see CONDITIONAL flag in `permissions.md`)
 - If a component hasn't been scored, exclude it and renormalize remaining weights
+- The strategist-critic gives a verdict, not points; its verdict maps to a score for this aggregate only (`scoring-rubrics.md`, Strategist-Critic)
+
+The declared weights sum to 100% for an applied paper. When the theorist runs, its 20% is added
+(120% in total) and all weights are renormalized to 100%, the same way a missing component is handled.
 
 ### Minimum Per Component
 
@@ -53,7 +57,7 @@ explain it — which is the exact trade the gate exists to block.
 Not every project uses all components. If a component hasn't been scored:
 - It's excluded from the weighted average
 - Remaining weights are renormalized
-- Example: no literature review → weights become 11%, 28%, 17%, 28%, 11%, 6%
+- Example (applied paper, no literature review): explorer 11%, strategist 28%, coder 17%, writer 11%, referees 28% combined, verifier 6%
 
 ---
 

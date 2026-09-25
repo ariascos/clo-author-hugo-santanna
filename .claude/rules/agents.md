@@ -30,7 +30,7 @@ Peer Review uses a different structure — the Orchestrator dispatches two indep
 ### Enforcement
 
 - The Orchestrator checks: if a creator artifact exists without a critic score, it is **not approved**
-- No artifact advances to the next phase without its critic's score >= 80
+- No artifact advances to the next phase without passing its critic: score >= 80, or for the strategist-critic a verdict of SOUND or MINOR ISSUES
 - Critics produce scores; creators produce artifacts — never the reverse
 
 ---

@@ -135,7 +135,7 @@ Append every attempt to `quality_reports/explainers/understanding_log.md`:
 
 A single self-contained HTML file at `quality_reports/explainers/{script}_microworld.html`: sliders and toggles over the choices that matter, a live plot or number that responds, no build step and no external dependencies.
 
-Use the design system in `templates/html/base/styles.css` and follow `.claude/rules/html-dashboard.md` (self-contained, print-friendly, dark mode).
+Use the design system in `templates/html/base/` (`styles.css`, `components.js`): self-contained, print-friendly, dark mode.
 
 **Two honest ways to build one, and you must label which you used:**
 

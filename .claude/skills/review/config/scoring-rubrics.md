@@ -109,6 +109,13 @@ The strategist-critic does not use a point-deduction rubric. Instead, it classif
 
 **Proportional criticism principle:** A working paper missing Oster bounds is MINOR. A paper with violated parallel trends is CRITICAL.
 
+**How the verdict is used.** The gate to execution is the verdict itself: SOUND or MINOR ISSUES lets
+the data-engineer and coder start; MAJOR ISSUES or CRITICAL ERRORS sends the memo back. For the
+weighted aggregate only, the verdict maps to a score through `verdict_scores` in
+`.claude/skills/new-project/config/quality-gates.json` (SOUND 95, MINOR ISSUES 85, MAJOR ISSUES 65,
+CRITICAL ERRORS 40). Identification problems don't decompose into point deductions, which is why
+this critic rules on the design as a whole.
+
 ---
 
 ## Theorist-Critic (Theory Review)

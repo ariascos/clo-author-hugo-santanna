@@ -16,4 +16,3 @@ Known failure points and edge cases for paper/code/strategy review.
 - R&R second round reloads same referee dispositions and pet peeves from round 1. Max 3 rounds total.
 - The editor is NOT a third referee -- they synthesize and decide, not add new substantive criticisms.
 - When reviewing structural papers, don't penalize for missing parallel trends. When reviewing descriptive papers, don't penalize for missing identification. Paper-type awareness is mandatory for all critics.
-- The data-review template says "4 categories" in the task spec but the explorer-critic actually checks 6 dimensions. The template file uses the full 6.
