@@ -12,7 +12,8 @@ gate runs it.
 
 Checks:
   frontmatter   agents have name + description; skills have description
-  tools         agent `tools:` entries are real Claude Code tools
+  tools         agent `tools:` entries are real tools; Agent(...) rosters name real agents;
+                skills that list Task also list Agent (its current name)
   paths         backticked .claude/ scripts/ templates/ paths in the scaffold exist
   registry      every agent in permissions.md has an agent file
   weights       permissions.md QUALITY_WEIGHT agrees with quality-gates.json
@@ -44,7 +45,7 @@ KNOWN_TOOLS = {
 SKILL_MAX_LINES = 500
 # Lines of CLAUDE.md plus every .claude/rules/*.md without `paths:` frontmatter. Everything here
 # loads into every session, and Claude Code's docs put the adherence limit near 200 lines per file.
-ALWAYS_LOADED_BUDGET = 850
+ALWAYS_LOADED_BUDGET = 700
 PATH_RE = re.compile(r"`((?:\.claude|scripts|templates)/[^`\s]+)`")
 
 Problem = Tuple[str, str, str]  # (level, check, message)
@@ -76,10 +77,18 @@ def check(root: Path) -> List[Problem]:
         for key in ("name", "description"):
             if not fm.get(key) or fm.get(key) == ">":
                 probs.append(("ERROR", "frontmatter", f"{rel}: missing '{key}'"))
-        for tool in re.split(r",\s*", fm.get("tools", "")):
+        tools_field = fm.get("tools", "")
+        roster = re.search(r"\bAgent\(([^)]*)\)", tools_field)
+        if roster:
+            for name in [n.strip() for n in roster.group(1).split(",") if n.strip()]:
+                if not (claude / "agents" / f"{name}.md").exists():
+                    probs.append(("ERROR", "tools", f"{rel}: Agent({name}) names an agent with no file"))
+        for tool in re.split(r",\s*(?![^()]*\))", tools_field):
             base = re.sub(r"\(.*\)$", "", tool.strip())
             if base and base not in KNOWN_TOOLS and not base.startswith("mcp__"):
                 probs.append(("ERROR", "tools", f"{rel}: unknown tool '{tool.strip()}'"))
+        if fm.get("effort") and fm["effort"] not in ("low", "medium", "high", "xhigh", "max"):
+            probs.append(("ERROR", "frontmatter", f"{rel}: effort '{fm['effort']}' is not low/medium/high/xhigh/max"))
     for skill in sorted((claude / "skills").glob("*/SKILL.md")):
         text = skill.read_text(errors="replace")
         fm = frontmatter(text)
@@ -91,7 +100,7 @@ def check(root: Path) -> List[Problem]:
             probs.append(("ERROR", "size", f"{rel}: {n} lines (limit {SKILL_MAX_LINES}; move detail into reference files)"))
         tools = fm.get("allowed-tools", "")
         if re.search(r"\bTask\b", tools) and not re.search(r"\bAgent\b", tools):
-            probs.append(("WARN", "tools", f"{rel}: allowed-tools has Task but not Agent (Task is the old name)"))
+            probs.append(("ERROR", "tools", f"{rel}: allowed-tools has Task but not Agent (Task is the old name)"))
 
     # paths referenced from the scaffold
     sources = [root / "CLAUDE.md"] + sorted(claude.rglob("*.md"))

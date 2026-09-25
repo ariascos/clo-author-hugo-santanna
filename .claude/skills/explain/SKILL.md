@@ -2,7 +2,7 @@
 name: explain
 description: Build understanding of analysis code an agent wrote — delta-explainer, 5-question quiz with separate answer key, optional interactive micro-world. Dispatches the explainer agent. Run it before you take a result to a coauthor, a seminar, or a referee.
 argument-hint: "[script path or 'all'] Options: --quiz | --grade | --microworld | --status"
-allowed-tools: Read,Grep,Glob,Write,Edit,Bash,Task
+allowed-tools: Read,Grep,Glob,Write,Edit,Bash,Agent,Task
 ---
 
 # Explain

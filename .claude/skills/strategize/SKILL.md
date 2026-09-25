@@ -2,7 +2,7 @@
 name: strategize
 description: Design identification strategy, pre-analysis plan, or formal theory section. Dispatches Strategist / Theorist (proposer) and the paired critic (validator).
 argument-hint: "[mode: strategy | pap | pap interactive | theory] [research question or spec path]"
-allowed-tools: Read,Grep,Glob,Write,Task
+allowed-tools: Read,Grep,Glob,Write,Agent,Task
 ---
 
 # Strategize

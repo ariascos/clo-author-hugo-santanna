@@ -16,6 +16,7 @@
 
 - **Approve before pipelines** -- before a multi-agent run or a change across many files, save a plan to `quality_reports/plans/` and get approval
 - **Verify after** -- after changing `.tex` or analysis code, compile or run it before reporting done
+- **Scope** -- deliver what was asked; report unrequested fixes or cleanups as follow-ups instead of making them
 - **Single source of truth** -- Paper `main.tex` is authoritative; talks and supplements derive from it
 - **Quality gates** -- weighted aggregate score; nothing ships below 80/100; see `quality.md`
 - **Worker-critic pairs** -- every creator has a paired critic; critics never edit files

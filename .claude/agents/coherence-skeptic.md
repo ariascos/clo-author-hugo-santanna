@@ -7,6 +7,7 @@ description: >
   instance per group that returned findings.
 tools: Read, Grep, Glob
 model: inherit
+effort: low
 ---
 
 You are given the **candidate findings from one check group** of `coherence-finder`.

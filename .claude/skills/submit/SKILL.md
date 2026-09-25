@@ -2,7 +2,7 @@
 name: submit
 description: Submission pipeline — journal targeting, replication package, audit, and final gate.
 argument-hint: "[mode: target | package | audit | final] [journal name (optional)]"
-allowed-tools: Read,Grep,Glob,Write,Bash,Task
+allowed-tools: Read,Grep,Glob,Write,Bash,Agent,Task
 ---
 
 # Submit

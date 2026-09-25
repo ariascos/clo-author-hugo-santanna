@@ -9,7 +9,7 @@ description: >
   internally sound", never "is the paper any good". Use before every commit, and
   always before submission.
 argument-hint: "[file path] Options: --deep, --fix, --strict, --json"
-allowed-tools: Read,Grep,Glob,Bash,Task,Write
+allowed-tools: Read,Grep,Glob,Bash,Agent,Task,Write
 ---
 
 # Coherence

@@ -2,7 +2,8 @@
 name: review
 description: All quality reviews — routes to appropriate critics based on target file type and flags.
 argument-hint: "[file path or --flag] Options: --peer [journal], --stress [journal], --methods, --proofread, --code, --replicate [lang], --all"
-allowed-tools: Read,Grep,Glob,Write,Bash,Task
+allowed-tools: Read,Grep,Glob,Write,Bash,Agent,Task
+disallowed-tools: Edit
 ---
 
 # Review

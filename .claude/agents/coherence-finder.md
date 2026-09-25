@@ -8,6 +8,7 @@ description: >
   each in its own context.
 tools: Read, Grep
 model: inherit
+effort: low
 ---
 
 You run one group of reasoning checks on a paper. The dispatch prompt names your

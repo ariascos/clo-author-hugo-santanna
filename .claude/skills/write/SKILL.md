@@ -2,7 +2,7 @@
 name: write
 description: Draft academic paper sections using paragraph-level argument moves. Cleanup pass strips AI patterns after drafting.
 argument-hint: "[section or mode: intro | strategy | results | conclusion | abstract | full | humanize | style-guide] [file path (optional)]"
-allowed-tools: Read,Grep,Glob,Write,Edit,Task
+allowed-tools: Read,Grep,Glob,Write,Edit,Agent,Task
 ---
 
 # Write

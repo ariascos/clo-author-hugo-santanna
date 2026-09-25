@@ -2,7 +2,7 @@
 name: revise
 description: R&R cycle — classify referee comments and route to appropriate agents.
 argument-hint: "[referee-report file path] [paper path (optional)]"
-allowed-tools: Read,Grep,Glob,Write,Edit,Task
+allowed-tools: Read,Grep,Glob,Write,Edit,Agent,Task
 ---
 
 # Revise

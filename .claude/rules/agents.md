@@ -1,3 +1,10 @@
+---
+paths:
+  - ".claude/agents/**"
+  - ".claude/skills/**"
+  - "quality_reports/**"
+---
+
 # Agents: Pairs, Separation of Powers, and Escalation
 
 ---
@@ -78,7 +85,24 @@ The Orchestrator flags violations:
 
 ---
 
-## 3. Three Strikes Escalation
+## 3. Effort per Agent
+
+Every agent runs on the session's model (`model: inherit`); `effort:` in its frontmatter sets how
+much it thinks. Effort, not prose like "think harder", is the control on current models, and Opus
+5.5's default is `medium`.
+
+| Effort | Agents | Why |
+|--------|--------|-----|
+| `high` | strategist, strategist-critic, theorist, theorist-critic, methods-referee, editor | Identification, proof validity, and editorial judgment: errors here propagate through every later phase |
+| `low` | coherence-finder, coherence-skeptic, librarian-critic, explorer-critic | Narrow, well-specified checks over pre-filtered input |
+| session default | everyone else | |
+
+These are starting points. If an agent at `low` misses what it should catch, raise it; if one at
+`high` is slow on routine work without better output, lower it.
+
+---
+
+## 4. Three Strikes Escalation
 
 **If a worker-critic pair fails to converge after 3 rounds, the Orchestrator escalates.**
 
