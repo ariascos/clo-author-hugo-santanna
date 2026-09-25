@@ -238,7 +238,8 @@ python3 scripts/generate_dashboard.py
 ```
 
 ### Manuscript Polish (`--proofread`)
-Dispatch **writer-critic** standalone:
+Run `python3 scripts/style_metrics.py <file or paper/>` and include its output in the writer-critic's
+input (whenever the writer-critic is dispatched, in any mode). Then dispatch **writer-critic** standalone:
 - Categories per the writer-critic's Standalone Mode (`manuscript-review-8-categories.md`)
 - Save report to `quality_reports/[file]_proofread_report.md`
 

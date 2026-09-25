@@ -66,8 +66,10 @@ Standard library only, no dependencies, exits 1 when a blocking finding exists.
 | `table-file-wrapped` | minor | A table body carries its own float/caption (INV-13) |
 | `float-in-section` | minor | A float is declared in a section file (INV-23) |
 | `duplicate-macro` | minor | A macro is defined twice — silent notation drift (INV-7) |
+| `abstract-too-long` | major | Abstract over 150 words (INV-5; `--abstract-limit N` for a journal's own limit) |
+| `table1-extra-columns` | major | Table 1 has difference, SD, or p-value columns, or more than two value columns (INV-24) |
 
-Enforces **INV-7, INV-11, INV-13, INV-23**.
+Enforces **INV-5, INV-7, INV-11, INV-13, INV-23, INV-24**.
 
 ### How number matching works
 

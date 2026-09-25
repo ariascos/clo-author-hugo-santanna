@@ -166,6 +166,10 @@ your-project/
 
 Optional: Python, Julia, [Quarto](https://quarto.org), [gh CLI](https://cli.github.com/).
 
+After cloning, run `scripts/install-hooks.sh` once. It points git at `.githooks/`, whose pre-commit
+check blocks commits that break the scaffold's own references or add analysis scripts with
+`setwd()`, absolute paths, and similar INV-14/15/16/19 violations.
+
 ---
 
 ## Upgrading

@@ -81,7 +81,7 @@ Plan approved → orchestrator activates
   Step 4: VERIFY — Compile, render, run code, check outputs
   │         If verification fails → fix → re-verify (max 2 attempts)
   │
-  Step 5: SCORE — Aggregate scores across components (see quality.md)
+  Step 5: SCORE — `python3 scripts/score.py` (see quality.md)
   │
   └── Score >= threshold?
         YES → Present summary to user
@@ -126,7 +126,7 @@ No multi-agent reviews. Just: write, test, verify quality >= 80.
 
 When user says "just do it" / "handle it":
 - Skip final approval pause
-- Auto-commit if score >= 80
+- Auto-commit if `python3 scripts/score.py --gate commit` passes
 - Still run the full verify-review-fix loop
 - Still present the summary
 

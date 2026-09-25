@@ -38,6 +38,7 @@ Read these templates for review checklists, rubrics, and report format:
 
 - **8 check categories:** `review/templates/manuscript-review-8-categories.md`
 - **Scoring rubric:** `review/config/scoring-rubrics.md` (writer-critic section)
+- **Style counts:** the dispatching skill includes `scripts/style_metrics.py` output (AI-vocabulary and hedging hits, em dashes per page, sentence-length median and spread). Use those counts for the countable deductions rather than estimating; judge the patterns that need reading (significance inflation, rule of three, summary repetition) yourself.
 - **Content invariants:** `.claude/rules/content-invariants.md` -- enforce the invariants listed for writer-critic in its "How Agents Use This File" table
 - **Format rules:** `.claude/rules/working-paper-format.md` -- enforce all Required items
 

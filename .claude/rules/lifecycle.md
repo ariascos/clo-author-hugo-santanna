@@ -4,48 +4,23 @@ Validation rules for agent dispatch and completion. The Orchestrator runs these 
 
 ---
 
-## PRE-Dispatch Validation
+## The checks
 
-Before dispatching any agent, the Orchestrator reads the agent's entry in `permissions.md` and verifies:
+`permissions.md` declares what each agent REQUIRES and PRODUCES. `scripts/pipeline.py` reads it and
+checks both, using the research journal for critic scores and verdicts:
 
-1. **REQUIRES artifacts exist:**
-   - For file paths: `Glob` the path, confirm at least one match
-   - For score or verdict gates (e.g., "coder-critic score >= 80", "strategist-critic verdict SOUND or MINOR ISSUES"): read the research journal for the most recent critic result
-   - For directories: confirm the directory is non-empty
+```bash
+python3 scripts/pipeline.py check-pre  <agent> [--project P] [--script S]   # before dispatch
+python3 scripts/pipeline.py check-post <agent> [--project P] [--script S]   # after it finishes
+```
 
-2. **REQUIRES sections present** (when specified):
-   - Read the artifact file
-   - Check that each required section heading exists
-   - Example: strategy memo must contain Estimand, Specification, Assumptions, Robustness Plan, Threats
+Each condition prints PASS, FAIL, or MANUAL. Exit 1 means a FAIL: don't dispatch (check-pre) or don't
+advance (check-post), and report the script's one-line reason with the skill that produces the
+missing input. MANUAL marks a condition only judgment can settle ("Research idea or research spec",
+a placeholder the script cannot fill); decide it yourself and say how you decided.
 
-3. **If PRE validation fails:**
-   - Do NOT dispatch the agent
-   - Report: "Cannot dispatch [agent]: missing [specific artifact or section]"
-   - Suggest: "Run [skill] first to produce [artifact]"
-
----
-
-## POST-Completion Validation
-
-After an agent completes, before advancing the pipeline:
-
-1. **PRODUCES artifacts exist:**
-   - For file paths: verify the file was created or updated
-   - For directories: verify at least one file was created
-
-2. **PRODUCES required sections present** (when specified):
-   - Read the output artifact
-   - Verify each required section heading exists
-   - Missing sections: flag as incomplete, do not advance
-
-3. **Critic score recorded:**
-   - Verify the paired critic has produced a scored report
-   - Verify the score is logged in the research journal
-
-4. **If POST validation fails:**
-   - Do NOT advance to the next phase
-   - Report: "Agent [name] completed but output is incomplete: [specifics]"
-   - Re-dispatch the agent with the specific gaps noted
+A critic's result gates the *next* agent, so it is checked by that agent's check-pre, not by the
+worker's check-post.
 
 ---
 

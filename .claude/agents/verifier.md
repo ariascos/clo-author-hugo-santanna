@@ -11,13 +11,26 @@ You are a **verification agent** for academic research projects. You check that 
 
 Enforce the invariants listed for the verifier in `.claude/rules/content-invariants.md` ("How Agents Use This File"); any violation is a FAIL.
 
+**Start with the script.** The mechanical checks (1-6, 8, 9, 11) run in code:
+
+```bash
+python3 scripts/verify.py                          # standard mode: checks 1-4
+python3 scripts/verify.py --mode submission        # adds 5, 6, 8, 9, 11
+python3 scripts/verify.py --script scripts/R/02_main.R   # also run specific scripts (check 2)
+python3 scripts/verify.py --mode submission --run-master  # run the package end to end (check 8)
+```
+
+Put its table in your report as-is. Your own work is what it can't decide: which scripts to run
+for check 2, data provenance (7), README completeness (10), and whether a FAIL it reports is real
+(a stale timestamp after a no-op re-save, say). The sections below define each check.
+
 ## Two Modes
 
 ### Standard Mode (between phase transitions)
 
 Checks 1–4. Run automatically after any code or paper changes.
 
-### Submission Mode (`/audit-replication`, `/data-deposit`, `/submit`)
+### Submission Mode (`/submit`)
 
 Checks 1–10. Full AEA Data Editor compliance audit before journal submission.
 

@@ -385,11 +385,26 @@ Always exits 0. Problems go to you as a `systemMessage` and to Claude as `additi
 
 ---
 
-## 8. post-merge.sh {#post-merge}
+## 8. Git hooks: pre-commit and post-merge {#post-merge}
 
-**Event:** Git post-merge (not a Claude Code hook) | **Timeout:** N/A | **Blocking:** No
+These are git hooks, not Claude Code hooks. They live in `.githooks/`; `scripts/install-hooks.sh`
+points git at that folder (`git config core.hooksPath .githooks`) once per clone.
 
-### What it does
+**pre-commit** runs on every commit, including ones made outside Claude:
+
+- blocks when `scripts/check_scaffold.py` finds a broken reference, a missing hook file, or a
+  weight that disagrees between `permissions.md` and `quality-gates.json`
+- blocks when `.claude/hooks/` or settings changed and `scripts/test_hooks.py` fails, or when
+  enforcement scripts changed and `scripts/test_scripts.py` fails
+- blocks on HIGH lint findings in staged analysis scripts (`setwd()`, absolute paths, ...)
+- prints paper-coherence findings for staged `.tex` files as advice; they block at `/submit`
+
+Bypass with `SKIP_GATE=1 git commit ...` and say why in the message. It does not check the quality
+score; `/tools commit` does that once critics have scored.
+
+**post-merge**
+
+**Event:** Git post-merge | **Blocking:** No
 
 A standard Git hook (not a Claude Code hook) that prints a reminder after any `git merge` or `git pull` to update the session report.
 
@@ -399,12 +414,6 @@ echo "=== SESSION MERGED TO MAIN ==="
 echo ""
 echo "Remember to append a summary to SESSION_REPORT.md if you haven't already."
 ```
-
-### How it works
-
-Git hooks live in `.git/hooks/` by default, but this script is stored in `.claude/hooks/` alongside the Claude Code hooks for organizational convenience. To activate it, symlink or copy it to `.git/hooks/post-merge`.
-
-### Why it exists
 
 Merges to main are significant project events that should be logged. This hook is a simple reminder --- it does not enforce logging, just nudges.
 

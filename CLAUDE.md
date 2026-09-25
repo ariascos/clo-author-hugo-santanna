@@ -27,8 +27,9 @@
 ## Getting Started
 
 1. Fill in the `[BRACKETED PLACEHOLDERS]` in this file
-2. Run `/discover interview [topic]` to build your research specification
-3. Or run `/new-project [topic]` for the full orchestrated pipeline
+2. Run `scripts/install-hooks.sh` once, so git runs the pre-commit checks
+3. Run `/discover interview [topic]` to build your research specification
+4. Or run `/new-project [topic]` for the full orchestrated pipeline
 
 ---
 
@@ -88,7 +89,7 @@ cd paper && latexmk -c
 | 95 | Submission | Aggregate + all components >= 80 |
 | -- | Advisory | Talks (reported, non-blocking) |
 
-See `quality.md` for weighted aggregation formula.
+`python3 scripts/score.py` computes the aggregate and every gate; see `quality.md`.
 
 ---
 

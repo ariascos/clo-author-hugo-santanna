@@ -60,11 +60,13 @@ Full verification + score enforcement + submission checklist.
 Workflow:
 1. Run comprehensive review if not done recently
 2. Run replication audit
-3. Check score gate: aggregate >= 95, all components >= 80
-3b. Check the understanding gate (INV-26) — pass/fail, separate from the score:
+3. Check the submission gate — aggregate >= 95, every component >= 80, every non-conditional
+   component scored, and the understanding gate (INV-26), which `score.py` runs as a pass/fail command:
 ```bash
-python3 scripts/explainer_status.py --gate
+python3 scripts/score.py --gate submission
+python3 scripts/verify.py --mode submission
 ```
+3b. If the understanding gate is what failed, `explainer_status.py` lists the scripts:
 Exit 1 blocks submission. Every script behind a table or figure needs a current explainer and a
 passing quiz attempt at its current fingerprint. Fix with `/explain <script>` (MISSING or STALE)
 or `/explain <script> --quiz` (UNTESTED). This never enters the weighted score — see
