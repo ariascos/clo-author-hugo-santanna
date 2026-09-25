@@ -188,6 +188,6 @@ Every output needs human review. Claude plans and executes; you decide what ship
 
 ## Origin
 
-Maintained by [Hugo Sant'Anna](https://hsantanna.org) at UAB.
+Maintained by [Hugo Sant'Anna](https://hsantanna.org) at UAB. Originally forked from Pedro H. C. Sant'Anna's [claude-code-my-workflow](https://github.com/pedrohcgs/claude-code-my-workflow) in February 2026; developed independently since.
 
-MIT License.
+MIT License — see [LICENSE](LICENSE).
