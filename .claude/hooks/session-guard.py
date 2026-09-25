@@ -8,9 +8,13 @@ Enforces session-scoped guards:
 
 Reads guard configuration from .claude/state/session-guards.json.
 If no guards are active or the file doesn't exist, passes through immediately.
+A guards file that exists but can't be read is an error, not "no guards":
+the user switched a guard on and must hear that it isn't working.
 
-Hook Event: PreToolUse
+Hook Event: PreToolUse (matcher: "Edit|Write|Bash")
 """
+
+from __future__ import annotations
 
 import json
 import os
@@ -18,21 +22,22 @@ import re
 import sys
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _hooklib import HookError, emit, run  # noqa: E402
 
-def load_guards() -> dict:
+
+def load_guards(project_dir: Path) -> dict:
     """Load active guards from session state."""
-    project_dir = os.environ.get("CLAUDE_PROJECT_DIR", "")
-    if not project_dir:
-        return {}
-
-    guards_file = Path(project_dir) / ".claude" / "state" / "session-guards.json"
+    guards_file = project_dir / ".claude" / "state" / "session-guards.json"
     if not guards_file.exists():
         return {}
-
     try:
         return json.loads(guards_file.read_text())
-    except (json.JSONDecodeError, IOError):
-        return {}
+    except (json.JSONDecodeError, OSError) as exc:
+        raise HookError(
+            f"{guards_file} exists but can't be read ({exc}); /freeze and /careful "
+            f"are NOT being enforced until it is fixed or deleted"
+        ) from None
 
 
 def check_freeze(tool_name: str, tool_input: dict, guards: dict) -> tuple:
@@ -46,7 +51,7 @@ def check_freeze(tool_name: str, tool_input: dict, guards: dict) -> tuple:
 
     file_path = tool_input.get("file_path", "")
     if not file_path:
-        return True, ""
+        raise HookError(f"{tool_name} payload has no tool_input.file_path; freeze can't check it")
 
     project_dir = os.environ.get("CLAUDE_PROJECT_DIR", "")
 
@@ -93,7 +98,7 @@ def check_careful(tool_name: str, tool_input: dict, guards: dict) -> tuple:
 
     command = tool_input.get("command", "")
     if not command:
-        return True, ""
+        raise HookError("Bash payload has no tool_input.command; careful mode can't check it")
 
     for pattern, description in DESTRUCTIVE_PATTERNS:
         if re.search(pattern, command, re.IGNORECASE):
@@ -107,43 +112,31 @@ def check_careful(tool_name: str, tool_input: dict, guards: dict) -> tuple:
 
 def deny(reason: str) -> None:
     """Emit the PreToolUse deny decision (top-level "decision" is deprecated)."""
-    print(json.dumps({
+    emit({
         "hookSpecificOutput": {
             "hookEventName": "PreToolUse",
             "permissionDecision": "deny",
             "permissionDecisionReason": reason,
         }
-    }))
+    })
 
 
-def main() -> int:
-    """Main hook entry point."""
-    try:
-        hook_input = json.load(sys.stdin)
-    except (json.JSONDecodeError, IOError):
-        return 0  # Pass through on parse error
+def body(hook) -> None:
+    tool_name = hook.require("tool_name")
+    tool_input = hook.require("tool_input")
 
-    tool_name = hook_input.get("tool_name", "")
-    tool_input = hook_input.get("tool_input", {})
+    guards = load_guards(hook.project_dir())
+    if not any(g.get("active") for g in guards.values() if isinstance(g, dict)):
+        hook.skip("no active guards")
 
-    guards = load_guards()
-    if not guards:
-        return 0  # No guards active, pass through
-
-    # Check freeze
-    allowed, message = check_freeze(tool_name, tool_input, guards)
-    if not allowed:
-        deny(message)
-        return 0
-
-    # Check careful
-    allowed, message = check_careful(tool_name, tool_input, guards)
-    if not allowed:
-        deny(message)
-        return 0
-
-    return 0
+    for check in (check_freeze, check_careful):
+        allowed, message = check(tool_name, tool_input, guards)
+        if not allowed:
+            deny(message)
+            hook.acted(message)
+            return
+    hook.skip(f"{tool_name} allowed by active guards")
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    run("session-guard", body)

@@ -13,7 +13,7 @@ quality_reports/plans/, quality_reports/pipeline_state.json, and the latest
 SESSION_REPORT.md entry.
 
 Hook Event: SessionStart (matcher: "compact|resume")
-Returns: Exit code 0 (output to stdout)
+Returns: Exit 0 with plain-text stdout (added to Claude's context); exit 1 on error
 """
 
 from __future__ import annotations
@@ -24,6 +24,9 @@ import os
 import re
 import sys
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _hooklib import run  # noqa: E402
 
 
 def get_session_dir() -> Path:
@@ -110,19 +113,11 @@ def latest_session_entry(project_dir: Path) -> list[str]:
     return lines
 
 
-def main() -> int:
-    try:
-        hook_input = json.load(sys.stdin)
-    except (json.JSONDecodeError, OSError):
-        hook_input = {}
-
-    if hook_input.get("source", "") not in ("compact", "resume"):
-        return 0
-
-    project_dir = os.environ.get("CLAUDE_PROJECT_DIR", "")
-    if not project_dir:
-        return 0
-    root = Path(project_dir)
+def body(hook) -> None:
+    source = hook.require("source")
+    if source not in ("compact", "resume"):
+        hook.skip(f"source={source}")
+    root = hook.project_dir()
 
     saved = read_pre_compact_state()
     plan = find_active_plan(root)
@@ -130,9 +125,9 @@ def main() -> int:
     session = latest_session_entry(root)
 
     if not (saved or plan or pipeline or session):
-        return 0
+        hook.skip("no plan, pipeline state, or session report to restore")
 
-    out = [f"[Context restored after {hook_input['source']}]"]
+    out = [f"[Context restored after {source}]"]
     if plan:
         out.append(f"Active plan: {plan['path']}")
         if plan["next_task"]:
@@ -148,11 +143,8 @@ def main() -> int:
         out += session
     out.append("Read the active plan and check `git status` before continuing.")
     print("\n".join(out))
-    return 0
+    hook.acted(f"restored after {source}")
 
 
 if __name__ == "__main__":
-    try:
-        sys.exit(main())
-    except Exception:
-        sys.exit(0)  # never block a session start
+    run("post-compact-restore", body)

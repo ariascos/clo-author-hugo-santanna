@@ -10,7 +10,8 @@ Fires before context compaction to capture the current state:
 This state is read by post-compact-restore.py after compaction.
 
 Hook Event: PreCompact
-Returns: Exit code 0 (never blocks compaction; message on stderr)
+Returns: Exit 0; the checklist as systemMessage, shown to the user (stderr on
+exit 0 goes only to the debug log). Never blocks compaction.
 """
 
 from __future__ import annotations
@@ -22,6 +23,9 @@ import re
 from pathlib import Path
 from datetime import datetime
 import hashlib
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from _hooklib import emit, run  # noqa: E402
 
 
 
@@ -134,41 +138,24 @@ def format_compaction_message(plan_info: dict | None, decisions: list[str]) -> s
     return "\n".join(lines)
 
 
-def main() -> int:
-    """Main hook entry point."""
-    # Read hook input
-    try:
-        hook_input = json.load(sys.stdin)
-    except (json.JSONDecodeError, IOError):
-        hook_input = {}
+def body(hook) -> None:
+    trigger = hook.payload.get("trigger", "auto")
+    project_dir = str(hook.project_dir())
 
-    trigger = hook_input.get("trigger", "auto")
-    project_dir = os.environ.get("CLAUDE_PROJECT_DIR", "")
-
-    if not project_dir:
-        return 0
-
-    # Gather state
     plan_info = find_active_plan(project_dir)
     decisions = extract_recent_decisions(project_dir)
 
-    # Build state object
-    state = {
+    save_state({
         "trigger": trigger,
         "plan_path": plan_info["plan_path"] if plan_info else None,
         "plan_status": plan_info["status"] if plan_info else None,
         "current_task": plan_info.get("current_task") if plan_info else None,
-        "decisions": decisions
-    }
+        "decisions": decisions,
+    })
 
-    # Save state for restoration
-    save_state(state)
-
-    # Print message to stderr so it's visible
-    print(format_compaction_message(plan_info, decisions), file=sys.stderr)
-
-    return 0  # Exit code 0 = allow compaction to proceed
+    emit({"systemMessage": format_compaction_message(plan_info, decisions).strip()})
+    hook.acted(f"state saved ({trigger})")
 
 
 if __name__ == "__main__":
-    sys.exit(main())
+    run("pre-compact", body)
