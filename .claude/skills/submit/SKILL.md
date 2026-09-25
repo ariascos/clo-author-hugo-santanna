@@ -1,6 +1,6 @@
 ---
 name: submit
-description: Submission pipeline — journal targeting, replication package, audit, and final gate. Replaces /submit, /target-journal, /audit-replication, /data-deposit.
+description: Submission pipeline — journal targeting, replication package, audit, and final gate.
 argument-hint: "[mode: target | package | audit | final] [journal name (optional)]"
 allowed-tools: Read,Grep,Glob,Write,Bash,Task
 ---

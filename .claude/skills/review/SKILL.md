@@ -1,6 +1,6 @@
 ---
 name: review
-description: All quality reviews — routes to appropriate critics based on target file type and flags. Replaces /paper-excellence, /proofread, /econometrics-check, /review-r, /review-paper.
+description: All quality reviews — routes to appropriate critics based on target file type and flags.
 argument-hint: "[file path or --flag] Options: --peer [journal], --stress [journal], --methods, --proofread, --code, --replicate [lang], --all"
 allowed-tools: Read,Grep,Glob,Write,Bash,Task
 ---

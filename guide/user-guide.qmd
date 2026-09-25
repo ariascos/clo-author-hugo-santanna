@@ -164,6 +164,29 @@ Scores are weighted aggregates of individual critic scores. Each critic starts a
 
 ---
 
+## Managing Long Sessions
+
+### Compaction discipline
+
+Borrowed from Goldsmith-Pinkham's Claude Code for Economists workflow:
+
+- **Manual `/compact` before natural stopping points**, not at the threshold. You control what gets summarized.
+- **Aim for 5–10 turn focused sessions.** Long sessions drift; short, scoped sessions keep output sharp.
+- **Start fresh between phases.** Don't carry "discovery residue" into execution.
+- **Before `/compact` or session end, run `/checkpoint`.** That persists state to memory, SESSION_REPORT, and the research journal — so the next session reads real context, not an auto-summary.
+
+### Rewind, correct, compact, or clear
+
+Choose the right context management action:
+
+- **Rewind** when Claude took a wrong approach -- removes the failed attempt from context entirely. Re-prompt with constraints upfront. Strictly superior to correction when the entire approach was wrong.
+- **Correct** when the approach was right but a detail was wrong ("use state-level clustering") -- the context of the prior attempt is useful.
+- **Compact** when context is bloated but the current trajectory is correct.
+- **Clear** when you need a fresh start on a new task.
+
+Rewind keeps failed exploration out of context, saving tokens and avoiding confusion on subsequent turns.
+
+
 ## Troubleshooting
 
 ### LaTeX Won't Compile

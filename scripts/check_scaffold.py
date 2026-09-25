@@ -42,8 +42,9 @@ KNOWN_TOOLS = {
     "Task", "Agent", "Skill", "NotebookEdit", "TodoWrite", "AskUserQuestion", "LSP", "Monitor",
 }
 SKILL_MAX_LINES = 500
-# Lines of CLAUDE.md plus every .claude/rules/*.md without `paths:` frontmatter.
-ALWAYS_LOADED_BUDGET = 2000
+# Lines of CLAUDE.md plus every .claude/rules/*.md without `paths:` frontmatter. Everything here
+# loads into every session, and Claude Code's docs put the adherence limit near 200 lines per file.
+ALWAYS_LOADED_BUDGET = 850
 PATH_RE = re.compile(r"`((?:\.claude|scripts|templates)/[^`\s]+)`")
 
 Problem = Tuple[str, str, str]  # (level, check, message)

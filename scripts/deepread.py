@@ -13,7 +13,9 @@ Project-agnostic: point it at any paper directory.
     python3 scripts/deepread.py --segment seg03 --skeptic
     python3 scripts/deepread.py --dry-run            # projection only, no calls
 
-Reader roles and their instructions live in .claude/agents/paper-reader-*.md.
+Reader roles and their instructions live in scripts/deepread_prompts/paper-reader-*.md.
+They are Codex prompts, kept out of .claude/agents/ so Claude never lists them as its own
+subagents (a Claude-agent version of this pipeline cost 6.9M tokens on one paper).
 Standard library only. Python 3.9+.
 """
 
@@ -34,7 +36,7 @@ from typing import Dict, List, Optional, Tuple
 
 HERE = Path(__file__).resolve().parent
 REPO = HERE.parent
-AGENTS = REPO / ".claude" / "agents"
+AGENTS = REPO / "scripts" / "deepread_prompts"
 COHERENCE = HERE / "paper_coherence.py"
 
 CAP = 3  # max comments per reader — see the Hard limit section in each role file

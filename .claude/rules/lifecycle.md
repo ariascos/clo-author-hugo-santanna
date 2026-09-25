@@ -1,3 +1,10 @@
+---
+paths:
+  - ".claude/agents/**"
+  - ".claude/skills/new-project/**"
+  - "quality_reports/**"
+---
+
 # Lifecycle: Handoff Validation Protocol
 
 Validation rules for agent dispatch and completion. The Orchestrator runs these checks before and after every agent invocation.

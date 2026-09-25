@@ -160,52 +160,8 @@ Agents in the same PARALLEL_GROUP run concurrently when their REQUIRES are met. 
 
 ## 4. Standalone Access
 
-**Any skill can be invoked directly, bypassing the pipeline.**
-
-### Two Modes
-
-**Mode 1: Orchestrated (within the pipeline)**
-
-The Orchestrator dispatches agents through the dependency graph. The user says:
-
-> "I want to study the effect of minimum wage on employment using CPS data."
-
-The Orchestrator activates Discovery → Strategy → Execution → Peer Review automatically.
-
-**Mode 2: Standalone (direct access)**
-
-The user invokes a skill directly:
-
-> `/strategize paper/main.tex`
-
-This runs the strategist-critic agent alone, right now, no phase dependencies.
-
-### Why Both Modes
-
-- **Pipeline mode** is for full projects where the Orchestrator manages the flow
-- **Standalone mode** is for targeted tasks: "just check this one thing"
-- Most users start with standalone skills and graduate to the pipeline
-
-### Standalone Skills
-
-All skills in the reference below work without pipeline context when invoked directly. They dispatch their agent(s) and return results.
-
-| Skill | What It Does |
-|-------|-------------|
-| `/discover` | Literature search + data discovery |
-| `/strategize` | Identification strategy design + review |
-| `/analyze` | End-to-end data analysis (code + debug) |
-| `/explain` | Explainer + quiz for a script — the comprehension gate |
-| `/write` | Draft paper sections + humanizer pass |
-| `/review` | Simulated peer review (domain + methods referees) |
-| `/revise` | R&R routing per revision-protocol |
-| `/talk` | Beamer talk from paper |
-| `/submit` | Final gate: score >= 95, all components >= 80 |
-| `/tools` | Utility skills (compile, validate-bib, commit, etc.) |
-
-### Constraint
-
-`/new-project` is the only skill that is always orchestrated — it exists to launch the full pipeline. Everything else can run standalone.
+Every skill runs standalone and dispatches its own agents; `/new-project` is the only skill that
+always runs the full pipeline.
 
 ---
 
@@ -215,15 +171,6 @@ All skills in the reference below work without pipeline context when invoked dir
 - Prefer intentional `/checkpoint` + `/compact` at natural stopping points over letting auto-compression summarize for you
 - Save important context to disk before it's lost
 - `/clear` only when context is genuinely polluted
-
-### Compaction Discipline
-
-Borrowed from Goldsmith-Pinkham's Claude Code for Economists workflow:
-
-- **Manual `/compact` before natural stopping points**, not at the threshold. You control what gets summarized.
-- **Aim for 5–10 turn focused sessions.** Long sessions drift; short, scoped sessions keep output sharp.
-- **Start fresh between phases.** Don't carry "discovery residue" into execution.
-- **Before `/compact` or session end, run `/checkpoint`.** That persists state to memory, SESSION_REPORT, and the research journal — so the next session reads real context, not an auto-summary.
 
 ### Context Survival Strategy
 
@@ -239,17 +186,6 @@ Also confirm before compaction:
 - Open questions are documented
 
 The pre-compact hook reminds you of this checklist.
-
-### Rewind Strategy
-
-Choose the right context management action:
-
-- **Rewind** when Claude took a wrong approach -- removes the failed attempt from context entirely. Re-prompt with constraints upfront. Strictly superior to correction when the entire approach was wrong.
-- **Correct** when the approach was right but a detail was wrong ("use state-level clustering") -- the context of the prior attempt is useful.
-- **Compact** when context is bloated but the current trajectory is correct.
-- **Clear** when you need a fresh start on a new task.
-
-Rewind keeps failed exploration out of context, saving tokens and avoiding confusion on subsequent turns.
 
 ### Session Recovery
 

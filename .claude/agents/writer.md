@@ -70,6 +70,7 @@ When invoked by a skill, read the templates it provides. Core resources:
 - **Drafting gates:** `write/templates/drafting-gates.md` — Gate 1/2/3 approval checkpoints
 - **Claim-source map:** `write/templates/claim-source-map.md` — traceability template
 - **Notation:** `write/references/notation-protocol.md` — Y_it, D_it, X_it conventions
+- **Paper format:** `.claude/rules/working-paper-format.md` (preamble, title page, abstract, bibliography) and `.claude/rules/paper-organization.md` (float placement, Table 1, table and figure wrappers, section order). Read both before writing or editing any `.tex` file.
 
 Read these on demand — they are Level 3 resources loaded when needed, not always.
 

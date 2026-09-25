@@ -15,7 +15,7 @@ Launch a full research pipeline from idea to paper, orchestrated through the dep
 
 ## Pipeline Overview
 
-This skill orchestrates the full dependency graph. Each phase activates when its dependencies are met. The orchestrator manages agent dispatch, three-strikes escalation, and quality gates.
+This skill orchestrates the full dependency graph declared in `.claude/rules/permissions.md`; dispatch checks follow `.claude/rules/lifecycle.md` (`scripts/pipeline.py`). Each phase activates when its dependencies are met. The orchestrator manages agent dispatch, three-strikes escalation, and quality gates.
 
 ```
 Phase 1: Discovery

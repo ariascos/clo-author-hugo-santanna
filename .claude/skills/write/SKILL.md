@@ -1,6 +1,6 @@
 ---
 name: write
-description: Draft academic paper sections using paragraph-level argument moves. Cleanup pass strips AI patterns after drafting. Replaces /draft-paper and /humanizer.
+description: Draft academic paper sections using paragraph-level argument moves. Cleanup pass strips AI patterns after drafting.
 argument-hint: "[section or mode: intro | strategy | results | conclusion | abstract | full | humanize | style-guide] [file path (optional)]"
 allowed-tools: Read,Grep,Glob,Write,Edit,Task
 ---
@@ -179,6 +179,9 @@ Strips 24 patterns across 4 categories:
 ---
 
 ## LaTeX Conventions
+
+Read `.claude/rules/working-paper-format.md` and `.claude/rules/paper-organization.md` before writing
+`.tex`; they define the preamble, title page, float placement, Table 1, and section order.
 
 - `\citet{}` for textual citations ("Smith (2024) shows...")
 - `\citep{}` for parenthetical citations ("...is well documented (Smith, 2024)")

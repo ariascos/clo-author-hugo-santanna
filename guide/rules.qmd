@@ -235,7 +235,7 @@ A score of 95 is difficult to achieve. It requires all components to be polished
 
 # Working Paper Format
 
-The `working-paper-format.md` rule file specifies the LaTeX standard that all papers must follow. The full reference preamble, title page conventions, and bibliography setup are documented there. Here is a summary of what the writer-critic enforces.
+The `working-paper-format.md` rule file specifies the LaTeX standard that all papers must follow. The reference preamble itself is `paper/preambles/header.tex` (a paper starts with `\documentclass[12pt]{article}` and `\input{preambles/header}`); the rule documents each design choice, the title page conventions, and the bibliography setup. Here is a summary of what the writer-critic enforces.
 
 ## Required (Blocking Deductions)
 

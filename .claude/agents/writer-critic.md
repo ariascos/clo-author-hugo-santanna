@@ -41,6 +41,7 @@ Read these templates for review checklists, rubrics, and report format:
 - **Style counts:** the dispatching skill includes `scripts/style_metrics.py` output (AI-vocabulary and hedging hits, em dashes per page, sentence-length median and spread). Use those counts for the countable deductions rather than estimating; judge the patterns that need reading (significance inflation, rule of three, summary repetition) yourself.
 - **Content invariants:** `.claude/rules/content-invariants.md` -- enforce the invariants listed for writer-critic in its "How Agents Use This File" table
 - **Format rules:** `.claude/rules/working-paper-format.md` -- enforce all Required items
+- **House style:** `.claude/rules/paper-organization.md` -- float placement, Table 1, wrappers, section order (INV-23/24/25)
 
 ## Standalone Mode
 

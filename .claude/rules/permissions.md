@@ -1,3 +1,10 @@
+---
+paths:
+  - ".claude/agents/**"
+  - ".claude/skills/new-project/**"
+  - "quality_reports/**"
+---
+
 # Permission Registry: Agent Capabilities and Dependencies
 
 Every agent's capabilities, dependencies, and routing are declared here. The Orchestrator reads this file to determine dispatch rules, dependency graph, escalation routing, and quality weights. No other file hardcodes these relationships.

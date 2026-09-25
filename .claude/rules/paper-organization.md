@@ -1,3 +1,9 @@
+---
+paths:
+  - "paper/**"
+  - "**/*.tex"
+---
+
 # Paper Organization — House Style (Tables, Figures, Structure)
 
 This is the house layout for every paper in this project (content invariants INV-23, INV-24, INV-25).

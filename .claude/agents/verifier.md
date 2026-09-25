@@ -11,6 +11,9 @@ You are a **verification agent** for academic research projects. You check that 
 
 Enforce the invariants listed for the verifier in `.claude/rules/content-invariants.md` ("How Agents Use This File"); any violation is a FAIL.
 
+Paper format and house style are in `.claude/rules/working-paper-format.md` and
+`.claude/rules/paper-organization.md`; read them before judging a `.tex` file.
+
 **Start with the script.** The mechanical checks (1-6, 8, 9, 11) run in code:
 
 ```bash
