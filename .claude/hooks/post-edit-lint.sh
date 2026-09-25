@@ -1,11 +1,13 @@
 #!/bin/bash
-# post-edit-lint.sh — PostToolUse hook that auto-lints R/Python/Julia files
-# after Edit or Write operations. Advisory only (exit 0).
+# post-edit-lint.sh — PostToolUse hook (Edit|Write) that lints R/Python/Julia
+# files after they change. Advisory: always exits 0.
 #
-# Environment variables set by Claude Code:
-#   CLAUDE_TOOL_ARG_FILE_PATH — the file that was edited/written
+# Claude Code sends the hook payload as JSON on stdin; the edited path is
+# tool_input.file_path. Findings go back to Claude as
+# hookSpecificOutput.additionalContext — plain stdout from a PostToolUse hook
+# only reaches the transcript, not the model.
 
-FILE="${CLAUDE_TOOL_ARG_FILE_PATH:-}"
+FILE=$(python3 -c 'import json,sys; print(json.load(sys.stdin).get("tool_input",{}).get("file_path",""))' 2>/dev/null)
 [[ -z "$FILE" ]] && exit 0
 
 # Only run on R/Python/Julia scripts
@@ -19,8 +21,10 @@ case "$FILE" in
   */.claude/*) exit 0 ;;
 esac
 
-# Run the linter on the single file
 SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
-"$SCRIPT_DIR/lint-scripts.sh" "$FILE" 2>/dev/null
+OUT=$("$SCRIPT_DIR/lint-scripts.sh" "$FILE" 2>/dev/null)
+[[ -z "$OUT" ]] && exit 0
+grep -q "Status: CLEAN" <<<"$OUT" && exit 0
 
+python3 -c 'import json,sys; print(json.dumps({"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":"Lint findings for the file just edited (content invariants INV-14/15/16/19):\n"+sys.stdin.read()}}))' <<<"$OUT"
 exit 0

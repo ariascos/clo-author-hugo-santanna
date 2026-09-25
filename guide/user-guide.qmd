@@ -197,7 +197,7 @@ Scores are weighted aggregates of individual critic scores. Each critic starts a
 **Symptom:** Claude forgets what you were working on.
 
 1. Point Claude to the plan: "Read `quality_reports/plans/[latest].md`"
-2. Check session log: "Read `quality_reports/session_logs/[latest].md`"
+2. Check the session report: "Read the latest entry in `SESSION_REPORT.md`"
 3. The `post-compact-restore.py` hook should print recovery info automatically. See [Hooks & Automation](hooks.qmd#post-compact-restore) for details.
 
 ### Quality Score Too Low

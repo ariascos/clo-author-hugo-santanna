@@ -105,6 +105,17 @@ def check_careful(tool_name: str, tool_input: dict, guards: dict) -> tuple:
     return True, ""
 
 
+def deny(reason: str) -> None:
+    """Emit the PreToolUse deny decision (top-level "decision" is deprecated)."""
+    print(json.dumps({
+        "hookSpecificOutput": {
+            "hookEventName": "PreToolUse",
+            "permissionDecision": "deny",
+            "permissionDecisionReason": reason,
+        }
+    }))
+
+
 def main() -> int:
     """Main hook entry point."""
     try:
@@ -122,13 +133,13 @@ def main() -> int:
     # Check freeze
     allowed, message = check_freeze(tool_name, tool_input, guards)
     if not allowed:
-        print(json.dumps({"decision": "block", "reason": message}))
+        deny(message)
         return 0
 
     # Check careful
     allowed, message = check_careful(tool_name, tool_input, guards)
     if not allowed:
-        print(json.dumps({"decision": "block", "reason": message}))
+        deny(message)
         return 0
 
     return 0

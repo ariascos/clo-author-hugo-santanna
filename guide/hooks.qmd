@@ -83,7 +83,7 @@ PROTECTED_PATTERNS=(
 These defaults protect:
 
 - **`settings.json`** --- the hook configuration itself. Accidental edits here could disable all hooks.
-- **`strategy-memo-*.md`** --- approved strategy memos. The strategist-critic scores these; Claude should not modify them after approval.
+- **`strategy-memo-*.md`** --- approved strategy memos. The strategist-critic reviews these; Claude should not modify them after approval.
 - **`referee-report-*.md`** --- real referee reports. These are external inputs that Claude classifies and responds to, never rewrites.
 - **`quality-score-*.json`** --- critic scores. Separation of powers: creators cannot edit their own scores.
 
@@ -181,7 +181,7 @@ When `careful.active` is `true` and the tool is Bash:
 
 ### Exit behavior
 
-The hook always exits 0. Blocking is communicated through stdout JSON (`{"decision": "block", "reason": "..."}`) rather than exit codes --- this is the newer Claude Code hook protocol for Python hooks.
+The hook always exits 0. Blocking is communicated through stdout JSON (`hookSpecificOutput.permissionDecision: "deny"` with a `permissionDecisionReason`) rather than exit codes --- the current Claude Code protocol for `PreToolUse` decisions.
 
 ### Activating and deactivating
 
@@ -207,10 +207,11 @@ The coder-critic catches prohibited patterns, but it runs later in the pipeline.
 
 ### How it works
 
-1. Reads the edited file path from the `CLAUDE_TOOL_ARG_FILE_PATH` environment variable (set by Claude Code)
+1. Reads the edited file path from the JSON payload Claude Code sends on stdin (`tool_input.file_path`)
 2. Filters by extension --- only runs on `.R`, `.py`, and `.jl` files
 3. Skips files inside `.claude/` (hooks, agents, and other configuration scripts should not be linted as analysis code)
 4. Delegates to `lint-scripts.sh` for the actual analysis
+5. Returns any findings as `hookSpecificOutput.additionalContext`, which is how a `PostToolUse` hook puts text in front of Claude (plain stdout only reaches the transcript)
 
 ### Exit behavior
 
@@ -314,7 +315,7 @@ Compaction is the single biggest source of context loss in long sessions. This h
 ### What it captures
 
 1. **Active plan** --- finds the most recent non-completed plan in `quality_reports/plans/`, extracts its status (draft/approved/in-progress) and the first unchecked task
-2. **Recent decisions** --- scans the most recent session log for decision markers (lines containing "Decision:", "Decided:", "Chose:", or bullet points) and captures the last 3
+2. **Recent decisions** --- the last three bullets under **Decisions:** in the newest `SESSION_REPORT.md` entry
 3. **Compaction timestamp** --- records when compaction occurred
 
 ### Where it saves
@@ -323,7 +324,6 @@ State is written to a JSON file at `~/.claude/sessions/<project-hash>/pre-compac
 
 ### Side effects
 
-- Appends a compaction note to the most recent session log in `quality_reports/session_logs/`, documenting when compaction happened
 - Prints a context survival checklist to the transcript as a reminder:
 
 ```
@@ -335,7 +335,7 @@ Context Survival Checklist:
 
 ### Exit behavior
 
-Always exits 2, which makes the message visible in the transcript. This is intentional --- the checklist serves as a reminder to run `/checkpoint` before compaction if you have not already.
+Always exits 0 and prints the checklist to stderr, so compaction is never blocked. The checklist is a reminder to run `/checkpoint` before compaction if you have not already.
 
 ---
 
@@ -349,27 +349,14 @@ Restores context after compaction by reading the state saved by `pre-compact.py`
 
 ### How it works
 
-1. Checks the session type --- only runs when the session type is `"compact"` (not on fresh starts)
+1. Reads the `source` field of the SessionStart payload and runs only for `compact` or `resume` (not on fresh starts)
 2. Reads and deletes the `pre-compact-state.json` file (one-time consumption)
-3. Independently finds the most recent plan and session log (as a fallback if the state file is missing)
-4. Prints a restoration message with:
-   - Pre-compaction state (plan path, current task, recent decisions)
-   - Active plan file and status
-   - Session log location
-   - Recovery action steps
-
-### Recovery actions printed
-
-```
-Recovery Actions:
-  1. Read the active plan to understand current objectives
-  2. Check git status/diff for uncommitted changes
-  3. Continue from where you left off
-```
+3. Finds the active plan, summarizes `quality_reports/pipeline_state.json`, and reads the newest `SESSION_REPORT.md` entry's status
+4. Prints a plain-text restoration message (no terminal color codes, since SessionStart stdout goes straight into Claude's context) ending with: read the active plan and check `git status` before continuing
 
 ### Exit behavior
 
-Always exits 0. The restoration message appears in Claude's context as informational output.
+Always exits 0, and fails open: any error inside the hook exits 0 silently rather than disturbing the session start.
 
 ### Why the pair exists
 
@@ -502,7 +489,7 @@ chmod +x .claude/hooks/my-custom-hook.sh
 
 ## Step 2: Write the logic
 
-The script receives the tool input as JSON on stdin (for `PreToolUse` and `PostToolUse`). For `PostToolUse`, the edited file path is also available in `$CLAUDE_TOOL_ARG_FILE_PATH`.
+The script receives the tool input as JSON on stdin (for `PreToolUse` and `PostToolUse`); the edited file path is `tool_input.file_path`. To show Claude a message from a `PostToolUse` hook, print JSON with `hookSpecificOutput.additionalContext`.
 
 Here is an example hook that warns when a LaTeX file is edited without compiling:
 
@@ -510,7 +497,7 @@ Here is an example hook that warns when a LaTeX file is edited without compiling
 #!/bin/bash
 # warn-latex-compile.sh --- Advisory reminder after LaTeX edits
 
-FILE="${CLAUDE_TOOL_ARG_FILE_PATH:-}"
+FILE=$(python3 -c 'import json,sys; print(json.load(sys.stdin).get("tool_input",{}).get("file_path",""))')
 [[ -z "$FILE" ]] && exit 0
 
 # Only fire on .tex files
@@ -519,8 +506,8 @@ case "$FILE" in
   *) exit 0 ;;
 esac
 
-echo "LaTeX file edited: $FILE"
-echo "Remember to compile with: cd paper && latexmk main.tex"
+MSG="LaTeX file edited: $FILE. Compile with: cd paper && latexmk main.tex"
+python3 -c 'import json,sys; print(json.dumps({"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":sys.argv[1]}}))' "$MSG"
 
 exit 0
 ```

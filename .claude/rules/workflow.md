@@ -240,9 +240,6 @@ Also confirm before compaction:
 
 The pre-compact hook reminds you of this checklist.
 
-**After Compression:**
-First message should be: "Resuming after compression. Last task: [read most recent plan + git log + last SESSION_REPORT entry]. Status: [next step]."
-
 ### Rewind Strategy
 
 Choose the right context management action:
@@ -256,9 +253,8 @@ Rewind keeps failed exploration out of context, saving tokens and avoiding confu
 
 ### Session Recovery
 
-After compression or a new session, in order:
-0. **Read pipeline state:** If `quality_reports/pipeline_state.json` exists, read it to determine: current phase, completed agents (with scores), in-progress agents (with round count and remaining issues), pending agents, and any blocking conditions. This is faster and more reliable than reconstructing state from prose logs.
-1. **Read the most recent checkpoint artifacts:** tail of `SESSION_REPORT.md`, tail of `quality_reports/research_journal.md`, and — if `.claude/state/obsidian-config.md` exists and Obsidian MCP is connected — the latest project-note journal entry
-2. Read `CLAUDE.md` + most recent plan in `quality_reports/plans/`
-2. Check `git log --oneline -10` and `git diff`
-3. State what you understand the current task to be
+After compaction or a resume, the SessionStart hook (`post-compact-restore.py`) prints the active plan,
+the pipeline state, and the latest `SESSION_REPORT.md` entry; read the files it names and check
+`git status` before continuing. In a fresh session, start from `quality_reports/pipeline_state.json`
+and the most recent plan in `quality_reports/plans/` — structured state is more reliable than
+reconstructing it from prose logs.
