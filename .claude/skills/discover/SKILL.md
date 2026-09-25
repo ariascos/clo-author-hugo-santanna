@@ -174,7 +174,7 @@ Generate:
 | Lit review entry | `discover/templates/lit-review-entry.md` | Per-paper annotation format with proximity scoring |
 | Data assessment | `discover/templates/data-assessment.md` | Data source evaluation with 5-point critique and feasibility grades |
 | Research ideas | `discover/templates/research-ideas.md` | Ideation output format with feasibility/novelty ranking |
-| PDF processing | `discover/references/pdf-processing.md` | Safe workflow for reading reference papers |
+| PDF processing | `discover/references/pdf-processing.md` | Reading reference papers with the Read tool |
 | Gotchas | `discover/gotchas.md` | Known failure points and edge cases |
 
 ---

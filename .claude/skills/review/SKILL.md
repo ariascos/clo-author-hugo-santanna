@@ -62,8 +62,20 @@ The editor's referee assignment specifies for each referee:
 - **Critical pet peeve** (one from the critical pool)
 - **Constructive pet peeve** (one from the constructive pool)
 
+**Fence the manuscript first.** Copy the paper out of the repository and give the referees that
+copy, not the repo path:
+
+```bash
+FENCE="$(mktemp -d)/paper" && cp -R paper "$FENCE" && cp Bibliography_base.bib "$FENCE"/ 2>/dev/null; echo "$FENCE"
+```
+
+Inside the repository, `quality_reports/reviews/` and the research journal hold earlier rounds'
+verdicts, and a referee who has read the last verdict tends to repeat it instead of reading the
+paper. Tell each referee to read only the fenced copy. (`--r2` deliberately reuses round 1 and is
+not fenced.)
+
 Dispatch **domain-referee** and **methods-referee** in parallel, each receiving:
-1. The paper manuscript
+1. The fenced manuscript path
 2. The target journal name (for .claude/references/journal-profiles.md calibration)
 3. Their assigned disposition and pet peeves, injected into the prompt:
 

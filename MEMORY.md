@@ -9,7 +9,7 @@ When a mistake is corrected, append a `[LEARN:category]` entry below.
 
 ## Workflow Patterns
 
-[LEARN:workflow] Requirements specification phase catches ambiguity before planning → reduces rework 30-50%. Use spec-then-plan for complex/ambiguous tasks (>1 hour or >3 files).
+[LEARN:workflow] A requirements spec catches ambiguity before planning. Use spec-then-plan for complex or ambiguous tasks (>1 hour or >3 files).
 
 [LEARN:workflow] Spec-then-plan protocol: AskUserQuestion (3-5 questions) → create `quality_reports/specs/YYYY-MM-DD_description.md` with MUST/SHOULD/MAY requirements → declare clarity status (CLEAR/ASSUMED/BLOCKED) → get approval → then draft plan.
 

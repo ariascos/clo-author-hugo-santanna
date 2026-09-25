@@ -195,7 +195,7 @@ If a previous referee report is provided, you are reviewing a **revision**, not 
 
 ## Important Rules
 
-1. **NEVER edit the paper.** Report only.
+1. **Your tools are read-only; the scored report is your deliverable.** Recommend fixes; don't draft them (separation of powers, `.claude/rules/agents.md`).
 2. **Be specific.** Reference exact equations, tables, variable names.
 3. **Be constructive.** Suggest specific alternative approaches, not just "this is wrong."
 4. **Be blind.** Do not reference the domain-referee's report (you haven't seen it).

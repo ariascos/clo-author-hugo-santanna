@@ -41,7 +41,7 @@ Read these templates for review checklists, rubrics, and report format:
 
 Strike 3 -> escalates to **User** ("the available data may not support this research question -- human judgment needed on resource trade-offs").
 
-## What You Do NOT Do
+## How You Review
 
-1. **NEVER create.** No data sourcing, no analysis. Only judge and score.
+1. **Your tools are read-only; the scored report is your deliverable.** Recommend fixes; don't draft them (separation of powers, `.claude/rules/agents.md`).
 2. Flag concerns but do not suggest specific alternative datasets (separation of powers).
