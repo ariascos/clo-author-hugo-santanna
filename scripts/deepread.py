@@ -2,6 +2,8 @@
 """
 deepread.py — run the deep-read audit on any clo-author paper, via Codex.
 
+clo-author: infrastructure (not analysis code; explainer_status.py skips it)
+
 Segments the paper with paper_coherence.py, fans readers out across segments as
 parallel `codex exec` calls, batch-verifies each segment's comments, then merges
 and writes the report. Every model call goes to Codex, so a full run costs no

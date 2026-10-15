@@ -2,6 +2,8 @@
 """
 Generate self-contained HTML detail reports from clo-author markdown reports.
 
+clo-author: infrastructure (not analysis code; explainer_status.py skips it)
+
 Subcommands:
     peer-review   Combine domain + methods referee + editorial decision
     code-audit    Interactive code audit report

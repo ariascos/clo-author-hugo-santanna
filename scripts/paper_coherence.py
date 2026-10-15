@@ -2,6 +2,8 @@
 """
 paper_coherence.py — deterministic coherence engine for LaTeX papers.
 
+clo-author: infrastructure (not analysis code; explainer_status.py skips it)
+
 Builds an index of a paper's cross-reference, citation, and numeric structure,
 then runs checks that have a right answer. Every finding it emits is verifiable
 without trusting a language model: a reference either resolves or it does not, a

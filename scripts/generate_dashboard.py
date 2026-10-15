@@ -2,6 +2,8 @@
 """
 Generate a self-contained HTML project dashboard for a clo-author research project.
 
+clo-author: infrastructure (not analysis code; explainer_status.py skips it)
+
 Scans the project structure — paper sections, data, scripts, quality reports,
 bibliography, plans — and produces a single interactive HTML file.
 
