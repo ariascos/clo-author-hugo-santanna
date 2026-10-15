@@ -2,14 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.38">
 
-<link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Customization – The Clo-Author</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -66,21 +68,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-fdd259eaf9296a602f9f2594b91304b4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-1e421a9c73e24ddbaf9719a3c33ffac8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-b9862f91d0a1d344de8539a32e8a5ff2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-10a0879e8cb5ddd784eb9f3673ca8224.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -111,7 +113,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <style>html{ scroll-behavior: smooth; }</style>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -405,7 +407,13 @@ window.Quarto = {
   <li><a href="#when-to-re-run" id="toc-when-to-re-run" class="nav-link" data-scroll-target="#when-to-re-run">When to re-run</a></li>
   </ul></li>
   <li><a href="#sec-coding-standards" id="toc-sec-coding-standards" class="nav-link" data-scroll-target="#sec-coding-standards">Coding Standards</a></li>
-  <li><a href="#sec-new-agent" id="toc-sec-new-agent" class="nav-link" data-scroll-target="#sec-new-agent">Adding a New Agent</a></li>
+  <li><a href="#sec-quality-gates" id="toc-sec-quality-gates" class="nav-link" data-scroll-target="#sec-quality-gates">Quality Weights and Thresholds</a></li>
+  <li><a href="#sec-preamble" id="toc-sec-preamble" class="nav-link" data-scroll-target="#sec-preamble">LaTeX Preamble</a></li>
+  <li><a href="#sec-rules-budget" id="toc-sec-rules-budget" class="nav-link" data-scroll-target="#sec-rules-budget">Rules and the Context Budget</a></li>
+  <li><a href="#sec-new-agent" id="toc-sec-new-agent" class="nav-link" data-scroll-target="#sec-new-agent">Adding a New Agent</a>
+  <ul class="collapse">
+  <li><a href="#effort-per-agent" id="toc-effort-per-agent" class="nav-link" data-scroll-target="#effort-per-agent">Effort per agent</a></li>
+  </ul></li>
   <li><a href="#sec-new-skill" id="toc-sec-new-skill" class="nav-link" data-scroll-target="#sec-new-skill">Adding a New Skill</a>
   <ul class="collapse">
   <li><a href="#the-steps" id="toc-the-steps" class="nav-link" data-scroll-target="#the-steps">The steps</a></li>
@@ -416,7 +424,7 @@ window.Quarto = {
   <li><a href="#sec-exploration" id="toc-sec-exploration" class="nav-link" data-scroll-target="#sec-exploration">Exploration Workflow</a>
   <ul class="collapse">
   <li><a href="#folder-structure" id="toc-folder-structure" class="nav-link" data-scroll-target="#folder-structure">Folder structure</a></li>
-  <li><a href="#fast-track-vs.-plan-first" id="toc-fast-track-vs.-plan-first" class="nav-link" data-scroll-target="#fast-track-vs.-plan-first">Fast-track vs.&nbsp;plan-first</a></li>
+  <li><a href="#fast-track-vs.-production" id="toc-fast-track-vs.-production" class="nav-link" data-scroll-target="#fast-track-vs.-production">Fast-track vs.&nbsp;production</a></li>
   <li><a href="#graduation-checklist" id="toc-graduation-checklist" class="nav-link" data-scroll-target="#graduation-checklist">Graduation checklist</a></li>
   <li><a href="#kill-switch" id="toc-kill-switch" class="nav-link" data-scroll-target="#kill-switch">Kill switch</a></li>
   </ul></li>
@@ -454,7 +462,7 @@ window.Quarto = {
 </header>
 
 
-<p>Eight configuration files control how the system behaves. This page walks through each one — what it does, what to put in it, and how agents use it.</p>
+<p>A small set of configuration files control how the system behaves. This page walks through each one — what it does, what to put in it, and how agents use it.</p>
 <hr>
 <section id="sec-claude-md" class="level1">
 <h1>CLAUDE.md — The Project Constitution</h1>
@@ -479,33 +487,37 @@ window.Quarto = {
 </tr>
 <tr class="even">
 <td>Core principles</td>
-<td>5–6 bullets (plan-first, quality gates, worker-critic pairs)</td>
+<td>8 bullets (approve before pipelines, verify after, scope, single source of truth, quality gates, worker-critic pairs, understand before you ship, auto-memory)</td>
 </tr>
 <tr class="odd">
+<td>Getting started</td>
+<td>First steps: fill the placeholders, run <code>scripts/install-hooks.sh</code>, then <code>/discover interview</code> or <code>/new-project</code></td>
+</tr>
+<tr class="even">
 <td>Folder structure</td>
 <td>Where data, scripts, paper, and reports live</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Compilation commands</td>
 <td><code>latexmk</code> invocations for paper and talks</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Quality thresholds</td>
 <td>Commit (80), PR (90), submission (95)</td>
 </tr>
-<tr class="even">
-<td>Skills quick reference</td>
-<td>Table of 10 slash commands</td>
-</tr>
 <tr class="odd">
+<td>Skills quick reference</td>
+<td>Table of 13 slash commands</td>
+</tr>
+<tr class="even">
 <td>Beamer environments</td>
 <td>Custom environments for your talk preamble</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Output organization</td>
 <td><code>by-script</code> (default) or <code>by-purpose</code></td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>Current project state</td>
 <td>Status of paper, data, replication, talk</td>
 </tr>
@@ -585,7 +597,7 @@ window.Quarto = {
 </section>
 <section id="pre-populated-journals" class="level2">
 <h2 class="anchored" data-anchor-id="pre-populated-journals">Pre-populated journals</h2>
-<p>30 journals ship with profiles across five fields:</p>
+<p>34 journals ship with profiles across five fields:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 41%">
@@ -600,7 +612,7 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td>Economics</td>
-<td>AER, Econometrica, JPE, QJE, REStud, AEJ:Applied, AEJ:Policy, JHR, JHE, RAND, JPubE, JLE, JDE, RESTAT, AER:Insights</td>
+<td>AER, Econometrica, JPE, QJE, REStud, AEJ:Applied, AEJ:Policy, JHR, JHE, RAND, JPubE, JLE, JDE, RESTAT, AER:Insights, Economics Letters, Journal of Econometrics, Health Economics, JUE, Journal of Economic Geography</td>
 </tr>
 <tr class="even">
 <td>Finance</td>
@@ -696,7 +708,7 @@ window.Quarto = {
 </section>
 <section id="how-the-writer-uses-it" class="level2">
 <h2 class="anchored" data-anchor-id="how-the-writer-uses-it">How the Writer uses it</h2>
-<p>The style guide is a voice target. The Writer loads it at invocation and calibrates sentence length, word choice, paragraph openings, and hedging to match. It overrides the generic academic voice but never overrides content invariants (INV-1 through INV-21).</p>
+<p>The style guide is a voice target. The Writer loads it at invocation and calibrates sentence length, word choice, paragraph openings, and hedging to match. It overrides the generic academic voice but never overrides content invariants (INV-1 through INV-26).</p>
 </section>
 <section id="when-to-re-run" class="level2">
 <h2 class="anchored" data-anchor-id="when-to-re-run">When to re-run</h2>
@@ -740,38 +752,107 @@ window.Quarto = {
 <p>The Coder agent reads the relevant standards file before writing any code. The coder-critic checks compliance and deducts points for violations. CLAUDE.md declares the project language; if none is declared, the default is R.</p>
 <hr>
 </section>
+<section id="sec-quality-gates" class="level1">
+<h1>Quality Weights and Thresholds</h1>
+<p>Every number behind the score lives in one file: <code>.claude/skills/new-project/config/quality-gates.json</code>. <code>scripts/score.py</code> reads it; the <code>QUALITY_WEIGHT</code> fields in <code>permissions.md</code> mirror its weights for readers.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 26%">
+<col style="width: 73%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Key</th>
+<th>What it sets</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>components</code></td>
+<td>Each scored component, its source critic, and its weight</td>
+</tr>
+<tr class="even">
+<td><code>verdict_scores</code></td>
+<td>The points the strategist-critic’s verdict maps to (95 / 85 / 65 / 40)</td>
+</tr>
+<tr class="odd">
+<td><code>gates</code></td>
+<td>Commit (80), PR (90), and submission (95, every component &gt;= 80, plus the understanding gate’s command)</td>
+</tr>
+<tr class="even">
+<td><code>discovery_to_strategy</code> and the other transition keys</td>
+<td>What each phase transition requires</td>
+</tr>
+</tbody>
+</table>
+<p>To reweight a component, change its <code>weight</code> here and the matching <code>QUALITY_WEIGHT</code> in <code>.claude/rules/permissions.md</code>. <code>scripts/check_scaffold.py</code> — and the pre-commit hook that runs it — fails when the two disagree. Weights need not sum to 100: components never scored are dropped and the rest renormalized. For the formula, see <a href="./architecture.html#sec-scoring">Architecture</a>.</p>
+<hr>
+</section>
+<section id="sec-preamble" class="level1">
+<h1>LaTeX Preamble</h1>
+<p>The paper’s packages and layout live in <code>paper/preambles/header.tex</code>, which <code>main.tex</code> loads right after <code>\documentclass</code> with <code>\input{preambles/header}</code>. Add your packages and notation macros there, not in <code>main.tex</code>. <code>/tools upgrade</code> copies <code>header.tex</code> only when the project has none, so your edits survive an upgrade.</p>
+<p>Table 1, the table and figure wrappers, and section order are specified once, in <code>.claude/rules/paper-organization.md</code>; <code>/paper-format</code> applies them. Where table and figure files go follows the <code>Output organization</code> setting in CLAUDE.md.</p>
+<hr>
+</section>
+<section id="sec-rules-budget" class="level1">
+<h1>Rules and the Context Budget</h1>
+<p>The 13 files in <code>.claude/rules/</code> load two ways. Six always load: content-invariants, logging, meta-governance, quality, understanding, workflow. The other seven carry <code>paths:</code> frontmatter and load only when Claude reads a matching file:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="fu">paths</span><span class="kw">:</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"paper/**"</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="at">  </span><span class="kw">-</span><span class="at"> </span><span class="st">"**/*.tex"</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>That is <code>paper-organization.md</code>: it enters context when Claude opens a <code>.tex</code> file and stays out otherwise. CLAUDE.md plus the always-loaded rules ship at 679 lines, and <code>scripts/check_scaffold.py</code> fails above 700. When you add a rule, scope it with <code>paths:</code> unless it truly applies to every task. See <a href="./rules.html#sec-rule-files">Rules &amp; Invariants</a> for what each file covers.</p>
+<hr>
+</section>
 <section id="sec-new-agent" class="level1">
 <h1>Adding a New Agent</h1>
-<p>Two files, two steps.</p>
+<p>Two files always; two more when they apply.</p>
 <p><strong>Step 1.</strong> Create <code>.claude/agents/[name].md</code> following the pattern of existing agent files. The agent file defines identity, voice, and constraints — not operational knowledge. If the agent is paired with a skill, move checklists, templates, and rubrics into the skill’s <code>templates/</code> folder. The agent file keeps only: who it is, how it reasons, and what rules it follows.</p>
+<p>The frontmatter names the agent, its tools, and its model. Every shipped agent uses <code>model: inherit</code> (the session’s model); <code>effort:</code> is optional. Critics get read-only tools.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">agent-name</span><span class="kw">]</span></span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">What it does and when to use it</span><span class="kw">]</span></span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">tools</span><span class="kw">:</span><span class="at"> Read, Grep, Glob</span></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">model</span><span class="kw">:</span><span class="at"> inherit</span></span>
+<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">effort</span><span class="kw">:</span><span class="at"> high</span><span class="co">            # optional: low, medium, high, xhigh, max</span></span>
+<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p><strong>Step 2.</strong> Add an entry to <code>.claude/rules/permissions.md</code> with all required fields:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">## [agent-name]</span></span>
-<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**PHASE:** <span class="co">[</span><span class="ot">Discovery/Strategy/Execution/Peer Review/Presentation/Submission</span><span class="co">]</span></span>
-<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**PARALLEL_GROUP:** <span class="co">[</span><span class="ot">group name</span><span class="co">]</span></span>
-<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**REQUIRES:** <span class="co">[</span><span class="ot">what must exist before this agent runs</span><span class="co">]</span></span>
-<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**PRODUCES:** <span class="co">[</span><span class="ot">output paths and required files</span><span class="co">]</span></span>
-<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**CRITIC:** <span class="co">[</span><span class="ot">paired critic name, or None</span><span class="co">]</span></span>
-<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**ESCALATION_TARGET:** <span class="co">[</span><span class="ot">who handles 3-strike failures</span><span class="co">]</span></span>
-<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**QUALITY_WEIGHT:** <span class="co">[</span><span class="ot">percentage of overall score, or Advisory</span><span class="co">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
-<p>No other files need to change. The Orchestrator reads <code>permissions.md</code> to discover available agents, their dependencies, and their dispatch rules.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">## [agent-name]</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**PHASE:** <span class="co">[</span><span class="ot">Discovery/Strategy/Execution/Peer Review/Presentation/Submission</span><span class="co">]</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**PARALLEL_GROUP:** <span class="co">[</span><span class="ot">group name</span><span class="co">]</span></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**REQUIRES:** <span class="co">[</span><span class="ot">what must exist before this agent runs</span><span class="co">]</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**PRODUCES:** <span class="co">[</span><span class="ot">output paths and required files</span><span class="co">]</span></span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**CRITIC:** <span class="co">[</span><span class="ot">paired critic name, or None</span><span class="co">]</span></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**ESCALATION_TARGET:** <span class="co">[</span><span class="ot">who handles 3-strike failures</span><span class="co">]</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="ss">- </span>**QUALITY_WEIGHT:** <span class="co">[</span><span class="ot">percentage of overall score, or Advisory</span><span class="co">]</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>The Orchestrator reads <code>permissions.md</code> for each agent’s dependencies and dispatch rules.</p>
+<p><strong>Step 3 (if the orchestrator dispatches it).</strong> Add the name to the <code>Agent(...)</code> roster on the <code>tools:</code> line of <code>.claude/agents/orchestrator.md</code>. The orchestrator can spawn only the agents listed there.</p>
+<p><strong>Step 4 (if it is weighted).</strong> Add a component to <code>quality-gates.json</code> (see <a href="#sec-quality-gates">Quality Weights and Thresholds</a>) whose weight matches the <code>QUALITY_WEIGHT</code> above.</p>
+<p>Then run <code>python3 scripts/check_scaffold.py</code>. It fails on a roster or registry entry with no agent file, a weight mismatch, or malformed frontmatter.</p>
+<section id="effort-per-agent" class="level2">
+<h2 class="anchored" data-anchor-id="effort-per-agent">Effort per agent</h2>
+<p>Each agent can set its own effort in frontmatter. The shipped settings put judgment-heavy roles at <code>high</code> (strategist, strategist-critic, theorist, theorist-critic, methods-referee, editor) and narrow checkers at <code>low</code> (coherence-finder, coherence-skeptic, librarian-critic, explorer-critic); the rest use the default. To change one, edit its <code>effort:</code> line.</p>
 <hr>
+</section>
 </section>
 <section id="sec-new-skill" class="level1">
 <h1>Adding a New Skill</h1>
 <p>A skill earns its own folder when a workflow pattern recurs across projects and carries specific templates, gotchas, or configuration that no single agent should own. The test: if the same checklist or template would be copy-pasted into multiple agent files, it belongs in a skill folder.</p>
 <section id="the-steps" class="level2">
 <h2 class="anchored" data-anchor-id="the-steps">The steps</h2>
-<p><strong>1. Create the folder.</strong> <code>.claude/skills/[name]/</code> with at minimum two files: <code>SKILL.md</code> and <code>gotchas.md</code>.</p>
+<p><strong>1. Create the folder.</strong> <code>.claude/skills/[name]/</code> with <code>SKILL.md</code> (required) and <code>gotchas.md</code> (recommended — 13 of the 18 shipped skills have one).</p>
 <p><strong>2. Write <code>SKILL.md</code> with frontmatter.</strong> The frontmatter is Level 1 metadata — always loaded, always visible in the skill index. Keep it under 100 tokens.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">skill-name</span><span class="kw">]</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">One sentence. What does this skill do?</span><span class="kw">]</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="fu">argument-hint</span><span class="kw">:</span><span class="at"> </span><span class="st">"[modes and arguments the user can pass]"</span></span>
-<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a><span class="fu">allowed-tools</span><span class="kw">:</span><span class="at"> Read,Write,Edit,Bash,Grep,Glob</span></span>
-<span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a><span class="fu">user-invocable</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb9-7"><a href="#cb9-7" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">skill-name</span><span class="kw">]</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> </span><span class="kw">[</span><span class="at">One sentence. What does this skill do?</span><span class="kw">]</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">argument-hint</span><span class="kw">:</span><span class="at"> </span><span class="st">"[modes and arguments the user can pass]"</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">allowed-tools</span><span class="kw">:</span><span class="at"> Read,Write,Edit,Bash,Grep,Glob,Agent,Task</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">user-invocable</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>If the skill dispatches agents, list <code>Agent</code> alongside <code>Task</code> (<code>Task</code> is the old name; <code>check_scaffold.py</code> fails on <code>Task</code> without <code>Agent</code>). Two optional keys: <code>disable-model-invocation: true</code> makes the skill run only when you type it, as <code>/new-project</code> and <code>/deepread</code> do, and <code>disallowed-tools: Edit</code> keeps it from editing files, as <code>/review</code> and <code>/deepread</code> do.</p>
 <p>The body of SKILL.md is Level 2 — loaded only when the user invokes the command. It contains workflow steps, dispatch logic, mode routing, and a Bundled Resources table that tells agents which templates to read.</p>
-<p><strong>3. Create <code>gotchas.md</code>.</strong> Seed it with known failure points — even two or three lines to start. This file accumulates over time as real pipeline runs surface edge cases. It is the fastest-appreciating asset in the folder.</p>
+<p><strong>3. Create <code>gotchas.md</code> (recommended).</strong> Seed it with known failure points — even two or three lines to start. This file accumulates over time as real pipeline runs surface edge cases. It is the fastest-appreciating asset in the folder.</p>
 <p><strong>4. Create <code>templates/</code>.</strong> Reusable artifacts the agent loads during execution. A strategy skill carries memo templates and checklist structures. A review skill carries scoring rubrics and report templates. A write skill carries paragraph-move patterns and section templates. Each template is a separate file — the agent reads only what it needs.</p>
 <p><strong>5. Optionally: <code>references/</code> and <code>config/</code>.</strong> References hold domain material the agent consults (notation protocols, interview flows, design checklists). Config holds machine-readable settings (scoring weights, disposition pools, threshold mappings).</p>
 <p><strong>6. Wire it.</strong> In SKILL.md’s dispatch section, tell agents which templates to read. The agent’s own file says “read the templates provided by the invoking skill” — it does not hardcode template paths.</p>
@@ -795,13 +876,13 @@ window.Quarto = {
 └── templates/
     └── diary-entry.md</code></pre>
 <p>The <code>SKILL.md</code> frontmatter:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> data-diary</span></span>
-<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Log data decisions --- variable constructions, sample restrictions, merge choices --- with rationale and alternatives considered.</span></span>
-<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a><span class="fu">argument-hint</span><span class="kw">:</span><span class="at"> </span><span class="st">"[decision summary]"</span></span>
-<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a><span class="fu">allowed-tools</span><span class="kw">:</span><span class="at"> Read,Write,Edit</span></span>
-<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="fu">user-invocable</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
-<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode yaml code-with-copy"><code class="sourceCode yaml"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">name</span><span class="kw">:</span><span class="at"> data-diary</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a><span class="fu">description</span><span class="kw">:</span><span class="at"> Log data decisions --- variable constructions, sample restrictions, merge choices --- with rationale and alternatives considered.</span></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="fu">argument-hint</span><span class="kw">:</span><span class="at"> </span><span class="st">"[decision summary]"</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="fu">allowed-tools</span><span class="kw">:</span><span class="at"> Read,Write,Edit</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="fu">user-invocable</span><span class="kw">:</span><span class="at"> </span><span class="ch">true</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a><span class="pp">---</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The body dispatches no agent — it appends a structured entry to <code>quality_reports/data_diary.md</code> using the template in <code>templates/diary-entry.md</code>. The gotchas file warns: “Don’t log trivial renames. Log decisions where a different choice would change results.”</p>
 </section>
 <section id="when-not-to-create-a-skill" class="level2">
@@ -827,9 +908,15 @@ window.Quarto = {
     ├── completed_[name]/   # Graduated to production
     └── abandoned_[name]/   # Documented why stopped</code></pre>
 </section>
-<section id="fast-track-vs.-plan-first" class="level2">
-<h2 class="anchored" data-anchor-id="fast-track-vs.-plan-first">Fast-track vs.&nbsp;plan-first</h2>
+<section id="fast-track-vs.-production" class="level2">
+<h2 class="anchored" data-anchor-id="fast-track-vs.-production">Fast-track vs.&nbsp;production</h2>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 17%">
+<col style="width: 21%">
+<col style="width: 40%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Question</th>
@@ -842,7 +929,7 @@ window.Quarto = {
 <tr class="odd">
 <td>Will this ship?</td>
 <td>Yes</td>
-<td>Plan-first</td>
+<td>Production (plan first if it is a pipeline run or spans many files)</td>
 <td>80/100</td>
 </tr>
 <tr class="even">
@@ -1029,7 +1116,7 @@ window.Quarto = {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/hugosantanna\.github\.io\/clo-author\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

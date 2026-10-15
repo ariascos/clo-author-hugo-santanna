@@ -2,14 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.38">
 
-<link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>What’s New – The Clo-Author</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -31,21 +33,21 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-fdd259eaf9296a602f9f2594b91304b4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-1e421a9c73e24ddbaf9719a3c33ffac8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-b9862f91d0a1d344de8539a32e8a5ff2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-10a0879e8cb5ddd784eb9f3673ca8224.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -317,7 +319,16 @@ ul.task-list li input[type="checkbox"] {
     <h2 id="toc-title">On this page</h2>
    
   <ul>
-  <li><a href="#r2605" id="toc-r2605" class="nav-link active" data-scroll-target="#r2605">26.05 — May 2026</a>
+  <li><a href="#r2609" id="toc-r2609" class="nav-link active" data-scroll-target="#r2609">26.09 — September 2026</a>
+  <ul class="collapse">
+  <li><a href="#scripts-enforce-the-gates" id="toc-scripts-enforce-the-gates" class="nav-link" data-scroll-target="#scripts-enforce-the-gates">Scripts Enforce the Gates</a></li>
+  <li><a href="#hooks-that-run-and-fail-loudly" id="toc-hooks-that-run-and-fail-loudly" class="nav-link" data-scroll-target="#hooks-that-run-and-fail-loudly">Hooks That Run, and Fail Loudly</a></li>
+  <li><a href="#consistent-lighter-rules" id="toc-consistent-lighter-rules" class="nav-link" data-scroll-target="#consistent-lighter-rules">Consistent, Lighter Rules</a></li>
+  <li><a href="#written-for-current-models" id="toc-written-for-current-models" class="nav-link" data-scroll-target="#written-for-current-models">Written for Current Models</a></li>
+  <li><a href="#new-skills" id="toc-new-skills" class="nav-link" data-scroll-target="#new-skills">New Skills</a></li>
+  <li><a href="#also" id="toc-also" class="nav-link" data-scroll-target="#also">Also</a></li>
+  </ul></li>
+  <li><a href="#r2605" id="toc-r2605" class="nav-link" data-scroll-target="#r2605">26.05 — May 2026</a>
   <ul class="collapse">
   <li><a href="#html-report-pipeline" id="toc-html-report-pipeline" class="nav-link" data-scroll-target="#html-report-pipeline">HTML Report Pipeline</a></li>
   <li><a href="#mas-evolution-v2" id="toc-mas-evolution-v2" class="nav-link" data-scroll-target="#mas-evolution-v2">MAS Evolution v2</a></li>
@@ -325,8 +336,7 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#session-scoped-guards" id="toc-session-scoped-guards" class="nav-link" data-scroll-target="#session-scoped-guards">Session-Scoped Guards</a></li>
   <li><a href="#quarto-first-talks" id="toc-quarto-first-talks" class="nav-link" data-scroll-target="#quarto-first-talks">Quarto-First Talks</a></li>
   <li><a href="#guide-site" id="toc-guide-site" class="nav-link" data-scroll-target="#guide-site">Guide Site</a></li>
-  <li><a href="#also" id="toc-also" class="nav-link" data-scroll-target="#also">Also</a></li>
-  <li><a href="#guide-site-overhaul" id="toc-guide-site-overhaul" class="nav-link" data-scroll-target="#guide-site-overhaul">Guide Site Overhaul</a></li>
+  <li><a href="#also-1" id="toc-also-1" class="nav-link" data-scroll-target="#also-1">Also</a></li>
   </ul></li>
   <li><a href="#r260403" id="toc-r260403" class="nav-link" data-scroll-target="#r260403">26.04.3 — Theorist Pair, Personal Style Guide, Checkpoint</a>
   <ul class="collapse">
@@ -393,6 +403,59 @@ ul.task-list li input[type="checkbox"] {
 
 <p><strong>Versioning:</strong> CalVer (YY.MM) — one version per month maximum. Git commits provide granularity within a release.</p>
 <hr>
+<section id="r2609" class="level1">
+<h1>26.09 — September 2026</h1>
+<p>Rebuilt for Opus 5.5 and current Claude Code. Scripts now enforce the gates, so the model no longer does that arithmetic. Hooks that had been failing silently now run, and say so when they break. Rules state goals instead of steps, and load only when relevant. Also includes the June–August work: the paper house style, <code>/coherence</code>, <code>/deepread</code>, and <code>/explain</code>. Requires Claude Code 2.1.295 or later.</p>
+<section id="scripts-enforce-the-gates" class="level2">
+<h2 class="anchored" data-anchor-id="scripts-enforce-the-gates">Scripts Enforce the Gates</h2>
+<ul>
+<li><strong><code>score.py</code></strong> — weighted aggregate, renormalization, strategist verdict map, and the commit (80) / PR (90) / submission (95, every component ≥ 80, understanding gate) gates. <code>quality-gates.json</code> is the single source for the numbers.</li>
+<li><strong><code>pipeline.py</code></strong> — checks each agent’s REQUIRES/PRODUCES before and after dispatch; derives <code>pipeline_state.json</code> from the research journal; flags execution traces.</li>
+<li><strong><code>verify.py</code></strong> — the verifier’s mechanical checks, from compilation to the INV-26 understanding gate.</li>
+<li><strong><code>paper_coherence.py</code></strong>, <strong><code>style_metrics.py</code></strong>, <strong><code>check_scaffold.py</code></strong> — INV-5 / INV-24 checks, the writer-critic’s countable deductions, and the scaffold’s own integrity.</li>
+<li><strong>Pre-commit gate</strong> — <code>scripts/install-hooks.sh</code> once per clone; blocks on scaffold errors, failing tests, and HIGH lint findings. See <a href="./hooks.html#post-merge">Hooks</a>.</li>
+</ul>
+</section>
+<section id="hooks-that-run-and-fail-loudly" class="level2">
+<h2 class="anchored" data-anchor-id="hooks-that-run-and-fail-loudly">Hooks That Run, and Fail Loudly</h2>
+<p>Two hooks had been dead for months: one read an environment variable Claude Code never sets, the other checked the wrong field. Both work now. Every hook logs its outcome, <code>hook-health.py</code> reports dead or erroring hooks at session start, and the two guards fail closed (<code>"onFailure": "block"</code>). See <a href="./hooks.html">Hooks</a>.</p>
+</section>
+<section id="consistent-lighter-rules" class="level2">
+<h2 class="anchored" data-anchor-id="consistent-lighter-rules">Consistent, Lighter Rules</h2>
+<ul>
+<li><strong>Contradictions resolved</strong> — one source for Table 1 and section order; submission at 95 everywhere; strategist-critic gives a verdict instead of points.</li>
+<li><strong>Path-scoped rules</strong> — paper, revision, and pipeline rules load only when matching files are read. Instructions loaded every session dropped from 1,817 to 679 lines.</li>
+<li>The LaTeX preamble lives in <code>paper/preambles/header.tex</code>.</li>
+</ul>
+</section>
+<section id="written-for-current-models" class="level2">
+<h2 class="anchored" data-anchor-id="written-for-current-models">Written for Current Models</h2>
+<ul>
+<li>Plan mode gates pipeline runs and many-file changes, not every task. PDFs are read directly.</li>
+<li>Effort set per agent: <code>high</code> for judgment-heavy roles, <code>low</code> for narrow checkers.</li>
+<li><code>/deepread</code> and <code>/new-project</code> run only when you type them. <code>/review --peer</code> gives referees a fenced copy of the manuscript.</li>
+</ul>
+</section>
+<section id="new-skills" class="level2">
+<h2 class="anchored" data-anchor-id="new-skills">New Skills</h2>
+<ul>
+<li><strong><code>/paper-format</code></strong> — the mandatory paper house style (INV-23/24/25).</li>
+<li><strong><code>/coherence</code></strong> — internal-consistency audit: a deterministic parser, plus reasoning finders with <code>--deep</code>.</li>
+<li><strong><code>/deepread</code></strong> — a deep technical read on Codex, at no Claude token cost.</li>
+<li><strong><code>/explain</code></strong> — an explainer and quiz for agent-written analysis code; feeds the INV-26 gate at <code>/submit</code>.</li>
+</ul>
+</section>
+<section id="also" class="level2">
+<h2 class="anchored" data-anchor-id="also">Also</h2>
+<ul>
+<li><code>/tools upgrade</code> now carries the scaffold scripts, <code>.githooks/</code>, and a missing preamble, and keeps your <code>settings.json</code> additions in <code>settings.local.json</code>.</li>
+<li><code>/freeze</code> and <code>/careful</code> stay on until you turn them off; the docs used to say they reset with the conversation.</li>
+<li>Fixed <code>/deepread</code>’s empty description.</li>
+</ul>
+<p>Roster: 25 agents, 18 skills. MIT license added.</p>
+<hr>
+</section>
+</section>
 <section id="r2605" class="level1">
 <h1>26.05 — May 2026</h1>
 <section id="html-report-pipeline" class="level2">
@@ -442,18 +505,13 @@ ul.task-list li input[type="checkbox"] {
 <h2 class="anchored" data-anchor-id="guide-site">Guide Site</h2>
 <p>9 pages rewritten with guide-writer voice (bold openings, problem-solution arcs, progressive disclosure). Thariqs aesthetic (ivory/clay/serif). agents.qmd compressed 603 → 205 lines. Skill-folder architecture documented. Nav reordered for user journey.</p>
 </section>
-<section id="also" class="level2">
-<h2 class="anchored" data-anchor-id="also">Also</h2>
+<section id="also-1" class="level2">
+<h2 class="anchored" data-anchor-id="also-1">Also</h2>
 <ul>
 <li>CalVer adoption (YY.MM)</li>
 <li>Rewind strategy in workflow.md</li>
-<li><code>pre-compact.py</code> exit code fix | <code>literature</code> | Zotero-like filterable bibliography (category, proximity, method filters, sort, search, copy-cite) |</li>
+<li><code>pre-compact.py</code> exit code fix</li>
 </ul>
-<p>Shared design system in <code>templates/html/base/</code> (styles.css + components.js). Dark mode, print support, collapsible sections, filter engine. All skills auto-generate HTML after saving markdown reports.</p>
-</section>
-<section id="guide-site-overhaul" class="level2">
-<h2 class="anchored" data-anchor-id="guide-site-overhaul">Guide Site Overhaul</h2>
-<p>Migrated from cyberpunk neon (dark, scanlines, pink/cyan glow) to the thariqs aesthetic (ivory background, clay accents, serif headings). All mermaid diagrams updated to match. Readability pass across all pages — trimmed agent descriptions, broke up dense paragraphs, removed duplicate content.</p>
 <hr>
 </section>
 </section>
@@ -763,7 +821,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/hugosantanna\.github\.io\/clo-author\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

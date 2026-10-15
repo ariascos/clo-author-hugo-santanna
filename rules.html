@@ -2,14 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.38">
 
-<link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Rules &amp; Invariants – The Clo-Author</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -31,21 +33,21 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-fdd259eaf9296a602f9f2594b91304b4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-1e421a9c73e24ddbaf9719a3c33ffac8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-b9862f91d0a1d344de8539a32e8a5ff2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-10a0879e8cb5ddd784eb9f3673ca8224.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -76,7 +78,7 @@ ul.task-list li input[type="checkbox"] {
 <style>html{ scroll-behavior: smooth; }</style>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -349,6 +351,7 @@ window.Quarto = {
   <li><a href="#how-rules-work" id="toc-how-rules-work" class="nav-link active" data-scroll-target="#how-rules-work">How Rules Work</a></li>
   <li><a href="#sec-rule-files" id="toc-sec-rule-files" class="nav-link" data-scroll-target="#sec-rule-files">Rule Files Overview</a>
   <ul class="collapse">
+  <li><a href="#sec-rule-loading" id="toc-sec-rule-loading" class="nav-link" data-scroll-target="#sec-rule-loading">How rules load</a></li>
   <li><a href="#what-each-file-governs" id="toc-what-each-file-governs" class="nav-link" data-scroll-target="#what-each-file-governs">What each file governs</a></li>
   </ul></li>
   <li><a href="#sec-invariants" id="toc-sec-invariants" class="nav-link" data-scroll-target="#sec-invariants">Content Invariants</a>
@@ -360,6 +363,8 @@ window.Quarto = {
   <li><a href="#code-inv-14-through-inv-19" id="toc-code-inv-14-through-inv-19" class="nav-link" data-scroll-target="#code-inv-14-through-inv-19">Code (INV-14 through INV-19)</a></li>
   <li><a href="#talk-inv-20-through-inv-21" id="toc-talk-inv-20-through-inv-21" class="nav-link" data-scroll-target="#talk-inv-20-through-inv-21">Talk (INV-20 through INV-21)</a></li>
   <li><a href="#traceability-inv-22" id="toc-traceability-inv-22" class="nav-link" data-scroll-target="#traceability-inv-22">Traceability (INV-22)</a></li>
+  <li><a href="#paper-house-style-inv-23-through-inv-25" id="toc-paper-house-style-inv-23-through-inv-25" class="nav-link" data-scroll-target="#paper-house-style-inv-23-through-inv-25">Paper house style (INV-23 through INV-25)</a></li>
+  <li><a href="#understanding-inv-26" id="toc-understanding-inv-26" class="nav-link" data-scroll-target="#understanding-inv-26">Understanding (INV-26)</a></li>
   </ul></li>
   </ul></li>
   <li><a href="#sec-severity" id="toc-sec-severity" class="nav-link" data-scroll-target="#sec-severity">Severity Gradient</a>
@@ -369,7 +374,8 @@ window.Quarto = {
   </ul></li>
   <li><a href="#sec-gates" id="toc-sec-gates" class="nav-link" data-scroll-target="#sec-gates">Quality Gates</a>
   <ul class="collapse">
-  <li><a href="#the-four-gates" id="toc-the-four-gates" class="nav-link" data-scroll-target="#the-four-gates">The Four Gates</a></li>
+  <li><a href="#the-score-gates" id="toc-the-score-gates" class="nav-link" data-scroll-target="#the-score-gates">The Score Gates</a></li>
+  <li><a href="#gates-that-are-not-scores" id="toc-gates-that-are-not-scores" class="nav-link" data-scroll-target="#gates-that-are-not-scores">Gates That Are Not Scores</a></li>
   <li><a href="#how-scores-aggregate" id="toc-how-scores-aggregate" class="nav-link" data-scroll-target="#how-scores-aggregate">How Scores Aggregate</a></li>
   <li><a href="#when-components-are-missing" id="toc-when-components-are-missing" class="nav-link" data-scroll-target="#when-components-are-missing">When Components Are Missing</a></li>
   <li><a href="#the-per-component-minimum" id="toc-the-per-component-minimum" class="nav-link" data-scroll-target="#the-per-component-minimum">The Per-Component Minimum</a></li>
@@ -412,12 +418,12 @@ window.Quarto = {
 <section id="how-rules-work" class="level1">
 <h1>How Rules Work</h1>
 <p>The system enforces quality through <strong>rule files</strong> — machine-readable documents that tell each agent what to check, what to flag, and how severely to penalize violations. Every critic reads the relevant rules before reviewing. Every worker reads them before creating.</p>
-<p>This page is a reference for all 11 rule files, the 22 content invariants, the severity gradient, and the quality gates. If you fork the repo and change nothing else, these rules still apply.</p>
+<p>This page is a reference for all 13 rule files, the 26 content invariants, the severity gradient, and the quality gates. If you fork the repo and change nothing else, these rules still apply.</p>
 <hr>
 </section>
 <section id="sec-rule-files" class="level1">
 <h1>Rule Files Overview</h1>
-<p>Eleven files in <code>.claude/rules/</code> govern the system. Each file has a clear scope — no rule appears in two places.</p>
+<p>Thirteen files in <code>.claude/rules/</code> govern the system. Each file has a clear scope — no rule appears in two places.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 18%">
@@ -434,22 +440,22 @@ window.Quarto = {
 <tbody>
 <tr class="odd">
 <td><code>agents.md</code></td>
-<td>Worker-critic pairs, separation of powers, 3-strike escalation</td>
+<td>Worker-critic pairs, separation of powers, effort per agent, 3-strike escalation</td>
 <td>Orchestrator, all agents</td>
 </tr>
 <tr class="even">
 <td><code>content-invariants.md</code></td>
-<td>22 non-negotiable checks (paper, code, talk, traceability)</td>
-<td>All critics, verifier, lint hook</td>
+<td>26 non-negotiable checks (paper, house style, code, talk, traceability, understanding)</td>
+<td>All critics, verifier, <code>/coherence</code>, lint hook</td>
 </tr>
 <tr class="odd">
 <td><code>content-standards.md</code></td>
-<td>Table format, figure format, PDF processing, exploration protocol</td>
+<td>Tabular body format, figure format, PDF processing, exploration protocol</td>
 <td>Coder, writer, coder-critic, writer-critic</td>
 </tr>
 <tr class="even">
 <td><code>lifecycle.md</code></td>
-<td>Pre-dispatch and post-completion validation protocol</td>
+<td>Pre-dispatch and post-completion validation via <code>scripts/pipeline.py</code></td>
 <td>Orchestrator</td>
 </tr>
 <tr class="odd">
@@ -463,45 +469,62 @@ window.Quarto = {
 <td>Orchestrator, user</td>
 </tr>
 <tr class="odd">
+<td><code>paper-organization.md</code></td>
+<td>House style: floats at the end of <code>main.tex</code>, Table 1, table and figure wrappers, section order</td>
+<td>Writer, writer-critic, verifier, <code>/paper-format</code></td>
+</tr>
+<tr class="even">
 <td><code>permissions.md</code></td>
 <td>Agent registry: phase, dependencies, outputs, escalation targets, quality weights</td>
 <td>Orchestrator</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>quality.md</code></td>
 <td>Scoring protocol, gate thresholds, severity gradient, deduction scaling</td>
 <td>Orchestrator, all critics</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>revision.md</code></td>
 <td>R&amp;R cycle: comment classification and routing</td>
 <td>Orchestrator, writer, coder</td>
 </tr>
+<tr class="odd">
+<td><code>understanding.md</code></td>
+<td>The comprehension gate (INV-26): explainers and quizzes for every script behind a paper exhibit</td>
+<td>Explainer, verifier, <code>/explain</code>, <code>/submit</code></td>
+</tr>
 <tr class="even">
 <td><code>workflow.md</code></td>
-<td>Plan-first protocol, orchestrator loop, dependency graph, context management</td>
+<td>When to plan and get approval, orchestrator loop, dependency graph, context management</td>
 <td>Orchestrator, user</td>
 </tr>
 <tr class="odd">
 <td><code>working-paper-format.md</code></td>
-<td>LaTeX preamble standard, title page format, bibliography setup</td>
+<td>Document class and layout, the preamble in <code>paper/preambles/header.tex</code>, title page, abstract metadata, bibliography</td>
 <td>Writer, writer-critic, verifier</td>
 </tr>
 </tbody>
 </table>
+<section id="sec-rule-loading" class="level2">
+<h2 class="anchored" data-anchor-id="sec-rule-loading">How rules load</h2>
+<p>Six rules load in every session: <code>content-invariants</code>, <code>logging</code>, <code>meta-governance</code>, <code>quality</code>, <code>understanding</code>, and <code>workflow</code>. The other seven (<code>agents</code>, <code>content-standards</code>, <code>lifecycle</code>, <code>paper-organization</code>, <code>permissions</code>, <code>revision</code>, <code>working-paper-format</code>) carry <code>paths:</code> frontmatter and load when Claude reads a matching file — the paper rules on <code>paper/**</code> or a <code>.tex</code> file, the pipeline rules on <code>.claude/agents/**</code> or <code>quality_reports/**</code>.</p>
+<p>The reason is cost: every always-loaded line is paid for in every session, whether or not the task needs it. Together with <code>CLAUDE.md</code>, the always-loaded rules come to 679 lines, down from 1,817, and <code>scripts/check_scaffold.py</code> fails if they exceed a 700-line budget. Because a scoped rule loads only on a matching read, the agents and skills that depend on one name it explicitly: the writer-critic and verifier read <code>paper-organization.md</code> and <code>working-paper-format.md</code>, the orchestrator reads <code>permissions.md</code> and <code>lifecycle.md</code>, and <code>/revise</code> reads <code>revision.md</code>.</p>
+</section>
 <section id="what-each-file-governs" class="level2">
 <h2 class="anchored" data-anchor-id="what-each-file-governs">What each file governs</h2>
 <p><strong>agents.md</strong> defines the adversarial pairing system. Every worker has a paired critic. Critics never create artifacts; creators never self-score. When a pair fails to converge after 3 rounds, the file specifies where to escalate (often back to the user for fundamental disagreements).</p>
-<p><strong>content-invariants.md</strong> lists the 22 non-negotiable rules that every agent checks. These are the “constitution” of the system — violations produce deductions, not suggestions. Critics cite invariant numbers (e.g., “violates INV-3”) in their reports. See <a href="#sec-invariants">Section 2</a> for the full table.</p>
-<p><strong>content-standards.md</strong> specifies how tables, figures, and PDFs should look. It covers booktabs formatting, coefficient display conventions (including AEA no-stars policy), preferred R packages (<code>modelsummary</code>, <code>fixest::etable</code>), figure typography (serif fonts, no in-plot titles), and the exploration folder lifecycle.</p>
-<p><strong>lifecycle.md</strong> defines PRE-dispatch and POST-completion validation. Before dispatching any agent, the Orchestrator checks that required input artifacts exist and contain the right sections. After completion, it verifies outputs were created and the critic score was recorded. This prevents launching agents with missing inputs or advancing past agents with missing outputs.</p>
-<p><strong>logging.md</strong> standardizes three persistence mechanisms: the session report (append-only human-readable log), the research journal (structured agent-by-agent entries with scores), and the pipeline state JSON (machine-readable status for session recovery).</p>
+<p><strong>content-invariants.md</strong> lists the 26 non-negotiable rules that every agent checks. These are the “constitution” of the system — violations produce deductions, not suggestions (INV-26 is the exception: a pass/fail gate, never a score). Critics cite invariant numbers (e.g., “violates INV-3”) in their reports. See <a href="#sec-invariants">Content Invariants</a> for the full table.</p>
+<p><strong>content-standards.md</strong> specifies how the tabular body, figures, and PDFs should look. It covers booktabs formatting, coefficient display conventions (including AEA no-stars policy), preferred R packages (<code>modelsummary</code>, <code>fixest::etable</code>), figure typography (serif fonts, no in-plot titles), reading PDFs with page ranges, and the exploration folder lifecycle. Table 1, the table and figure wrappers, and float placement live in <code>paper-organization.md</code>.</p>
+<p><strong>lifecycle.md</strong> defines PRE-dispatch and POST-completion validation. <code>scripts/pipeline.py check-pre &lt;agent&gt;</code> checks that required inputs exist and that the critic results they depend on are in the research journal; <code>check-post &lt;agent&gt;</code> checks that the declared outputs exist with their required sections. Each condition prints PASS, FAIL, or MANUAL. This prevents launching agents with missing inputs or advancing past agents with missing outputs.</p>
+<p><strong>logging.md</strong> standardizes three persistence mechanisms: the session report (append-only human-readable log), the research journal (structured agent-by-agent entries with scores and verdicts), and the pipeline state JSON. The research journal is the record: <code>scripts/score.py</code> computes scores and <code>scripts/pipeline.py status</code> derives the pipeline state from it, so a critic result that isn’t logged there doesn’t count.</p>
 <p><strong>meta-governance.md</strong> addresses the repo’s dual nature as both a working project and a public template. The “one rule” is simple: before committing, ask whether another researcher forking the repo would benefit. Project-specific state goes in <code>.claude/state/</code>; reusable patterns go in the repo itself. It also governs learning promotion — patterns validated across 3+ projects can be elevated to new invariants, but only with user approval.</p>
-<p><strong>permissions.md</strong> is the agent registry. Each agent’s entry declares its phase, parallel group, required inputs, expected outputs, paired critic, escalation target, and quality weight. The Orchestrator reads this file to determine what to dispatch and when. Adding a new agent means adding an entry here — no other file needs to change.</p>
-<p><strong>quality.md</strong> defines how individual critic scores aggregate into the project-wide score that gates submission. It also specifies the severity gradient — the same violation costs more in later phases. See <a href="#sec-severity">Section 3</a> and <a href="#sec-gates">Section 4</a> for details.</p>
+<p><strong>paper-organization.md</strong> is the house style and the single source for float placement, Table 1, the table and figure wrappers, and section order (INV-23, INV-24, INV-25). Section files hold prose and <code>\cref{}</code> only; tables and figures sit in TABLES and FIGURES blocks at the end of <code>main.tex</code>. <code>/paper-format</code> applies it; the writer-critic deducts for deviations and the verifier fails on them.</p>
+<p><strong>permissions.md</strong> is the agent registry. Each agent’s entry declares its phase, parallel group, required inputs, expected outputs, paired critic, escalation target, and quality weight. The Orchestrator reads this file to determine what to dispatch and when, and <code>scripts/pipeline.py</code> parses it for the dispatch checks. Adding a new agent means adding an entry here, plus the orchestrator’s <code>Agent(...)</code> roster if the orchestrator dispatches it and <code>quality-gates.json</code> if it carries a weight; <code>scripts/check_scaffold.py</code> fails if the weights in the two files disagree.</p>
+<p><strong>quality.md</strong> defines how individual critic scores aggregate into the project-wide score that gates submission. <code>scripts/score.py</code> does the arithmetic, from the research journal and <code>.claude/skills/new-project/config/quality-gates.json</code>. It also specifies the severity gradient — the same violation costs more in later phases. See <a href="#sec-severity">Severity Gradient</a> and <a href="#sec-gates">Quality Gates</a> for details.</p>
 <p><strong>revision.md</strong> handles the R&amp;R cycle. When real referee reports arrive, <code>/revise</code> classifies each comment as NEW ANALYSIS (routed to coder), CLARIFICATION (routed to writer), DISAGREE (flagged for user), or MINOR (writer handles directly). The system never autonomously pushes back on referees — DISAGREE items always require human judgment.</p>
-<p><strong>workflow.md</strong> covers the plan-first protocol (plan before coding, save plans to disk, get user approval), the orchestrator’s dependency-driven loop (identify, dispatch, review, verify, score), standalone vs.&nbsp;pipeline mode, and context management (compaction discipline, session recovery).</p>
-<p><strong>working-paper-format.md</strong> specifies the LaTeX preamble, title page conventions, abstract format, section ordering, and bibliography setup. It distinguishes required items (blocking deductions if violated) from recommended items (advisory, no penalty). The writer-critic checks every paper against this standard.</p>
+<p><strong>understanding.md</strong> covers the comprehension gate (INV-26). Every script that produces a paper exhibit needs a current explainer and a passing quiz attempt; <code>/explain</code> writes both. The gate is pass/fail at <code>/submit</code> and a warning at <code>/write results</code>, and it never enters the weighted score: a quiz result is a fact about the author, not the artifact.</p>
+<p><strong>workflow.md</strong> covers when to write a plan and get approval (before multi-agent pipeline runs and changes across many files; smaller tasks proceed without one), the orchestrator’s dependency-driven loop (identify, dispatch, review, verify, score), standalone vs.&nbsp;pipeline mode, and context management (<code>/checkpoint</code> before <code>/compact</code>, session recovery). The fuller advice on when to compact, rewind, or clear is in the <a href="./user-guide.html#managing-long-sessions">User Guide</a>.</p>
+<p><strong>working-paper-format.md</strong> specifies the document class and layout, the design choices in the reference preamble (<code>paper/preambles/header.tex</code>), title page conventions, abstract metadata, and bibliography setup; section order follows <code>paper-organization.md</code>. It distinguishes required items (blocking deductions if violated) from recommended items (advisory, no penalty). The writer-critic checks every paper against this standard.</p>
 <hr>
 </section>
 </section>
@@ -560,7 +583,7 @@ window.Quarto = {
 <td>INV-5</td>
 <td>Abstract is 150 words or fewer</td>
 <td>Paper</td>
-<td>writer-critic</td>
+<td>writer-critic, <code>/coherence</code></td>
 <td>-5</td>
 </tr>
 <tr class="even">
@@ -574,7 +597,7 @@ window.Quarto = {
 <td>INV-7</td>
 <td>Notation consistent across all sections</td>
 <td>Paper</td>
-<td>writer-critic</td>
+<td>writer-critic, <code>/coherence</code></td>
 <td>-5</td>
 </tr>
 <tr class="even">
@@ -602,7 +625,7 @@ window.Quarto = {
 <td>INV-11</td>
 <td>Numbers in text match tables/figures exactly</td>
 <td>Paper</td>
-<td>writer-critic</td>
+<td>writer-critic, <code>/coherence</code></td>
 <td>-5</td>
 </tr>
 <tr class="even">
@@ -616,7 +639,7 @@ window.Quarto = {
 <td>INV-13</td>
 <td>Scripts export bare <code>tabular</code> — no <code>\begin{table}</code>, <code>\caption</code>, or notes</td>
 <td>Paper / Code</td>
-<td>writer-critic, coder-critic</td>
+<td>writer-critic, coder-critic, <code>/coherence</code></td>
 <td>-3</td>
 </tr>
 <tr class="even">
@@ -682,6 +705,34 @@ window.Quarto = {
 <td>writer-critic</td>
 <td>-5</td>
 </tr>
+<tr class="odd">
+<td>INV-23</td>
+<td>Tables and figures collected in TABLES and FIGURES blocks at the end of <code>main.tex</code>; section files hold prose and <code>\cref{}</code> only</td>
+<td>Paper house style</td>
+<td>writer-critic, verifier, <code>/paper-format</code>, <code>/coherence</code></td>
+<td>Rubric; verifier FAIL</td>
+</tr>
+<tr class="even">
+<td>INV-24</td>
+<td>Table 1 is pre-treatment characteristics: treated vs.&nbsp;control columns, thematic panels, unit counts at the bottom; no difference, SD, or p-value column</td>
+<td>Paper house style</td>
+<td>writer-critic, verifier, <code>/paper-format</code>, <code>/coherence</code></td>
+<td>Rubric; verifier FAIL</td>
+</tr>
+<tr class="odd">
+<td>INV-25</td>
+<td>Canonical wrappers: <code>threeparttable</code> with exhaustive notes for tables; <code>subcaption</code> multi-panel with the overall <code>\caption{}</code> on top for figures</td>
+<td>Paper house style</td>
+<td>writer-critic, verifier, <code>/paper-format</code></td>
+<td>Rubric; verifier FAIL</td>
+</tr>
+<tr class="even">
+<td>INV-26</td>
+<td>Every script behind a paper exhibit has a current explainer and a passing quiz attempt at its current fingerprint</td>
+<td>Understanding</td>
+<td><code>explainer_status.py --gate</code> at <code>/submit</code>, verifier</td>
+<td>None — pass/fail gate, never a score</td>
+</tr>
 </tbody>
 </table>
 </section>
@@ -712,6 +763,18 @@ window.Quarto = {
 <section id="traceability-inv-22" class="level3">
 <h3 class="anchored" data-anchor-id="traceability-inv-22">Traceability (INV-22)</h3>
 <p><strong>INV-22</strong> (claim-source map) is the audit trail. Every numerical claim in the manuscript — “treatment effect of 4.5 percentage points” — must have an entry in <code>quality_reports/claim_source_map_{project}.md</code> that traces it to a specific script line and output file. This makes it possible for a referee (or a future you) to verify any number in the paper by following the chain from text to table to code.</p>
+</section>
+<section id="paper-house-style-inv-23-through-inv-25" class="level3">
+<h3 class="anchored" data-anchor-id="paper-house-style-inv-23-through-inv-25">Paper house style (INV-23 through INV-25)</h3>
+<p>These encode the house layout in <code>paper-organization.md</code>, which coauthors and target journals expect. <code>/paper-format</code> applies them; the writer-critic deducts and the verifier fails on violations.</p>
+<p><strong>INV-23</strong> (floats at end) keeps section files to prose and <code>\cref{}</code>. Every table and figure lives in the TABLES and FIGURES blocks after the bibliography in <code>main.tex</code>.</p>
+<p><strong>INV-24</strong> (Table 1) fixes the first table as a two-group comparison at baseline. The N lives in unit-count rows at the bottom, not in a column, and there is deliberately no difference or test column.</p>
+<p><strong>INV-25</strong> (wrappers) gives every table the same <code>threeparttable</code> wrapper with exhaustive notes (sample, variable definitions, specification columns, SE clustering, stars) and every figure the same <code>subcaption</code> wrapper.</p>
+<p>INV-5 (abstract length) and INV-24 are also checked mechanically by <code>scripts/paper_coherence.py</code>, the deterministic layer of <code>/coherence</code>, which flags an abstract over 150 words and a Table 1 with extra columns.</p>
+</section>
+<section id="understanding-inv-26" class="level3">
+<h3 class="anchored" data-anchor-id="understanding-inv-26">Understanding (INV-26)</h3>
+<p><strong>INV-26</strong> (comprehension gate) asks whether you can explain the code, not whether it is correct. Every script that writes to <code>paper/tables/</code> or <code>paper/figures/</code> needs a current explainer in <code>quality_reports/explainers/</code> and a passing quiz attempt; when the script changes, its fingerprint changes and the gate reopens. <code>/explain</code> produces both. It is pass/fail at <code>/submit</code> (<code>python3 scripts/explainer_status.py --gate</code>) and never enters the score. See <code>.claude/rules/understanding.md</code>.</p>
 <hr>
 </section>
 </section>
@@ -829,21 +892,23 @@ Flag all issues. Do not suggest "consider" --- state what must change.</code></p
 </section>
 <section id="sec-gates" class="level1">
 <h1>Quality Gates</h1>
-<p>Quality scores determine what actions are allowed. The system uses a <strong>weighted aggregate</strong> of individual critic scores, with hard thresholds at each gate.</p>
-<section id="the-four-gates" class="level2">
-<h2 class="anchored" data-anchor-id="the-four-gates">The Four Gates</h2>
+<p>Quality scores determine what actions are allowed. The system uses a <strong>weighted aggregate</strong> of individual critic scores, with hard thresholds at each gate. <code>scripts/score.py</code> computes the aggregate and checks the gates; nobody does the arithmetic by hand.</p>
+<section id="the-score-gates" class="level2">
+<h2 class="anchored" data-anchor-id="the-score-gates">The Score Gates</h2>
 <table class="caption-top table">
 <colgroup>
-<col style="width: 10%">
-<col style="width: 24%">
-<col style="width: 38%">
-<col style="width: 26%">
+<col style="width: 8%">
+<col style="width: 20%">
+<col style="width: 31%">
+<col style="width: 18%">
+<col style="width: 21%">
 </colgroup>
 <thead>
 <tr class="header">
 <th>Gate</th>
 <th>Overall score</th>
 <th>Per-component minimum</th>
+<th>Enforced by</th>
 <th>What it means</th>
 </tr>
 </thead>
@@ -852,32 +917,61 @@ Flag all issues. Do not suggest "consider" --- state what must change.</code></p
 <td><strong>Commit</strong></td>
 <td>&gt;= 80</td>
 <td>None</td>
-<td>Work can be committed to the repository</td>
+<td><code>/tools commit</code> runs <code>score.py --gate commit</code></td>
+<td>Work can be committed. Passes with a notice while no critic has scored yet</td>
 </tr>
 <tr class="even">
 <td><strong>PR</strong></td>
 <td>&gt;= 90</td>
 <td>None</td>
+<td><code>score.py --gate pr</code></td>
 <td>Work can be opened as a pull request</td>
 </tr>
 <tr class="odd">
 <td><strong>Submission</strong></td>
 <td>&gt;= 95</td>
 <td>&gt;= 80 per component</td>
-<td>Work can be submitted to a journal</td>
-</tr>
-<tr class="even">
-<td><strong>Blocked</strong></td>
-<td>&lt; 80</td>
-<td>—</td>
-<td>Work cannot be committed; issues must be fixed first</td>
+<td><code>/submit final</code> runs <code>score.py --gate submission</code>, then <code>verify.py --mode submission</code></td>
+<td>Work can be submitted to a journal. Every non-conditional component must also be scored, and the understanding gate must pass</td>
 </tr>
 </tbody>
 </table>
+<p>The git pre-commit gate (<code>.githooks/pre-commit</code>) runs on every commit but does not check the score: a new project has no critic scores yet, and a gate that fails every early commit gets bypassed. It blocks on scaffold integrity and on HIGH lint findings instead (see <a href="./hooks.html#post-merge">Hooks &amp; Automation</a>).</p>
+</section>
+<section id="gates-that-are-not-scores" class="level2">
+<h2 class="anchored" data-anchor-id="gates-that-are-not-scores">Gates That Are Not Scores</h2>
+<p>Two checks sit outside the weighted aggregate. They are pass/fail and never deduct.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 23%">
+<col style="width: 50%">
+<col style="width: 26%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Gate</th>
+<th>What blocks</th>
+<th>Where</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>Coherence</strong> (<code>/coherence</code> Layer 1, <code>scripts/paper_coherence.py</code>)</td>
+<td>Major findings: broken references, missing citation keys, claim numbers that match no table cell, INV-5, INV-24. Minor findings only under <code>--strict</code>. <code>--deep</code> reasoning findings never block</td>
+<td>Any phase, zero tolerance. For <code>/submit final</code> the coherence skill sets <code>--strict</code>, so minor findings must be zero too. At commit, the pre-commit gate prints findings as advice only</td>
+</tr>
+<tr class="even">
+<td><strong>Understanding</strong> (INV-26, <code>scripts/explainer_status.py --gate</code>)</td>
+<td>Any script behind a paper exhibit without a current explainer and a passing quiz</td>
+<td><code>/submit</code>; <code>score.py</code> runs it as part of the submission gate</td>
+</tr>
+</tbody>
+</table>
+<p>The understanding gate is kept out of the score by design: a quiz result is a fact about the author, not the artifact. Folding it in would let good code compensate for an author who cannot explain it.</p>
 </section>
 <section id="how-scores-aggregate" class="level2">
 <h2 class="anchored" data-anchor-id="how-scores-aggregate">How Scores Aggregate</h2>
-<p>Each critic produces a score from 0 to 100 by starting at 100 and deducting for issues found. These individual scores combine via a weighted average:</p>
+<p>Each critic produces a score from 0 to 100 by starting at 100 and deducting for issues found. The strategist-critic is the exception: it gives a verdict (SOUND / MINOR ISSUES / MAJOR ISSUES / CRITICAL ERRORS), and execution may start on SOUND or MINOR ISSUES. <code>score.py</code> reads each critic’s latest entry in the research journal and combines them with the weights in <code>.claude/skills/new-project/config/quality-gates.json</code>, the single source for weights and thresholds:</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 40%">
@@ -905,7 +999,7 @@ Flag all issues. Do not suggest "consider" --- state what must change.</code></p
 <tr class="odd">
 <td>Identification validity</td>
 <td>25%</td>
-<td>strategist-critic</td>
+<td>strategist-critic (verdict mapped to SOUND 95, MINOR ISSUES 85, MAJOR ISSUES 65, CRITICAL ERRORS 40)</td>
 </tr>
 <tr class="even">
 <td>Theory (when present)</td>
@@ -918,37 +1012,43 @@ Flag all issues. Do not suggest "consider" --- state what must change.</code></p
 <td>coder-critic</td>
 </tr>
 <tr class="even">
-<td>Paper quality</td>
-<td>25%</td>
-<td>Avg(domain-referee + methods-referee)</td>
+<td>Referee: domain</td>
+<td>12.5%</td>
+<td>domain-referee</td>
 </tr>
 <tr class="odd">
+<td>Referee: methods</td>
+<td>12.5%</td>
+<td>methods-referee</td>
+</tr>
+<tr class="even">
 <td>Manuscript polish</td>
 <td>10%</td>
 <td>writer-critic</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Replication readiness</td>
 <td>5%</td>
 <td>Verifier (pass/fail, mapped to 0 or 100)</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Theory weight</strong> applies only to papers with a formal theory section (econometric methods, theory + empirics, structural identification). For applied papers using off-the-shelf estimators, the theory row is excluded and remaining weights renormalize.</p>
+<p>The verdict map applies to this aggregate only; everywhere else the strategist-critic gates by verdict. The two referees at 12.5% each are the same as averaging them into one 25% component.</p>
+<p><strong>Theory weight</strong> applies only when the theorist ran (papers with a formal theory section: econometric methods, theory + empirics, structural identification). An applied paper’s weights sum to 100%; a theory paper’s are renormalized from 120%.</p>
 </section>
 <section id="when-components-are-missing" class="level2">
 <h2 class="anchored" data-anchor-id="when-components-are-missing">When Components Are Missing</h2>
 <p>Not every project has every component. If a component has not been scored:</p>
 <ul>
-<li>It is excluded from the weighted average</li>
+<li>It is excluded from the weighted average, and <code>score.py</code> lists it as excluded</li>
 <li>Remaining weights are renormalized proportionally</li>
-<li>Example: no literature review yet — weights become 11%, 28%, 17%, 28%, 11%, 6%</li>
+<li>Example: no literature review yet on an applied paper — data 11%, identification 28%, code 17%, each referee 14%, manuscript 11%, replication 6%</li>
 </ul>
-<p>This means you can run partial pipelines (e.g., just Strategy + Execution) and still get meaningful scores.</p>
+<p>This means you can run partial pipelines (e.g., just Strategy + Execution) and still get meaningful scores. The submission gate is the exception: there, every non-conditional component must have been scored.</p>
 </section>
 <section id="the-per-component-minimum" class="level2">
 <h2 class="anchored" data-anchor-id="the-per-component-minimum">The Per-Component Minimum</h2>
-<p>For submission, the aggregate score must be &gt;= 95 <strong>and</strong> no individual component can be below 80. A perfect literature review cannot compensate for broken identification. A beautiful manuscript cannot compensate for code that does not reproduce.</p>
+<p>For submission, the aggregate score must be &gt;= 95 <strong>and</strong> no individual component can be below 80 <strong>and</strong> every non-conditional component must be scored. A perfect literature review cannot compensate for broken identification. A beautiful manuscript cannot compensate for code that does not reproduce. A missing referee report cannot be renormalized away.</p>
 <p>This rule prevents the “average-up” problem — where excellence in one area masks serious deficiencies in another.</p>
 </section>
 <section id="recovering-from-a-low-score" class="level2">
@@ -979,7 +1079,7 @@ Flag all issues. Do not suggest "consider" --- state what must change.</code></p
 </section>
 <section id="working-paper-format" class="level1">
 <h1>Working Paper Format</h1>
-<p>The <code>working-paper-format.md</code> rule file specifies the LaTeX standard that all papers must follow. The full reference preamble, title page conventions, and bibliography setup are documented there. Here is a summary of what the writer-critic enforces.</p>
+<p>The <code>working-paper-format.md</code> rule file specifies the LaTeX standard that all papers must follow. The reference preamble itself is <code>paper/preambles/header.tex</code> (a paper starts with <code>\documentclass[12pt]{article}</code> and <code>\input{preambles/header}</code>); the rule documents each design choice, the title page conventions, and the bibliography setup. Here is a summary of what the writer-critic enforces.</p>
 <section id="required-blocking-deductions" class="level2">
 <h2 class="anchored" data-anchor-id="required-blocking-deductions">Required (Blocking Deductions)</h2>
 <table class="caption-top table">
@@ -1088,7 +1188,7 @@ Flag all issues. Do not suggest "consider" --- state what must change.</code></p
 <tbody>
 <tr class="odd">
 <td><strong>writer-critic</strong></td>
-<td>INV-1 through INV-13, INV-22</td>
+<td>INV-1 through INV-13, INV-22, INV-23, INV-24, INV-25</td>
 <td>Deduct per scoring rubric</td>
 </tr>
 <tr class="even">
@@ -1103,24 +1203,39 @@ Flag all issues. Do not suggest "consider" --- state what must change.</code></p
 </tr>
 <tr class="even">
 <td><strong>verifier</strong></td>
-<td>INV-9, INV-10, INV-14, INV-15, INV-16, INV-19</td>
+<td>INV-9, INV-10, INV-14, INV-15, INV-16, INV-19, INV-23, INV-24, INV-25, INV-26</td>
 <td>FAIL (binary — no partial credit)</td>
 </tr>
 <tr class="odd">
+<td><strong>explainer</strong></td>
+<td>INV-26</td>
+<td>Produces the explainer and quiz the invariant requires</td>
+</tr>
+<tr class="even">
+<td><strong>/coherence</strong> (deterministic, <code>paper_coherence.py</code>)</td>
+<td>INV-5, INV-7, INV-11, INV-13, INV-23, INV-24</td>
+<td>Major findings block; minor findings block only under <code>--strict</code></td>
+</tr>
+<tr class="odd">
+<td><strong>/coherence –deep</strong> (reasoning)</td>
+<td>INV-7, INV-8, INV-11</td>
+<td>Advisory finding — never blocks</td>
+</tr>
+<tr class="even">
 <td><strong>lint hook</strong></td>
 <td>INV-14, INV-15, INV-16, INV-19</td>
-<td>Advisory warning (non-blocking)</td>
+<td>Advisory warning in the session; the git pre-commit gate blocks HIGH findings in staged analysis scripts</td>
 </tr>
 </tbody>
 </table>
-<p>Note the overlap: INV-13 is checked by both the writer-critic (paper side) and coder-critic (code side). INV-9, INV-10, INV-14–16, and INV-19 are checked by both the coder-critic (with deductions) and the verifier (with a hard FAIL). This redundancy is intentional — the critic catches issues during development; the verifier catches anything that slipped through at submission time.</p>
+<p>Note the overlap: INV-13 is checked by both the writer-critic (paper side) and coder-critic (code side). INV-9, INV-10, and INV-23–25 are checked by the writer-critic (with deductions) and the verifier (with a hard FAIL); INV-14–16 and INV-19 by the coder-critic and the verifier. This redundancy is intentional — the critic catches issues during development; the verifier catches anything that slipped through at submission time. <code>/coherence</code> adds a deterministic check that costs nothing to run, so it can run before every commit.</p>
 <hr>
 </section>
 <section id="lifecycle-validation" class="level1">
 <h1>Lifecycle Validation</h1>
-<p>The Orchestrator runs two validation checks around every agent dispatch, defined in <code>lifecycle.md</code>.</p>
-<p><strong>PRE-dispatch:</strong> Before launching any agent, the Orchestrator reads the agent’s entry in <code>permissions.md</code> and verifies that all required input artifacts exist and contain the expected sections. If validation fails, the agent is not dispatched — instead, the system reports what is missing and suggests which skill to run first.</p>
-<p><strong>POST-completion:</strong> After an agent finishes, the Orchestrator verifies that the expected output artifacts were created, that required sections are present in those outputs, and that the paired critic has produced a scored report logged in the research journal. If validation fails, the agent is re-dispatched with the specific gaps noted.</p>
+<p>Two validation checks run around every agent dispatch, defined in <code>lifecycle.md</code>. Both are <code>scripts/pipeline.py</code> subcommands that read the agent’s entry in <code>permissions.md</code> and the research journal; the Orchestrator calls them and acts on the result. Each condition prints PASS, FAIL, or MANUAL (a condition only judgment can settle, which the Orchestrator decides and explains).</p>
+<p><strong>PRE-dispatch:</strong> <code>pipeline.py check-pre &lt;agent&gt;</code> verifies that the required inputs exist and that the critic scores or verdicts they depend on are logged. If it fails, the agent is not dispatched — instead, the system reports what is missing and which skill produces it.</p>
+<p><strong>POST-completion:</strong> <code>pipeline.py check-post &lt;agent&gt;</code> verifies that the expected output artifacts were created and contain their required sections. If it fails, the agent is re-dispatched with the specific gaps noted. A critic’s result gates the <em>next</em> agent, so it is checked by that agent’s <code>check-pre</code>.</p>
 <p>The principle is <strong>fail fast</strong>: never launch an agent with missing inputs and hope it works, and never advance past an agent with missing outputs. Every handoff between agents is validated.</p>
 
 
@@ -1213,7 +1328,7 @@ Flag all issues. Do not suggest "consider" --- state what must change.</code></p
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/hugosantanna\.github\.io\/clo-author\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

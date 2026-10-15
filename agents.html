@@ -2,14 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.38">
 
-<link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Agents – The Clo-Author</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -31,21 +33,21 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-fdd259eaf9296a602f9f2594b91304b4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-1e421a9c73e24ddbaf9719a3c33ffac8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-b9862f91d0a1d344de8539a32e8a5ff2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-10a0879e8cb5ddd784eb9f3673ca8224.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -76,7 +78,7 @@ ul.task-list li input[type="checkbox"] {
 <style>html{ scroll-behavior: smooth; }</style>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -359,8 +361,9 @@ window.Quarto = {
   <li><a href="#discovery-pair" id="toc-discovery-pair" class="nav-link" data-scroll-target="#discovery-pair">Discovery Pair</a></li>
   <li><a href="#strategy-pair" id="toc-strategy-pair" class="nav-link" data-scroll-target="#strategy-pair">Strategy Pair</a></li>
   <li><a href="#execution-trio" id="toc-execution-trio" class="nav-link" data-scroll-target="#execution-trio">Execution Trio</a></li>
-  <li><a href="#review-team" id="toc-review-team" class="nav-link" data-scroll-target="#review-team">Review Team</a></li>
+  <li><a href="#peer-review" id="toc-peer-review" class="nav-link" data-scroll-target="#peer-review">Review Team</a></li>
   <li><a href="#presentation-pair" id="toc-presentation-pair" class="nav-link" data-scroll-target="#presentation-pair">Presentation Pair</a></li>
+  <li><a href="#coherence-chain" id="toc-coherence-chain" class="nav-link" data-scroll-target="#coherence-chain">Coherence Chain</a></li>
   <li><a href="#infrastructure" id="toc-infrastructure" class="nav-link" data-scroll-target="#infrastructure">Infrastructure</a></li>
   </ul></li>
   <li><a href="#phase-flow" id="toc-phase-flow" class="nav-link" data-scroll-target="#phase-flow">Phase Flow</a></li>
@@ -376,7 +379,7 @@ window.Quarto = {
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
 <h1 class="title">Agents</h1>
-<p class="subtitle lead">Twenty specialists that never edit each other’s work</p>
+<p class="subtitle lead">Twenty-five specialists that never edit each other’s work</p>
 </div>
 
 
@@ -395,10 +398,10 @@ window.Quarto = {
 
 <section id="how-agents-work" class="level1">
 <h1>Four Architectural Rules</h1>
-<p>The system uses 20 specialized agents organized into worker-critic pairs. Four rules explain most of the system’s behavior.</p>
+<p>The system uses 25 specialized agents, most of them organized into worker-critic pairs. Four rules explain most of the system’s behavior.</p>
 <section id="worker-critic-pairing" class="level2">
 <h2 class="anchored" data-anchor-id="worker-critic-pairing">Worker-Critic Pairing</h2>
-<p><strong>Every creator has a paired destroyer.</strong> The critic reads the artifact, scores it against a rubric, and lists what must change — but never edits the file itself. If the score falls below 80, the worker revises and the critic re-evaluates. This cycle repeats up to 3 rounds.</p>
+<p><strong>Every creator has a paired destroyer.</strong> The critic reads the artifact, scores it against a rubric, and lists what must change — but never edits the file itself. The strategist-critic gives a verdict instead of points: SOUND, MINOR ISSUES, MAJOR ISSUES, or CRITICAL ERRORS. If the score falls below 80 (or the verdict is MAJOR ISSUES or worse), the worker revises and the critic re-evaluates. This cycle repeats up to 3 rounds.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 24%">
@@ -453,13 +456,19 @@ window.Quarto = {
 <td>storyteller-critic</td>
 <td>Talk structure, visual quality, content fidelity</td>
 </tr>
+<tr class="odd">
+<td>coherence-finder</td>
+<td>coherence-skeptic</td>
+<td>Internal-consistency findings, one check group at a time</td>
+</tr>
 </tbody>
 </table>
-<p>Three agents have no paired critic because they are infrastructure (orchestrator, verifier) or already serve as reviewers (editor, domain-referee, methods-referee).</p>
+<p>The coherence pair is a chain rather than a loop: <code>/coherence --deep</code> runs coherence-finder once per check group, one coherence-skeptic per group tries to refute its findings, and coherence-consolidator merges the survivors. No scores, no revision rounds (see <a href="#coherence-chain">Coherence Chain</a>).</p>
+<p>Nine agents have no paired critic. Two are infrastructure (orchestrator, verifier); three already serve as reviewers (editor, domain-referee, methods-referee); two are later stages of the coherence chain (coherence-skeptic, coherence-consolidator). The explainer’s output is tested on the author by a quiz, not scored by a critic. The guide-writer writes documentation, outside the research pipeline.</p>
 </section>
 <section id="separation-of-powers" class="level2">
 <h2 class="anchored" data-anchor-id="separation-of-powers">Separation of Powers</h2>
-<p><strong>Critics never create. Creators never self-score.</strong> If a critic invocation produces a file in <code>scripts/</code>, <code>paper/</code>, or <code>paper/talks/</code>, the orchestrator flags it as a violation. If a creator reports its own score, the orchestrator discards it and dispatches the critic.</p>
+<p><strong>Critics never create. Creators never self-score.</strong> Every critic’s tool list is read-only (Read, Grep, Glob), so a critic cannot write a file in <code>scripts/</code>, <code>paper/</code>, or anywhere else. If a creator reports its own score, the orchestrator discards it and dispatches the critic.</p>
 <p>This prevents the system from rubber-stamping its own output. A critic who fixes their own findings has incentive to find only fixable issues. Separation keeps criticism honest.</p>
 </section>
 <section id="cold-read-protocol" class="level2">
@@ -476,7 +485,7 @@ window.Quarto = {
 <h1>The Skill-Centric Model</h1>
 <p><strong>Agents used to be monolithic.</strong> Each agent file contained identity, checklists, templates, rubrics, and scoring tables — 200 to 474 lines of coupled operational knowledge. Updating a checklist meant editing an agent. Adding a paper type meant editing every agent that touches paper types.</p>
 <p><strong>The problem:</strong> operational knowledge evolved faster than identity. A new estimator package required updating checklists, not changing who the coder <em>is</em>. Coupling them meant agent files churned constantly.</p>
-<p><strong>Now agents are lean identity files.</strong> Each one is 50–140 lines declaring: role, voice, constraints, tool access, paper-type awareness, and pointers to where the operational knowledge lives. The coder file says “read <code>analyze/templates/pre-code-report.md</code> before writing code” — it does not contain the pre-code report template itself.</p>
+<p><strong>Now agents are lean identity files.</strong> Each one is roughly 35–210 lines declaring: role, voice, constraints, tool access, paper-type awareness, and pointers to where the operational knowledge lives. The coder file says “read <code>analyze/templates/pre-code-report.md</code> before writing code” — it does not contain the pre-code report template itself.</p>
 <p>The operational knowledge — checklists, rubrics, scoring tables, templates, gotchas — lives in <strong>skill folders</strong>. When the orchestrator dispatches an agent, it tells the agent which skill invoked it and the agent reads the relevant templates from that skill’s directory. This means:</p>
 <ul>
 <li>Agent files change rarely (identity is stable)</li>
@@ -486,6 +495,7 @@ window.Quarto = {
 </ul>
 <p>A concrete example: the coder agent file (136 lines) declares its role, tool access, workflow stages, engineering standards, and output expectations. But when <code>/analyze</code> dispatches it, the coder reads <code>analyze/templates/pre-code-report.md</code> for the pre-code report format, <code>analyze/templates/r-script-structure.R</code> for the scaffold, and <code>analyze/gotchas.md</code> for known pitfalls. None of that lives in the agent file. If we learn a new gotcha tomorrow, we add one line to <code>analyze/gotchas.md</code> — the agent file never changes.</p>
 <p>The strategist-critic works the same way. Its identity file (62 lines) says: “You are a top-5 journal referee. Run 4 sequential phases. Read the causal audit template.” The 4-phase audit protocol, the design-specific checklists, and the scoring rubric all live in <code>review/templates/</code> and <code>review/config/</code>. Updating how we evaluate RDD papers means editing a template, not touching the critic’s identity.</p>
+<p><strong>Model and effort live in the frontmatter.</strong> Every agent sets <code>model: inherit</code>, so it runs on whatever model your session uses. Some also set <code>effort:</code>. High: strategist, strategist-critic, theorist, theorist-critic, methods-referee, editor. Low: coherence-finder, coherence-skeptic, librarian-critic, explorer-critic. Everything else runs at the default (medium on Opus 5.5).</p>
 <p>For full agent specifications, see the <code>.claude/agents/</code> directory — each file is self-contained and authoritative.</p>
 <hr>
 </section>
@@ -497,14 +507,14 @@ window.Quarto = {
 <p>The <strong>librarian</strong> searches top-5 general-interest journals, field journals, NBER working papers, and citation chains to produce an annotated bibliography, a BibTeX file, a frontier map (what has been done), and a positioning statement (where the new paper fits). The <strong>explorer</strong> searches for datasets — public, administrative, survey — and grades each by feasibility: variable coverage, access requirements, panel structure, and known data issues.</p>
 <p>Both run in parallel from the start of a project. Neither depends on the other. The librarian-critic checks for coverage gaps (missing seminal papers, missing methods literature, over-reliance on working papers). The explorer-critic checks measurement validity (does the proposed variable actually capture the concept?) and identification compatibility (does this data support the likely design?).</p>
 <p>Together they answer a single question: <em>what has been done, and what data could let us do something new?</em></p>
-<p><strong>Activates:</strong> From a research idea or spec. No prerequisites. <strong>Produces:</strong> <code>quality_reports/literature/</code> and <code>quality_reports/data-assessment/</code> <strong>Quality gate:</strong> Both critics must score &gt;= 80 before Strategy activates.</p>
+<p><strong>Activates:</strong> From a research idea or spec. No prerequisites. <strong>Produces:</strong> <code>quality_reports/literature/</code> and <code>quality_reports/data-assessment/</code> <strong>Quality gate:</strong> No score gate. Strategy needs only one of the two outputs to exist (literature OR data assessment); both critics’ scores feed the weighted aggregate, 10% each.</p>
 </section>
 <section id="strategy-pair" class="level2">
 <h2 class="anchored" data-anchor-id="strategy-pair">Strategy Pair</h2>
 <p>The <strong>strategist</strong> is paper-type aware. Given the literature and data assessment, it classifies the paper type (reduced-form, structural, theory+empirics, descriptive) and applies the corresponding strategy template. For reduced-form papers, it assesses the identification landscape, proposes designs ranked by credibility, and specifies design-specific estimation guidance (modern DiD estimators for staggered treatment, effective F for IV, MSE-optimal bandwidth for RDD). For structural papers, it specifies the model environment, decision problem, equilibrium concept, identification of each parameter, and counterfactual design. It always anticipates the top 5 referee objections.</p>
 <p>The <strong>theorist</strong> activates conditionally — only for papers that need formal proofs. It drafts assumptions, definitions, propositions, and proofs at journal-publication rigor, with every theorem linked to the empirical strategy. Its critic runs a 4-phase proof review with early stopping on logical gaps.</p>
 <p>The <strong>strategist-critic</strong> is the system’s most important gatekeeper. It runs a 4-phase sequential audit: identify the design, check whether the core assumptions hold (design-specific checklists), evaluate inference and code-theory alignment, then check robustness. Critical finding in Phase 2 stops the review — no point checking robustness if parallel trends are violated.</p>
-<p><strong>Activates:</strong> After at least one Discovery output (literature OR data assessment). <strong>Produces:</strong> <code>quality_reports/strategy/</code> and (when activated) <code>quality_reports/theory/</code> <strong>Quality gate:</strong> Strategist-critic score &gt;= 80 before Execution activates.</p>
+<p><strong>Activates:</strong> After at least one Discovery output (literature OR data assessment). <strong>Produces:</strong> <code>quality_reports/strategy/</code> and (when activated) <code>quality_reports/theory/</code> <strong>Quality gate:</strong> Strategist-critic verdict of SOUND or MINOR ISSUES before Execution activates; theorist-critic &gt;= 80 when the theorist ran.</p>
 </section>
 <section id="execution-trio" class="level2">
 <h2 class="anchored" data-anchor-id="execution-trio">Execution Trio</h2>
@@ -512,12 +522,13 @@ window.Quarto = {
 <p>The <strong>coder</strong> translates the strategy memo into numbered analysis scripts (<code>00_master.R</code> through <code>07_tables.R</code>) with engineering discipline: numerical guards, pre-allocation, a single seed, <code>here()</code> for all paths, and a paper-to-code naming map linking every <span class="math inline">\(\beta\)</span> and <span class="math inline">\(Y_{it}\)</span> to its code variable. It implements the main specification, all robustness checks from the memo, and exports bare <code>tabular</code> environments for tables.</p>
 <p>The <strong>writer</strong> drafts the manuscript after code is approved. It refuses to write Results without actual output files in <code>paper/tables/</code> — this gate exists because the distinction between “the strategy predicts X” and “the data shows X” is the difference between a proposal and a paper. It maintains a claim-source map tracing every numerical claim to a specific script line and output file.</p>
 <p>The <strong>coder-critic</strong> reviews both the data-engineer and coder across 16 categories: strategic alignment (does the code match the memo?), code quality (reproducibility, numerics, function design), and infrastructure (checkpointing, error handling, prohibited patterns). The <strong>writer-critic</strong> runs 8 checks: structure, claims-evidence, identification fidelity, AI-pattern detection, LaTeX format, compilation, voice fidelity, and notation consistency.</p>
-<p><strong>Activates:</strong> Data-engineer and coder after strategist-critic score &gt;= 80. Writer after coder-critic score &gt;= 80. <strong>Produces:</strong> <code>data/cleaned/</code>, <code>scripts/R/</code>, <code>paper/tables/</code>, <code>paper/figures/</code>, <code>paper/sections/</code> <strong>Quality gate:</strong> Coder-critic and writer-critic both &gt;= 80 before Peer Review.</p>
+<p>Alongside the trio, the <strong>explainer</strong> runs once code review passes, in parallel with the writer. For each analysis script it writes a delta-explainer (only what departs from the strategy memo, plus a sample-construction ledger with drop counts), a 5-question quiz, and a separate answer key. It tests the author, not the code: <code>/submit</code> blocks until every script behind a paper exhibit has a passing quiz at the script’s current fingerprint (INV-26).</p>
+<p><strong>Activates:</strong> Data-engineer and coder after a strategist-critic verdict of SOUND or MINOR ISSUES. Writer and explainer after coder-critic score &gt;= 80. <strong>Produces:</strong> <code>data/cleaned/</code>, <code>scripts/R/</code>, <code>paper/tables/</code>, <code>paper/figures/</code>, <code>paper/sections/</code> <strong>Quality gate:</strong> Coder-critic and writer-critic both &gt;= 80 before Peer Review.</p>
 </section>
-<section id="review-team" class="level2">
-<h2 class="anchored" data-anchor-id="review-team">Review Team</h2>
+<section id="peer-review" class="level2">
+<h2 class="anchored" data-anchor-id="peer-review">Review Team</h2>
 <p>The <strong>editor</strong> performs desk review: reads the abstract and introduction, skims the contribution, verifies novelty, and decides whether to send to referees or desk reject. When it sends, it assigns each referee a contrasting intellectual disposition — STRUCTURAL (“where’s the mechanism?”), CREDIBILITY (“show me the pre-trends”), MEASUREMENT (“how is this measured?”), POLICY (“does this generalize?”), THEORY (“what does the model predict?”), or SKEPTIC (“what would make this go away?”). Each referee also receives randomized pet peeves drawn from pools of critical and constructive tendencies.</p>
-<p>The <strong>domain-referee</strong> evaluates substance: contribution and novelty (30%), literature positioning (25%), substantive arguments (20%), external validity (15%), and journal fit (10%). The <strong>methods-referee</strong> evaluates methods with paper-type-specific weights: identification strategy, estimation, inference, robustness, and replication readiness. Neither sees the other’s report.</p>
+<p>The <strong>domain-referee</strong> evaluates substance: contribution and novelty (30%), literature positioning (25%), substantive arguments (20%), external validity (15%), and journal fit (10%). The <strong>methods-referee</strong> evaluates methods with paper-type-specific weights: identification strategy, estimation, inference, robustness, and replication readiness. Neither sees the other’s report. In round 1 neither sees earlier verdicts either: both read a fenced copy of the manuscript outside the repository, away from <code>quality_reports/reviews/</code>. <code>--peer --r2</code> deliberately reuses round 1.</p>
 <p>After both reports arrive, the editor classifies each concern as FATAL (cannot be fixed), ADDRESSABLE (fixable with revision), or TASTE (referee preference), resolves disagreements with explicit reasoning, and issues a decision.</p>
 <p><strong>Activates:</strong> After writer-critic and coder-critic both &gt;= 80. Invoked via <code>/review --peer</code>. <strong>Produces:</strong> <code>quality_reports/reviews/</code> <strong>Quality gate:</strong> Editorial decision of Accept or Minor Revisions to proceed to Submission.</p>
 </section>
@@ -527,10 +538,15 @@ window.Quarto = {
 <p>The <strong>storyteller-critic</strong> checks narrative flow (does the hook work?), visual quality (text overflow, font sizes, one idea per slide), content fidelity (numbers match the paper), and compilation. Presentation scores are advisory — they do not block commits or PRs.</p>
 <p><strong>Activates:</strong> After writer-critic score &gt;= 80. Can run parallel with Peer Review. <strong>Produces:</strong> <code>paper/talks/</code> or <code>paper/quarto/</code> <strong>Quality gate:</strong> Advisory only.</p>
 </section>
+<section id="coherence-chain" class="level2">
+<h2 class="anchored" data-anchor-id="coherence-chain">Coherence Chain</h2>
+<p><code>/coherence --deep</code> adds a reasoning pass on top of the deterministic parser, run as a three-stage chain. The <strong>coherence-finder</strong> is one definition dispatched once per non-empty check group (specification, claims, continuity, notation, theory), each in its own context, so the groups do not anchor on each other. A <strong>coherence-skeptic</strong> per group with findings tries to refute each one, defaulting to refuted when uncertain. The <strong>coherence-consolidator</strong> merges the same defect seen from different checks and ranks what survives.</p>
+<p><strong>Activates:</strong> On <code>/coherence --deep</code>, after <code>paper_coherence.py --slices</code> writes one slice per group. <strong>Produces:</strong> A <code>## Reasoning layer</code> section appended to <code>quality_reports/coherence/YYYY-MM-DD_report.md</code> <strong>Quality gate:</strong> None. Reasoning findings are advisory and never block; coherence carries no weight in the score.</p>
+</section>
 <section id="infrastructure" class="level2">
 <h2 class="anchored" data-anchor-id="infrastructure">Infrastructure</h2>
-<p>The <strong>orchestrator</strong> is the project manager. It reads <code>permissions.md</code> to determine which agents can activate, validates pre-dispatch (do REQUIRES artifacts exist?) and post-completion (do PRODUCES artifacts exist with required sections?), launches worker-critic pairs in parallel when independent, tracks strike counts, computes weighted overall scores, and maintains structured pipeline state in <code>pipeline_state.json</code>. It makes no research decisions — when judgment is needed, it escalates to the user with a clear question.</p>
-<p>The <strong>verifier</strong> checks mechanical correctness in two modes. Standard mode (between phases): LaTeX compilation, script execution, file integrity, output freshness. Submission mode (before journal deposit): package inventory, dependency verification, data provenance, end-to-end execution, output cross-reference, and AEA-format README completeness. It scores binary — 0 or 100, contributing 5% weight to the overall project score.</p>
+<p>The <strong>orchestrator</strong> is the project manager. It reads <code>permissions.md</code> to determine which agents can activate and runs <code>scripts/pipeline.py check-pre</code> / <code>check-post</code> around every dispatch (do REQUIRES artifacts exist? do PRODUCES artifacts exist with required sections?). It launches worker-critic pairs in parallel when independent and tracks strike counts. It does not do the arithmetic: <code>scripts/score.py</code> computes the weighted score, and <code>pipeline.py status</code> derives <code>pipeline_state.json</code> from the research journal. Its tool list names its dispatch roster as <code>Agent(...)</code>, so it can only spawn registry agents. It makes no research decisions — when judgment is needed, it escalates to the user with a clear question.</p>
+<p>The <strong>verifier</strong> checks mechanical correctness in two modes. It starts from <code>scripts/verify.py</code>, which runs the mechanical checks (including the INV-26 understanding gate), and keeps the judgment calls for itself. Standard mode (between phases): LaTeX compilation, script execution, file integrity, output freshness. Submission mode (before journal deposit): package inventory, dependency verification, data provenance, end-to-end execution, output cross-reference, and AEA-format README completeness. It scores binary — 0 or 100, contributing 5% weight to the overall project score.</p>
 <p><strong>Activates:</strong> Orchestrator runs throughout. Verifier runs between phases and at submission. <strong>Produces:</strong> <code>quality_reports/pipeline_state.json</code>, <code>quality_reports/verification_report.md</code> <strong>Quality gate:</strong> Verifier must PASS (100) for submission.</p>
 <hr>
 </section>
@@ -546,14 +562,14 @@ window.Quarto = {
                                                     ↕
                                               Presentation
                                               (storyteller)</code></pre>
-<p>Each arrow is gated by a critic score. The orchestrator checks <code>permissions.md</code> before every dispatch: are the REQUIRES artifacts present? Has the prerequisite critic scored &gt;= 80? If not, the agent does not activate.</p>
+<p>Every arrow but the first is gated by a critic: a strategist-critic verdict of SOUND or MINOR ISSUES out of Strategy, scores &gt;= 80 out of Execution, an editorial decision out of Peer Review. Before every dispatch the orchestrator runs <code>scripts/pipeline.py check-pre</code>, which reads <code>permissions.md</code>: are the REQUIRES artifacts present? Has the prerequisite critic passed? If not, the agent does not activate.</p>
 <p>Re-entry is allowed at any phase except Submission (terminal). A Major Revisions decision from Peer Review triggers re-entry at whatever phase the referee comments require — sometimes just the writer (clarification), sometimes back to the coder (new analysis), sometimes back to the strategist (fundamental design challenge).</p>
-<p>The system distinguishes between phases (sequential gates) and parallel groups (concurrent work within a phase). The librarian and explorer run concurrently. The data-engineer and coder run concurrently. But the writer waits for the coder to finish. These relationships are all declared in one file — <code>permissions.md</code> — not hardcoded in agent logic.</p>
+<p>The system distinguishes between phases (sequential gates) and parallel groups (concurrent work within a phase). The librarian and explorer run concurrently. The data-engineer and coder run concurrently. But the writer waits for the coder to finish, and runs alongside the explainer. These relationships are all declared in one file — <code>permissions.md</code> — not hardcoded in agent logic.</p>
 <hr>
 </section>
 <section id="agent-catalog" class="level1">
 <h1>Quick Reference</h1>
-<p>All 20 agents at a glance.</p>
+<p>All 25 agents at a glance.</p>
 <table class="caption-top table">
 <colgroup>
 <col style="width: 15%">
@@ -649,45 +665,75 @@ window.Quarto = {
 <td>writer</td>
 </tr>
 <tr class="even">
+<td>explainer</td>
+<td>Execution</td>
+<td>Delta-explainer, sample ledger, 5-question quiz + separate key (INV-26)</td>
+<td>None</td>
+</tr>
+<tr class="odd">
 <td>editor</td>
 <td>Peer Review</td>
 <td>Desk review, referee dispatch, editorial decision</td>
 <td>None</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>domain-referee</td>
 <td>Peer Review</td>
 <td>Blind review (substance: contribution, literature, scope)</td>
 <td>None</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>methods-referee</td>
 <td>Peer Review</td>
 <td>Blind review (methods: ID, estimation, inference, robustness)</td>
 <td>None</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td>storyteller</td>
 <td>Presentation</td>
 <td>Beamer / Quarto talks in 4 formats</td>
 <td>storyteller-critic</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>storyteller-critic</td>
 <td>Presentation</td>
 <td>Checks narrative, visuals, content fidelity, scope</td>
 <td>storyteller</td>
 </tr>
+<tr class="even">
+<td>coherence-finder</td>
+<td><code>/coherence --deep</code></td>
+<td>Internal-consistency findings for one check group</td>
+<td>coherence-skeptic</td>
+</tr>
+<tr class="odd">
+<td>coherence-skeptic</td>
+<td><code>/coherence --deep</code></td>
+<td>Tries to refute one group’s findings, in one batch</td>
+<td>coherence-finder</td>
+</tr>
+<tr class="even">
+<td>coherence-consolidator</td>
+<td><code>/coherence --deep</code></td>
+<td>Merges duplicates across groups, ranks survivors</td>
+<td>None</td>
+</tr>
 <tr class="odd">
 <td>orchestrator</td>
 <td>All</td>
-<td>Agent dispatch, quality gates, pipeline state</td>
+<td>Agent dispatch, quality gates (via <code>pipeline.py</code>, <code>score.py</code>)</td>
 <td>None</td>
 </tr>
 <tr class="even">
 <td>verifier</td>
 <td>Submission</td>
-<td>Compilation, execution, file integrity, AEA audit</td>
+<td>Compilation, execution, file integrity, AEA audit (<code>verify.py</code> + judgment)</td>
+<td>None</td>
+</tr>
+<tr class="odd">
+<td>guide-writer</td>
+<td>Documentation</td>
+<td>Guide pages and docs in a tutorial style</td>
 <td>None</td>
 </tr>
 </tbody>
@@ -702,9 +748,10 @@ window.Quarto = {
 <li><strong>Skill templates:</strong> <code>{skill}/templates/</code> — checklists, protocols, report formats</li>
 <li><strong>Skill config:</strong> <code>{skill}/config/</code> — scoring rubrics, tolerance thresholds</li>
 <li><strong>Permission registry:</strong> <code>.claude/rules/permissions.md</code> — REQUIRES, PRODUCES, escalation targets, quality weights</li>
-<li><strong>Lifecycle validation:</strong> <code>.claude/rules/lifecycle.md</code> — pre-dispatch and post-completion checks</li>
+<li><strong>Lifecycle validation:</strong> <code>.claude/rules/lifecycle.md</code> — pre-dispatch and post-completion checks, run by <code>scripts/pipeline.py check-pre</code> / <code>check-post</code></li>
+<li><strong>Weights and thresholds:</strong> <code>.claude/skills/new-project/config/quality-gates.json</code>, read by <code>scripts/score.py</code></li>
 </ul>
-<p>The permission registry is the single source of truth for agent dispatch. Adding a new agent means adding one entry there and one file in <code>.claude/agents/</code>. No other file needs to change.</p>
+<p>The permission registry is the single source of truth for agent dispatch. Adding a new agent means a file in <code>.claude/agents/</code> (frontmatter <code>model: inherit</code>, optional <code>effort:</code>) and an entry in <code>permissions.md</code>. If the orchestrator dispatches it, add it to the orchestrator’s <code>Agent(...)</code> roster; if it is weighted, add it to <code>quality-gates.json</code> too — <code>check_scaffold.py</code> fails when the weights in the two files disagree.</p>
 
 
 </section>
@@ -796,7 +843,7 @@ window.Quarto = {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/hugosantanna\.github\.io\/clo-author\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

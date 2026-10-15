@@ -1,5 +1,0 @@
-In the past days I finally gave some attention to my research scaffold. I made clo-author more aware of the type of research we're doing — reduced-form, structural, theory+empirics, or descriptive. Each agent now adapts.
-
-The unexpected origin: I took heavy inspiration from the coding standards in my computer science friend Vinícius Ferrão's C++23 HPC project — zero warnings, static analyzers, numerical guards, contract-driven design — and ported the philosophy to LLM agents writing R and LaTeX.
-
-LLM agents do their best creative work when they do not have to think about mechanical rules. So I added some float guards, pre-allocation, naming maps, and 21 numbered content invariants that the AI should follow without arguing about it. The boring stuff that separates output that compiles from output that's right.

@@ -2,14 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.38">
 
-<link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Architecture – The Clo-Author</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -66,21 +68,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-fdd259eaf9296a602f9f2594b91304b4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-1e421a9c73e24ddbaf9719a3c33ffac8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-b9862f91d0a1d344de8539a32e8a5ff2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-10a0879e8cb5ddd784eb9f3673ca8224.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -115,7 +117,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="site_libs/quarto-diagram/mermaid.css" rel="stylesheet">
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -432,9 +434,7 @@ window.Quarto = {
   <li><a href="#sec-pipeline-state" id="toc-sec-pipeline-state" class="nav-link" data-scroll-target="#sec-pipeline-state">Pipeline State and Session Recovery</a>
   <ul class="collapse">
   <li><a href="#the-state-file" id="toc-the-state-file" class="nav-link" data-scroll-target="#the-state-file">The state file</a></li>
-  <li><a href="#write-triggers" id="toc-write-triggers" class="nav-link" data-scroll-target="#write-triggers">Write triggers</a></li>
-  <li><a href="#read-triggers" id="toc-read-triggers" class="nav-link" data-scroll-target="#read-triggers">Read triggers</a></li>
-  <li><a href="#session-recovery-order" id="toc-session-recovery-order" class="nav-link" data-scroll-target="#session-recovery-order">Session recovery order</a></li>
+  <li><a href="#session-recovery" id="toc-session-recovery" class="nav-link" data-scroll-target="#session-recovery">Session recovery</a></li>
   <li><a href="#execution-traces" id="toc-execution-traces" class="nav-link" data-scroll-target="#execution-traces">Execution traces</a></li>
   <li><a href="#relationship-to-the-research-journal" id="toc-relationship-to-the-research-journal" class="nav-link" data-scroll-target="#relationship-to-the-research-journal">Relationship to the research journal</a></li>
   </ul></li>
@@ -445,7 +445,8 @@ window.Quarto = {
   <li><a href="#gate-thresholds" id="toc-gate-thresholds" class="nav-link" data-scroll-target="#gate-thresholds">Gate thresholds</a></li>
   <li><a href="#severity-gradient" id="toc-severity-gradient" class="nav-link" data-scroll-target="#severity-gradient">Severity gradient</a></li>
   </ul></li>
-  <li><a href="#sec-plan-first" id="toc-sec-plan-first" class="nav-link" data-scroll-target="#sec-plan-first">Plan-First Protocol</a>
+  <li><a href="#sec-scripts" id="toc-sec-scripts" class="nav-link" data-scroll-target="#sec-scripts">Scripts Enforce the Gates</a></li>
+  <li><a href="#sec-plan-first" id="toc-sec-plan-first" class="nav-link" data-scroll-target="#sec-plan-first">Plans and Approval</a>
   <ul class="collapse">
   <li><a href="#the-protocol" id="toc-the-protocol" class="nav-link" data-scroll-target="#the-protocol">The protocol</a></li>
   <li><a href="#simplified-mode" id="toc-simplified-mode" class="nav-link" data-scroll-target="#simplified-mode">Simplified mode</a></li>
@@ -512,7 +513,7 @@ window.Quarto = {
 <tr class="even">
 <td>Rules</td>
 <td><code>.claude/rules/</code></td>
-<td>Every session</td>
+<td>6 every session; 7 when a matching file is read</td>
 <td>Quality gates, invariants, permissions, lifecycle, workflow</td>
 </tr>
 <tr class="odd">
@@ -537,11 +538,11 @@ window.Quarto = {
 <td>Hooks</td>
 <td><code>.claude/hooks/</code></td>
 <td>Event-driven</td>
-<td>Pre-commit lint, pre-compact checklist</td>
+<td>File protection, session guards, post-edit lint, compaction save and restore, hook health</td>
 </tr>
 </tbody>
 </table>
-<p><code>CLAUDE.md</code> and rules are always in context. Everything else loads on demand. For the full layer-by-layer breakdown, see the <a href="./customization.html">Customization Guide</a>.</p>
+<p><code>CLAUDE.md</code> and six rule files are always in context: 679 lines, under the 700-line budget that <code>scripts/check_scaffold.py</code> enforces. The other seven rules carry <code>paths:</code> frontmatter and load when Claude reads a matching file (see <a href="./rules.html#sec-rule-loading">How Rules Load</a>). Everything else loads on demand. The pre-commit gate is a git hook in <code>.githooks/</code>, not a Claude Code hook; both are covered in <a href="./hooks.html">Hooks &amp; Automation</a>. For the full layer-by-layer breakdown, see the <a href="./customization.html">Customization Guide</a>.</p>
 <hr>
 </section>
 <section id="sec-skill-folders" class="level1">
@@ -591,14 +592,14 @@ window.Quarto = {
 </section>
 <section id="skill-folder-structure" class="level2">
 <h2 class="anchored" data-anchor-id="skill-folder-structure">Skill folder structure</h2>
-<p>Every skill follows the same layout:</p>
+<p>Skills share one layout:</p>
 <pre><code>skill-name/
 ├── SKILL.md          # Routing + dispatch logic (Level 2)
 ├── gotchas.md        # Known failure points, edge cases
 ├── templates/        # Reusable artifacts the agent loads
 ├── references/       # Domain-specific reference material
 └── config/           # Machine-readable configuration</code></pre>
-<p>Not every skill uses every subfolder. The <code>/write</code> skill has <code>templates/</code> (paragraph moves, section templates, cleanup patterns) and <code>references/</code> (notation protocol). The <code>/review</code> skill has <code>templates/</code> (scoring rubrics, referee report template) and <code>config/</code> (disposition pool weights). The <code>/strategize</code> skill has <code>templates/</code> (strategy memo structure, PAP templates, theory memo) and <code>references/</code> (PAP interview flow). Each skill carries exactly the knowledge its agents need.</p>
+<p>Not every skill uses every subfolder. The <code>/write</code> skill has <code>templates/</code> (paragraph moves, section templates, cleanup patterns) and <code>references/</code> (notation protocol). The <code>/review</code> skill has <code>templates/</code> (review checklists, referee report template, disposition pool) and <code>config/</code> (scoring rubrics). The <code>/strategize</code> skill has <code>templates/</code> (strategy memo structure, PAP templates, theory memo) and <code>references/</code> (PAP interview flow). Each skill carries exactly the knowledge its agents need.</p>
 </section>
 <section id="the-wiring" class="level2">
 <h2 class="anchored" data-anchor-id="the-wiring">The wiring</h2>
@@ -611,7 +612,7 @@ window.Quarto = {
 </section>
 <section id="gotchas-as-first-class-content" class="level2">
 <h2 class="anchored" data-anchor-id="gotchas-as-first-class-content">Gotchas as first-class content</h2>
-<p>Every skill has a <code>gotchas.md</code> — the highest-signal file in the folder. These are known failure modes, accumulated from real pipeline runs. The strategist’s gotchas warn that “staggered adoption does not automatically mean DiD is the right choice.” The writer’s gotchas note that “the cleanup pass can over-correct domain-specific hedging that’s actually appropriate.” The review skill’s gotchas document when cold-read critics produce false positives.</p>
+<p>Thirteen of the 18 skills have a <code>gotchas.md</code> — the highest-signal file in the folder. (<code>/coherence</code>, <code>/dashboard</code>, <code>/deepread</code>, <code>/explain</code>, and <code>/paper-format</code> have none.) These are known failure modes, accumulated from real pipeline runs. The strategist’s gotchas warn that “staggered adoption does not automatically mean DiD is the right choice.” The writer’s gotchas note that “the cleanup pass can over-correct domain-specific hedging that’s actually appropriate.” The review skill’s gotchas document when cold-read critics produce false positives.</p>
 <p>Gotchas are the fastest path to quality improvement. When a failure recurs, it gets a line in <code>gotchas.md</code>. The agent reads it before execution. The failure stops recurring.</p>
 </section>
 <section id="what-this-means-in-practice" class="level2">
@@ -622,7 +623,7 @@ window.Quarto = {
 </section>
 <section id="sec-permissions" class="level1">
 <h1>The Permission Registry</h1>
-<p>Every agent’s capabilities, dependencies, and routing are declared in a single file: <code>.claude/rules/permissions.md</code>. The Orchestrator reads this registry before dispatching any agent. No other file hardcodes agent relationships.</p>
+<p>Every agent’s capabilities, dependencies, and routing are declared in one registry: <code>.claude/rules/permissions.md</code>. The Orchestrator reads it, and <code>scripts/pipeline.py</code> parses it to check each dispatch. Two other files hold part of the picture. Quality weights live in <code>.claude/skills/new-project/config/quality-gates.json</code>; the registry’s <code>QUALITY_WEIGHT</code> fields mirror them, and <code>scripts/check_scaffold.py</code> fails if the two disagree. The orchestrator’s <code>tools: Agent(...)</code> roster lists the agents it is allowed to dispatch.</p>
 <section id="reading-an-entry" class="level2">
 <h2 class="anchored" data-anchor-id="reading-an-entry">Reading an entry</h2>
 <p>Each entry declares seven fields: <code>PHASE</code>, <code>PARALLEL_GROUP</code>, <code>REQUIRES</code>, <code>PRODUCES</code>, <code>CRITIC</code>, <code>ESCALATION_TARGET</code>, and <code>QUALITY_WEIGHT</code>.</p>
@@ -639,11 +640,11 @@ window.Quarto = {
 - CRITIC: strategist-critic
 - ESCALATION_TARGET: User --- fundamental design question
 - QUALITY_WEIGHT: 25% (identification validity)</code></pre>
-<p>The <code>REQUIRES</code> field uses OR logic — the strategist can activate after literature review alone, data assessment alone, or both. The <code>PRODUCES</code> field specifies not just the output file but the sections that must appear in it. POST-completion validation (see <a href="#sec-lifecycle">Section 4</a>) checks these sections exist before advancing.</p>
+<p>The <code>REQUIRES</code> field uses OR logic — the strategist can activate after literature review alone, data assessment alone, or both. The <code>PRODUCES</code> field specifies not just the output file but the sections that must appear in it. <code>pipeline.py check-post</code> (see <a href="#sec-lifecycle">Lifecycle Validation</a>) checks that these sections exist before the pipeline advances.</p>
 </section>
 <section id="adding-an-agent" class="level2">
 <h2 class="anchored" data-anchor-id="adding-an-agent">Adding an agent</h2>
-<p>Adding a new agent is a one-file change. Create the agent file in <code>.claude/agents/</code>, add its entry to <code>permissions.md</code>. No other file needs modification — the Orchestrator discovers agents by reading the registry.</p>
+<p>Create the agent file in <code>.claude/agents/</code> and add its entry to <code>permissions.md</code>. Two more edits when they apply: add the agent to the orchestrator’s <code>Agent(...)</code> roster if the orchestrator dispatches it, and to <code>quality-gates.json</code> if it carries a weight. <code>scripts/check_scaffold.py</code> fails on a roster name with no agent file and on a weight that differs between the two files. Step-by-step in the <a href="./customization.html#sec-new-agent">Customization Guide</a>.</p>
 <hr>
 </section>
 </section>
@@ -660,8 +661,8 @@ flowchart TD
     START([Plan approved]):::start --&gt; ID
     ID[1. IDENTIFY\nCheck dependency graph]:::step --&gt; DISP[2. DISPATCH\nLaunch worker-critic pairs]:::step
     DISP --&gt; REV[3. REVIEW\nCritic scores artifact]:::step
-    REV --&gt;|score &gt;= 80| VER[4. VERIFY\nCompile, render, run]:::step
-    REV --&gt;|score &lt; 80| FIX[Worker fixes]:::worker
+    REV --&gt;|"&gt;= 80, or SOUND / MINOR"| VER[4. VERIFY\nCompile, render, run]:::step
+    REV --&gt;|"&lt; 80, or MAJOR / CRITICAL"| FIX[Worker fixes]:::worker
     FIX --&gt; REV
     VER --&gt; SC[5. SCORE\nWeighted aggregate]:::step
     SC --&gt;|&gt;= threshold| DONE([Present summary]):::approved
@@ -684,11 +685,11 @@ flowchart TD
 </section>
 <section id="step-2-dispatch" class="level3">
 <h3 class="anchored" data-anchor-id="step-2-dispatch">Step 2: DISPATCH</h3>
-<p>Worker-critic pairs launch for all agents whose <code>REQUIRES</code> are satisfied. Agents in the same <code>PARALLEL_GROUP</code> run concurrently — for example, the librarian and explorer both belong to the <code>discovery</code> group and run simultaneously. Before dispatch, the Orchestrator runs PRE-validation (see <a href="#sec-lifecycle">Section 4</a>).</p>
+<p>Worker-critic pairs launch for all agents whose <code>REQUIRES</code> are satisfied. Agents in the same <code>PARALLEL_GROUP</code> run concurrently — for example, the librarian and explorer both belong to the <code>discovery</code> group and run simultaneously. Before dispatch, the Orchestrator runs <code>pipeline.py check-pre</code> (see <a href="#sec-lifecycle">Lifecycle Validation</a>).</p>
 </section>
 <section id="step-3-review" class="level3">
 <h3 class="anchored" data-anchor-id="step-3-review">Step 3: REVIEW</h3>
-<p>The paired critic evaluates the worker’s artifact against its rubric. If the score is below 80, the worker revises and the critic re-reviews. This inner loop runs up to 3 rounds per pair (see <a href="#sec-worker-critic">Section 5</a>).</p>
+<p>The paired critic evaluates the worker’s artifact against its rubric. If the score is below 80, the worker revises and the critic re-reviews. The strategist-critic gives a verdict instead of a score: SOUND or MINOR ISSUES passes, MAJOR ISSUES or CRITICAL ERRORS sends the memo back. This inner loop runs up to 3 rounds per pair (see <a href="#sec-worker-critic">Worker-Critic Protocol</a>).</p>
 </section>
 <section id="step-4-verify" class="level3">
 <h3 class="anchored" data-anchor-id="step-4-verify">Step 4: VERIFY</h3>
@@ -696,7 +697,7 @@ flowchart TD
 </section>
 <section id="step-5-score" class="level3">
 <h3 class="anchored" data-anchor-id="step-5-score">Step 5: SCORE</h3>
-<p>Compute the weighted aggregate across all scored components. If the score meets the gate threshold, present the summary to the user. If not, loop back to Step 1 to identify the blocking components.</p>
+<p>Run <code>scripts/score.py</code>, which computes the weighted aggregate from the research journal (see <a href="#sec-scoring">Scoring Protocol</a>). If the score meets the gate threshold, present the summary to the user. If not, loop back to Step 1 to identify the blocking components.</p>
 </section>
 <section id="limits" class="level3">
 <h3 class="anchored" data-anchor-id="limits">Limits</h3>
@@ -738,22 +739,23 @@ flowchart TD
 </section>
 <section id="sec-lifecycle" class="level1">
 <h1>Lifecycle Validation</h1>
-<p>The Orchestrator runs validation checks at two points: before dispatching an agent and after an agent completes. This implements a fail-fast principle — missing inputs are caught before work begins, missing outputs are caught before advancement.</p>
+<p>Validation runs at two points: before an agent is dispatched and after it completes. The checks are a script, <code>scripts/pipeline.py</code>, which reads each agent’s <code>permissions.md</code> entry and the research journal; the Orchestrator calls it and acts on the result. This implements a fail-fast principle — missing inputs are caught before work begins, missing outputs are caught before advancement.</p>
 <section id="pre-dispatch-checks" class="level2">
 <h2 class="anchored" data-anchor-id="pre-dispatch-checks">PRE-dispatch checks</h2>
-<p>Before dispatching any agent, the Orchestrator reads its <code>permissions.md</code> entry and verifies that <code>REQUIRES</code> artifacts exist (file paths globbed, score gates checked against the research journal, directories confirmed non-empty) and that required sections are present in structured artifacts.</p>
-<p>If PRE validation fails, the agent is not dispatched.</p>
+<p><code>python3 scripts/pipeline.py check-pre &lt;agent&gt;</code> verifies the agent’s <code>REQUIRES</code>: paths exist and directories are non-empty, critic scores and verdicts in the research journal meet their thresholds, and OR / AND clauses combine as written. Exit 1 means the agent is not dispatched.</p>
 </section>
 <section id="post-completion-checks" class="level2">
 <h2 class="anchored" data-anchor-id="post-completion-checks">POST-completion checks</h2>
-<p>After an agent completes, the Orchestrator verifies that <code>PRODUCES</code> artifacts exist, required sections are present, and the critic score is recorded in the research journal.</p>
-<p>If POST validation fails, the pipeline does not advance. The Orchestrator re-dispatches the agent with the specific gaps noted.</p>
+<p><code>python3 scripts/pipeline.py check-post &lt;agent&gt;</code> verifies that the <code>PRODUCES</code> artifacts exist and contain their required sections. Exit 1 means the pipeline does not advance; the Orchestrator re-dispatches the agent with the gaps noted. A critic’s result gates the <em>next</em> agent, so it is checked by that agent’s <code>check-pre</code>.</p>
+<p>Each condition prints PASS, FAIL, or MANUAL. MANUAL marks a condition only judgment can settle (for example, “Research idea or research spec”); the Orchestrator decides it and says how.</p>
 </section>
 <section id="what-failure-looks-like" class="level2">
 <h2 class="anchored" data-anchor-id="what-failure-looks-like">What failure looks like</h2>
-<pre><code>Cannot dispatch [coder]: missing quality_reports/strategy/{project}/strategy_memo.md
-  → Run /strategize first to produce the strategy memo.</code></pre>
-<p>No agent launches with missing inputs. No agent advances with missing outputs. The Orchestrator includes the validation failure in its report to the user.</p>
+<pre><code>check-pre coder
+  FAIL   `quality_reports/strategy/minwage/strategy_memo.md` missing or empty
+  FAIL   strategist-critic has no verdict in the research journal
+Cannot dispatch coder: `quality_reports/strategy/minwage/strategy_memo.md` missing or empty</code></pre>
+<p>No agent launches with missing inputs. No agent advances with missing outputs. The Orchestrator reports the failure to the user along with the skill that produces the missing input (here, <code>/strategize</code>).</p>
 <hr>
 </section>
 </section>
@@ -787,6 +789,7 @@ flowchart TD
 </div>
 </div>
 </div>
+<p>The strategist-critic rules by verdict rather than score: SOUND or MINOR ISSUES approves the memo, MAJOR ISSUES or CRITICAL ERRORS sends it back.</p>
 </section>
 <section id="cold-read-enforcement" class="level2">
 <h2 class="anchored" data-anchor-id="cold-read-enforcement">Cold-read enforcement</h2>
@@ -795,7 +798,7 @@ flowchart TD
 </section>
 <section id="separation-of-powers" class="level2">
 <h2 class="anchored" data-anchor-id="separation-of-powers">Separation of powers</h2>
-<p>Critics never create artifacts. Creators never self-score. If a critic invocation produces a file in <code>scripts/</code>, <code>paper/</code>, or <code>paper/talks/</code>, the Orchestrator flags it as a violation. If a creator reports its own score, the Orchestrator discards it and dispatches the critic.</p>
+<p>Critics never create artifacts. Creators never self-score. Every critic’s and referee’s tool list is read-only (<code>Read, Grep, Glob</code>), so a critic cannot write to <code>scripts/</code> or <code>paper/</code> in the first place. If a creator reports its own score, the Orchestrator discards it and dispatches the critic.</p>
 <p>A critic who fixes its own findings has incentive to find only fixable issues. Separation keeps criticism honest.</p>
 </section>
 <section id="escalation-routing" class="level2">
@@ -880,10 +883,11 @@ flowchart TD
 </section>
 <section id="synthesis-rules" class="level2">
 <h2 class="anchored" data-anchor-id="synthesis-rules">Synthesis rules</h2>
+<p>A critic passes the artifact with a score of 80 or more; the strategist-critic passes it with a verdict of SOUND or MINOR ISSUES.</p>
 <ul>
-<li><strong>Both &gt;= 80:</strong> Pass. Artifact advances.</li>
-<li><strong>One &lt; 80:</strong> Worker fixes issues from the failing critic. Both critics re-evaluate.</li>
-<li><strong>Both &lt; 80:</strong> Escalate per the pair’s <code>ESCALATION_TARGET</code>.</li>
+<li><strong>Both pass:</strong> Artifact advances.</li>
+<li><strong>One fails:</strong> Worker fixes issues from the failing critic. Both critics re-evaluate.</li>
+<li><strong>Both fail:</strong> Escalate per the pair’s <code>ESCALATION_TARGET</code>.</li>
 </ul>
 </section>
 <section id="independence" class="level2">
@@ -900,85 +904,38 @@ flowchart TD
 <h1>Pipeline State and Session Recovery</h1>
 <section id="the-state-file" class="level2">
 <h2 class="anchored" data-anchor-id="the-state-file">The state file</h2>
-<p>The Orchestrator maintains structured pipeline state in <code>quality_reports/pipeline_state.json</code>. The schema tracks:</p>
+<p>Nobody maintains <code>quality_reports/pipeline_state.json</code> by hand. <code>python3 scripts/pipeline.py status</code> derives it from the research journal and the registry: which agents have run, with rounds and latest result; which can be dispatched now; which are waiting and on what; the overall score; and the first gate that fails. The Orchestrator reruns it after each agent completes and before each phase transition. A trimmed example:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"project"</span><span class="fu">:</span> <span class="st">"project-name"</span><span class="fu">,</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"phase"</span><span class="fu">:</span> <span class="st">"Execution"</span><span class="fu">,</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"last_updated"</span><span class="fu">:</span> <span class="st">"2026-05-09T14:30:00Z"</span><span class="fu">,</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"project"</span><span class="fu">:</span> <span class="st">"minwage"</span><span class="fu">,</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"phase"</span><span class="fu">:</span> <span class="st">"Strategy"</span><span class="fu">,</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"last_updated"</span><span class="fu">:</span> <span class="st">"2026-10-15T14:15:35"</span><span class="fu">,</span></span>
 <span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"agents_completed"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span> <span class="dt">"agent"</span><span class="fu">:</span> <span class="st">"strategist"</span><span class="fu">,</span> <span class="dt">"critic"</span><span class="fu">:</span> <span class="st">"strategist-critic"</span><span class="fu">,</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"score"</span><span class="fu">:</span> <span class="dv">88</span><span class="fu">,</span> <span class="dt">"rounds"</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span> <span class="dt">"artifact"</span><span class="fu">:</span> <span class="st">"strategy_memo.md"</span> <span class="fu">}</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"agents_in_progress"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span> <span class="dt">"agent"</span><span class="fu">:</span> <span class="st">"coder"</span><span class="fu">,</span> <span class="dt">"critic"</span><span class="fu">:</span> <span class="st">"coder-critic"</span><span class="fu">,</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"current_round"</span><span class="fu">:</span> <span class="dv">2</span><span class="fu">,</span> <span class="dt">"max_rounds"</span><span class="fu">:</span> <span class="dv">3</span><span class="fu">,</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"last_score"</span><span class="fu">:</span> <span class="dv">72</span><span class="fu">,</span> <span class="dt">"issues_remaining"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"missing robustness"</span><span class="ot">]</span> <span class="fu">}</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"agents_pending"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"writer"</span><span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"overall_score"</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span></span>
-<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"blocked_by"</span><span class="fu">:</span> <span class="kw">null</span></span>
-<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span> <span class="dt">"agent"</span><span class="fu">:</span> <span class="st">"strategist-critic"</span><span class="fu">,</span> <span class="dt">"score"</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span> <span class="dt">"verdict"</span><span class="fu">:</span> <span class="st">"MINOR ISSUES"</span><span class="fu">,</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"rounds"</span><span class="fu">:</span> <span class="dv">1</span><span class="fu">,</span> <span class="dt">"report"</span><span class="fu">:</span> <span class="st">"quality_reports/strategy/minwage/strategy_review.md"</span><span class="fu">,</span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"timestamp"</span><span class="fu">:</span> <span class="st">"2026-10-14 11:20"</span> <span class="fu">}</span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"agents_in_progress"</span><span class="fu">:</span> <span class="ot">[]</span><span class="fu">,</span></span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"agents_pending"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"librarian"</span><span class="ot">,</span> <span class="st">"explorer"</span><span class="ot">,</span> <span class="st">"theorist"</span><span class="ot">,</span> <span class="st">"data-engineer"</span><span class="ot">,</span> <span class="st">"coder"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"agents_waiting"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span> <span class="dt">"agent"</span><span class="fu">:</span> <span class="st">"writer"</span><span class="fu">,</span> <span class="dt">"missing"</span><span class="fu">:</span> <span class="st">"coder-critic has no score in the research journal"</span> <span class="fu">}</span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb4-15"><a href="#cb4-15" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"overall_score"</span><span class="fu">:</span> <span class="fl">85.0</span><span class="fu">,</span></span>
+<span id="cb4-16"><a href="#cb4-16" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"components"</span><span class="fu">:</span> <span class="fu">{</span> <span class="dt">"identification"</span><span class="fu">:</span> <span class="fl">85.0</span><span class="fu">,</span> <span class="dt">"code"</span><span class="fu">:</span> <span class="kw">null</span><span class="fu">,</span> <span class="dt">"manuscript"</span><span class="fu">:</span> <span class="kw">null</span> <span class="fu">},</span></span>
+<span id="cb4-17"><a href="#cb4-17" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"blocked_by"</span><span class="fu">:</span> <span class="st">"pr gate: overall 85.0 &lt; 90"</span><span class="fu">,</span></span>
+<span id="cb4-18"><a href="#cb4-18" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"derived_from"</span><span class="fu">:</span> <span class="st">"quality_reports/research_journal.md via scripts/pipeline.py status"</span></span>
+<span id="cb4-19"><a href="#cb4-19" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="write-triggers" class="level2">
-<h2 class="anchored" data-anchor-id="write-triggers">Write triggers</h2>
-<p>The Orchestrator updates the state file at four points:</p>
-<ol type="1">
-<li><strong>After agent completion</strong> — move from <code>agents_in_progress</code> to <code>agents_completed</code></li>
-<li><strong>After critic score</strong> — update the score and round count</li>
-<li><strong>After phase transition</strong> — update the <code>phase</code> field</li>
-<li><strong>After escalation</strong> — set <code>blocked_by</code></li>
-</ol>
-</section>
-<section id="read-triggers" class="level2">
-<h2 class="anchored" data-anchor-id="read-triggers">Read triggers</h2>
-<p>On session start (new session or after context compression), the Orchestrator reads <code>pipeline_state.json</code> as the first action. The structured state is faster and more reliable than reconstructing from prose logs.</p>
-</section>
-<section id="session-recovery-order" class="level2">
-<h2 class="anchored" data-anchor-id="session-recovery-order">Session recovery order</h2>
-<table class="caption-top table">
-<colgroup>
-<col style="width: 27%">
-<col style="width: 36%">
-<col style="width: 36%">
-</colgroup>
-<thead>
-<tr class="header">
-<th>Step</th>
-<th>Action</th>
-<th>Source</th>
-</tr>
-</thead>
-<tbody>
-<tr class="odd">
-<td>0</td>
-<td>Read pipeline state</td>
-<td><code>quality_reports/pipeline_state.json</code></td>
-</tr>
-<tr class="even">
-<td>1</td>
-<td>Read checkpoint artifacts</td>
-<td><code>SESSION_REPORT.md</code>, <code>quality_reports/research_journal.md</code></td>
-</tr>
-<tr class="odd">
-<td>2</td>
-<td>Read project config + plan</td>
-<td><code>CLAUDE.md</code>, most recent file in <code>quality_reports/plans/</code></td>
-</tr>
-<tr class="even">
-<td>3</td>
-<td>Check recent changes</td>
-<td><code>git log --oneline -10</code>, <code>git diff</code></td>
-</tr>
-</tbody>
-</table>
+<section id="session-recovery" class="level2">
+<h2 class="anchored" data-anchor-id="session-recovery">Session recovery</h2>
+<p>After compaction or a resume, the <code>post-compact-restore.py</code> SessionStart hook prints the active plan, the pipeline state, and the last <code>SESSION_REPORT.md</code> entry into the new context (see <a href="./hooks.html#post-compact-restore">Hooks &amp; Automation</a>). Claude reads the files it names and checks <code>git status</code> before continuing. In a fresh session, start from <code>pipeline_state.json</code> and the most recent plan in <code>quality_reports/plans/</code>.</p>
 </section>
 <section id="execution-traces" class="level2">
 <h2 class="anchored" data-anchor-id="execution-traces">Execution traces</h2>
-<p>After completing a multi-agent skill (<code>/new-project</code>, <code>/analyze</code>, <code>/write full</code>), the Orchestrator generates an execution trace from the pipeline state and saves it to <code>quality_reports/traces/</code>. The trace includes a mermaid graph of the agent invocation sequence, a table of rounds and scores per agent, any escalation events, and a pipeline summary with totals.</p>
+<p>After a multi-agent skill (<code>/new-project</code>, <code>/analyze</code>, <code>/write full</code>), <code>python3 scripts/pipeline.py traces</code> tabulates rounds, first-pass and final score per agent, and flags HIGH-PERF, FRICTION, and USER ESCALATION. The Orchestrator saves that table with a short reading of the patterns to <code>quality_reports/traces/YYYY-MM-DD_trace.md</code>.</p>
 </section>
 <section id="relationship-to-the-research-journal" class="level2">
 <h2 class="anchored" data-anchor-id="relationship-to-the-research-journal">Relationship to the research journal</h2>
-<p><code>pipeline_state.json</code> is structured, machine-readable, and overwritten. <code>research_journal.md</code> is narrative, append-only, and human-readable. Both are maintained — the state file is for fast recovery, the journal is for understanding what happened and why.</p>
+<p>The research journal is the record: append-only, one entry per agent invocation, and the input to both <code>score.py</code> and <code>pipeline.py</code>. A critic result that isn’t logged there doesn’t count. <code>pipeline_state.json</code> is a view of the journal, regenerated whenever it is needed.</p>
 <hr>
 </section>
 </section>
@@ -986,10 +943,15 @@ flowchart TD
 <h1>Scoring Protocol</h1>
 <section id="weighted-aggregation" class="level2">
 <h2 class="anchored" data-anchor-id="weighted-aggregation">Weighted aggregation</h2>
-<p>Each agent’s quality weight is declared in its <code>permissions.md</code> entry. The Orchestrator reads the registry and computes:</p>
-<p><span class="math display">\[\text{Overall} = \sum_i w_i \times \text{score}_i\]</span></p>
-<p>where <span class="math inline">\(w_i\)</span> is the agent’s <code>QUALITY_WEIGHT</code> and <span class="math inline">\(\text{score}_i\)</span> is the critic’s final score (0–100). Current weights:</p>
+<p><code>scripts/score.py</code> computes the score; the Orchestrator reports its output and never recomputes it. The script reads each critic’s latest entry in the research journal and the weights in <code>.claude/skills/new-project/config/quality-gates.json</code>, the single source for weights and thresholds:</p>
+<p><span class="math display">\[\text{Overall} = \frac{\sum_{i \in \text{scored}} w_i \times \text{score}_i}{\sum_{i \in \text{scored}} w_i}\]</span></p>
+<p>where <span class="math inline">\(w_i\)</span> is the component’s weight and <span class="math inline">\(\text{score}_i\)</span> is the critic’s latest score (0–100). Current weights:</p>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 40%">
+<col style="width: 29%">
+<col style="width: 29%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Component</th>
@@ -1011,7 +973,7 @@ flowchart TD
 <tr class="odd">
 <td>Identification validity</td>
 <td>25%</td>
-<td>strategist-critic</td>
+<td>strategist-critic (verdict: SOUND 95, MINOR ISSUES 85, MAJOR ISSUES 65, CRITICAL ERRORS 40)</td>
 </tr>
 <tr class="even">
 <td>Theory (when present)</td>
@@ -1024,65 +986,77 @@ flowchart TD
 <td>coder-critic</td>
 </tr>
 <tr class="even">
-<td>Paper quality</td>
-<td>25%</td>
-<td>Avg(domain-referee, methods-referee)</td>
+<td>Referee: domain</td>
+<td>12.5%</td>
+<td>domain-referee</td>
 </tr>
 <tr class="odd">
+<td>Referee: methods</td>
+<td>12.5%</td>
+<td>methods-referee</td>
+</tr>
+<tr class="even">
 <td>Manuscript polish</td>
 <td>10%</td>
 <td>writer-critic</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td>Replication readiness</td>
 <td>5%</td>
-<td>verifier (0 or 100)</td>
+<td>verifier (pass/fail: 100 or 0)</td>
 </tr>
 </tbody>
 </table>
+<p>The strategist-critic’s verdict maps to a number for this aggregate only; everywhere else it gates by verdict.</p>
 </section>
 <section id="missing-components" class="level2">
 <h2 class="anchored" data-anchor-id="missing-components">Missing components</h2>
-<p>If a component has not been scored, it is excluded and remaining weights renormalize. The theory weight applies only when the theorist agent was dispatched (papers with formal theory sections). For applied papers using off-the-shelf estimators, theory is excluded automatically.</p>
+<p>If a component has not been scored, <code>score.py</code> excludes it, renormalizes the remaining weights, and lists what it excluded. The theory weight applies only when the theorist ran (papers with formal theory sections), so an applied paper’s weights sum to 100% and a theory paper’s are renormalized from 120%.</p>
 </section>
 <section id="gate-thresholds" class="level2">
 <h2 class="anchored" data-anchor-id="gate-thresholds">Gate thresholds</h2>
 <table class="caption-top table">
+<colgroup>
+<col style="width: 10%">
+<col style="width: 15%">
+<col style="width: 25%">
+<col style="width: 25%">
+<col style="width: 22%">
+</colgroup>
 <thead>
 <tr class="header">
 <th>Gate</th>
-<th>Overall Score</th>
-<th>Per-Component Min</th>
-<th>Consequence</th>
+<th>Overall</th>
+<th>Per component</th>
+<th>Also required</th>
+<th>Enforced by</th>
 </tr>
 </thead>
 <tbody>
 <tr class="odd">
 <td>Commit</td>
 <td>&gt;= 80</td>
-<td>None</td>
-<td>Allowed</td>
+<td>—</td>
+<td>Passes with a notice while nothing is scored</td>
+<td><code>/tools commit</code> runs <code>score.py --gate commit</code></td>
 </tr>
 <tr class="even">
 <td>PR</td>
 <td>&gt;= 90</td>
-<td>None</td>
-<td>Allowed</td>
+<td>—</td>
+<td>—</td>
+<td><code>score.py --gate pr</code> before opening a PR</td>
 </tr>
 <tr class="odd">
 <td>Submission</td>
 <td>&gt;= 95</td>
 <td>&gt;= 80</td>
-<td>Allowed</td>
-</tr>
-<tr class="even">
-<td>Below 80</td>
-<td>&lt; 80</td>
-<td>—</td>
-<td>Blocked</td>
+<td>Every non-conditional component scored; understanding gate (INV-26) passes</td>
+<td><code>/submit final</code> runs <code>score.py --gate submission</code> and <code>verify.py --mode submission</code></td>
 </tr>
 </tbody>
 </table>
+<p>The understanding gate is pass/fail and never enters the score: <code>score.py</code> runs <code>explainer_status.py --gate</code> as part of the submission gate. The git pre-commit gate does not check the score; a new project has no critic scores, and a gate that fails every early commit gets bypassed. See <a href="./rules.html#sec-gates">Quality Gates</a> for the coherence gate and the full rules.</p>
 </section>
 <section id="severity-gradient" class="level2">
 <h2 class="anchored" data-anchor-id="severity-gradient">Severity gradient</h2>
@@ -1131,23 +1105,70 @@ flowchart TD
 <hr>
 </section>
 </section>
+<section id="sec-scripts" class="level1">
+<h1>Scripts Enforce the Gates</h1>
+<p>The model used to do this arithmetic itself, working from prose that disagreed with itself about weights and thresholds: it added up weighted scores, globbed for required files, and estimated hedge counts by reading. Wherever the inputs fully determine the output, the check is now a script in <code>scripts/</code>. Agents call it and report the result; they keep only the checks that need judgment.</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 22%">
+<col style="width: 47%">
+<col style="width: 30%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Script</th>
+<th>What it decides</th>
+<th>Called by</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>score.py</code></td>
+<td>Weighted aggregate and the commit / PR / submission gates, from the research journal and <code>quality-gates.json</code></td>
+<td>Orchestrator, <code>/tools commit</code>, <code>/submit final</code></td>
+</tr>
+<tr class="even">
+<td><code>pipeline.py</code></td>
+<td><code>check-pre</code> / <code>check-post</code> against the registry; <code>status</code> writes the pipeline state; <code>traces</code> flags patterns</td>
+<td>Orchestrator</td>
+</tr>
+<tr class="odd">
+<td><code>verify.py</code></td>
+<td>The verifier’s mechanical checks: compile, file integrity, output freshness, script inventory, dependency files, master run, exhibit cross-reference, INV-26</td>
+<td>verifier, <code>/submit final</code></td>
+</tr>
+<tr class="even">
+<td><code>paper_coherence.py</code></td>
+<td>Cross-references, citation keys, claim numbers against table cells, abstract length (INV-5), Table 1 columns (INV-24)</td>
+<td><code>/coherence</code>, pre-commit gate (advisory)</td>
+</tr>
+<tr class="odd">
+<td><code>style_metrics.py</code></td>
+<td>The writer-critic’s countable deductions: AI vocabulary, hedging, em dashes, sentence length</td>
+<td><code>/review</code>, which hands the counts to the writer-critic</td>
+</tr>
+<tr class="even">
+<td><code>check_scaffold.py</code></td>
+<td>Broken references, missing hook files, weight disagreements between <code>permissions.md</code> and <code>quality-gates.json</code>, malformed frontmatter, guards without <code>"onFailure": "block"</code>, the 700-line always-loaded budget</td>
+<td>pre-commit gate, <code>/tools upgrade</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong>The git pre-commit gate.</strong> <code>.githooks/pre-commit</code>, turned on once per clone with <code>scripts/install-hooks.sh</code>, runs on every commit, including commits made outside Claude. It blocks on <code>check_scaffold.py</code> errors, on failing tests when hooks, scripts, or the registry changed, and on HIGH lint findings in staged analysis scripts. Paper-coherence findings are printed as advice. It does not check the quality score. To bypass it, run <code>SKIP_GATE=1 git commit ...</code> and say why in the commit message.</p>
+<p><strong>The scripts are tested.</strong> <code>scripts/test_scripts.py</code> runs each enforcement script against a throwaway fixture project; <code>scripts/test_hooks.py</code> covers the Claude Code hooks, which are documented in <a href="./hooks.html">Hooks &amp; Automation</a>.</p>
+<hr>
+</section>
 <section id="sec-plan-first" class="level1">
-<h1>Plan-First Protocol</h1>
-<p>For any non-trivial task, the system enters plan mode before implementation.</p>
+<h1>Plans and Approval</h1>
+<p>Plans and approval are reserved for work that is expensive to get wrong: a multi-agent pipeline run (<code>/new-project</code>, <code>/analyze</code>, <code>/write full</code>, <code>/revise</code>) or a change across many files. These cost real time and tokens. Medium and small tasks proceed without a written plan.</p>
 <section id="the-protocol" class="level2">
 <h2 class="anchored" data-anchor-id="the-protocol">The protocol</h2>
 <ol type="1">
-<li><strong>Enter plan mode</strong></li>
-<li><strong>Check memory</strong> — read <code>[LEARN]</code> entries relevant to the task</li>
-<li><strong>Requirements spec</strong> (for complex/ambiguous tasks) — clarify ambiguities, mark requirements as MUST / SHOULD / MAY, declare clarity status as CLEAR / ASSUMED / BLOCKED</li>
-<li><strong>Draft the plan</strong> — what changes, which files, in what order</li>
-<li><strong>Save to disk</strong> — <code>quality_reports/plans/YYYY-MM-DD_description.md</code></li>
-<li><strong>Present to user</strong> — wait for approval</li>
-<li><strong>Exit plan mode</strong> — only after approval</li>
-<li><strong>Save session log</strong> — capture goal and context while fresh</li>
-<li><strong>Implement</strong> — Orchestrator takes over via the dependency-driven loop</li>
+<li><strong>Write the plan</strong> — approach, files to change, how it will be verified; save it to <code>quality_reports/plans/YYYY-MM-DD_description.md</code></li>
+<li><strong>Get approval</strong> — the user approves before work starts</li>
+<li><strong>Implement</strong> — for pipelines, the Orchestrator takes over via the dependency-driven loop</li>
 </ol>
-<p>Plans survive context compression because they are saved to disk. The requirements spec step is optional — skip it for clear, specific tasks; use it for ambiguous or multi-file work.</p>
+<p><code>/new-project</code> keeps plan mode as its pipeline gate. For a large, ambiguous task, record the answers to clarifying questions as a requirements spec (MUST / SHOULD / MAY; CLEAR / ASSUMED / BLOCKED). Plans survive context compression because they are on disk, and the SessionStart hook points back to the active one.</p>
 </section>
 <section id="simplified-mode" class="level2">
 <h2 class="anchored" data-anchor-id="simplified-mode">Simplified mode</h2>
@@ -1155,7 +1176,7 @@ flowchart TD
 </section>
 <section id="just-do-it-mode" class="level2">
 <h2 class="anchored" data-anchor-id="just-do-it-mode">“Just do it” mode</h2>
-<p>When the user says “just do it” or “handle it”: skip the final approval pause, auto-commit if score &gt;= 80, but still run the full verify-review-fix loop.</p>
+<p>When the user says “just do it” or “handle it”: skip the final approval pause, auto-commit if <code>python3 scripts/score.py --gate commit</code> passes, but still run the full verify-review-fix loop.</p>
 <hr>
 </section>
 </section>
@@ -1303,7 +1324,7 @@ flowchart TD
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/hugosantanna\.github\.io\/clo-author\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

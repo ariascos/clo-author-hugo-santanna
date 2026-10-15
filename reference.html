@@ -2,14 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.38">
 
-<link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Command Reference – The Clo-Author</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -31,21 +33,21 @@ ul.task-list li input[type="checkbox"] {
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-fdd259eaf9296a602f9f2594b91304b4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-1e421a9c73e24ddbaf9719a3c33ffac8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-b9862f91d0a1d344de8539a32e8a5ff2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-10a0879e8cb5ddd784eb9f3673ca8224.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -324,12 +326,17 @@ ul.task-list li input[type="checkbox"] {
   <li><a href="#discover" id="toc-discover" class="nav-link" data-scroll-target="#discover"><code>/discover</code></a></li>
   <li><a href="#strategize" id="toc-strategize" class="nav-link" data-scroll-target="#strategize"><code>/strategize</code></a></li>
   <li><a href="#analyze" id="toc-analyze" class="nav-link" data-scroll-target="#analyze"><code>/analyze</code></a></li>
+  <li><a href="#explain" id="toc-explain" class="nav-link" data-scroll-target="#explain"><code>/explain</code></a></li>
   <li><a href="#write" id="toc-write" class="nav-link" data-scroll-target="#write"><code>/write</code></a></li>
+  <li><a href="#paper-format" id="toc-paper-format" class="nav-link" data-scroll-target="#paper-format"><code>/paper-format</code></a></li>
   <li><a href="#review" id="toc-review" class="nav-link" data-scroll-target="#review"><code>/review</code></a></li>
+  <li><a href="#coherence" id="toc-coherence" class="nav-link" data-scroll-target="#coherence"><code>/coherence</code></a></li>
+  <li><a href="#deepread" id="toc-deepread" class="nav-link" data-scroll-target="#deepread"><code>/deepread</code></a></li>
   <li><a href="#revise" id="toc-revise" class="nav-link" data-scroll-target="#revise"><code>/revise</code></a></li>
   <li><a href="#talk" id="toc-talk" class="nav-link" data-scroll-target="#talk"><code>/talk</code></a></li>
   <li><a href="#submit" id="toc-submit" class="nav-link" data-scroll-target="#submit"><code>/submit</code></a></li>
   <li><a href="#tools" id="toc-tools" class="nav-link" data-scroll-target="#tools"><code>/tools</code></a></li>
+  <li><a href="#dashboard" id="toc-dashboard" class="nav-link" data-scroll-target="#dashboard"><code>/dashboard</code></a></li>
   <li><a href="#freeze" id="toc-freeze" class="nav-link" data-scroll-target="#freeze"><code>/freeze</code></a></li>
   <li><a href="#careful" id="toc-careful" class="nav-link" data-scroll-target="#careful"><code>/careful</code></a></li>
   <li><a href="#checkpoint" id="toc-checkpoint" class="nav-link" data-scroll-target="#checkpoint"><code>/checkpoint</code></a></li>
@@ -398,14 +405,34 @@ ul.task-list li input[type="checkbox"] {
 <td>End-to-end data analysis (single or parallel language)</td>
 </tr>
 <tr class="odd">
+<td><code>/explain [script \| all]</code></td>
+<td><code>--quiz</code>, <code>--grade</code>, <code>--microworld</code>, <code>--status</code></td>
+<td>Explainer + quiz for agent-written code; feeds the INV-26 understanding gate</td>
+</tr>
+<tr class="even">
 <td><code>/write [section]</code></td>
 <td><code>intro</code>, <code>strategy</code>, <code>results</code>, <code>conclusion</code>, <code>data</code>, <code>model</code>, <code>abstract</code>, <code>full</code>, <code>humanize</code>, <code>style-guide</code></td>
 <td>Draft sections, strip AI patterns, or extract personal voice</td>
+</tr>
+<tr class="odd">
+<td><code>/paper-format [mode]</code></td>
+<td><code>audit</code>, <code>scaffold</code>, <code>table1</code>, <code>show</code></td>
+<td>Apply and check the paper house style (INV-23/24/25)</td>
 </tr>
 <tr class="even">
 <td><code>/review [file]</code></td>
 <td><code>--peer [journal]</code>, <code>--peer --r2</code>, <code>--stress [journal]</code>, <code>--methods</code>, <code>--theory</code>, <code>--proofread</code>, <code>--code</code>, <code>--replicate [lang]</code>, <code>--all</code></td>
 <td>Quality reviews (routes by target + flags)</td>
+</tr>
+<tr class="odd">
+<td><code>/coherence [file]</code></td>
+<td><code>--deep</code>, <code>--fix</code>, <code>--strict</code>, <code>--json</code></td>
+<td>Internal-consistency audit: refs, citations, numbers vs.&nbsp;tables, notation</td>
+</tr>
+<tr class="even">
+<td><code>/deepread [section]</code></td>
+<td><code>--dry-run</code>, <code>--segment segNN</code>, <code>--skeptic</code></td>
+<td>Deep technical read on Codex, no Claude tokens (runs only when typed)</td>
 </tr>
 <tr class="odd">
 <td><code>/revise [report]</code></td>
@@ -428,19 +455,24 @@ ul.task-list li input[type="checkbox"] {
 <td>Utilities</td>
 </tr>
 <tr class="odd">
+<td><code>/dashboard</code></td>
+<td><code>refresh</code>, <code>create</code>, <code>add-changelog TITLE</code></td>
+<td>Build or refresh <code>project_dashboard.html</code></td>
+</tr>
+<tr class="even">
 <td><code>/checkpoint</code></td>
 <td><code>--auto</code>, <code>--memory-only</code>, <code>--scaffold-only</code>, <code>--dry-run</code>, <code>--setup-obsidian</code></td>
 <td>Session handoff: memory + logs + Obsidian</td>
 </tr>
-<tr class="even">
+<tr class="odd">
 <td><code>/freeze [dirs]</code></td>
 <td><code>off</code></td>
-<td>Block edits outside specified directories for this session</td>
+<td>Block edits outside specified directories until turned off</td>
 </tr>
-<tr class="odd">
+<tr class="even">
 <td><code>/careful</code></td>
 <td><code>off</code></td>
-<td>Block destructive bash commands for this session</td>
+<td>Block destructive bash commands until turned off</td>
 </tr>
 </tbody>
 </table>
@@ -485,7 +517,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="even">
 <td>Strategy</td>
 <td>Strategist + strategist-critic; optionally theorist + theorist-critic</td>
-<td>Score &gt;= 80</td>
+<td>Strategist-critic verdict SOUND or MINOR ISSUES; theorist-critic &gt;= 80 if theory</td>
 </tr>
 <tr class="odd">
 <td>Execution</td>
@@ -500,7 +532,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Submission</td>
 <td>Coder + verifier; orchestrator</td>
-<td>Score &gt;= 95, all components &gt;= 80</td>
+<td>Score &gt;= 95, all components &gt;= 80, every non-conditional component scored, understanding gate (INV-26)</td>
 </tr>
 </tbody>
 </table>
@@ -697,8 +729,9 @@ ul.task-list li input[type="checkbox"] {
 <li>Output a mandatory Pre-Code Report proving the strategy memo, domain profile, and naming map were loaded.</li>
 <li>If raw data provided, dispatch Data-engineer for cleaning, variable construction, and summary statistics.</li>
 <li>Dispatch Coder for the main specification, robustness checks, and publication-ready output.</li>
-<li>Dispatch coder-critic for the full 12-category review.</li>
+<li>Dispatch coder-critic for the full 16-category review.</li>
 <li>Iterate up to 3 rounds on critical or major issues.</li>
+<li>Once coder-critic passes (&gt;= 80), dispatch the explainer for a delta-explainer and quiz per script (see <a href="#explain"><code>/explain</code></a>).</li>
 <li>Present results summary with estimates, scripts, outputs, and code review score.</li>
 </ol>
 <p><strong>Modes / Flags:</strong></p>
@@ -761,6 +794,66 @@ ul.task-list li input[type="checkbox"] {
 <li>Code review report in <code>quality_reports/</code>.</li>
 </ul>
 <p><strong>What to do next:</strong> Read <code>results_summary.md</code> to understand the findings. Check that estimates align with your expectations. Review the code review report for any unresolved issues. Proceed to <code>/write</code> to draft the paper.</p>
+<hr>
+</section>
+<section id="explain" class="level2">
+<h2 class="anchored" data-anchor-id="explain"><code>/explain</code></h2>
+<p><strong>Syntax:</strong> <code>/explain [script path | all] [--quiz | --grade | --microworld | --status]</code></p>
+<p>Correctness is what <code>/review</code> checks; comprehension is what this checks.</p>
+<p><strong>What happens:</strong></p>
+<ol type="1">
+<li>Run <code>scripts/explainer_status.py</code>: one row per script, <code>CURRENT</code>, <code>STALE</code> (script changed since its explainer), or <code>MISSING</code>.</li>
+<li>Dispatch the explainer with the script, strategy memo, and <code>results_summary.md</code>. It writes a delta-explainer (only what departs from the memo, plus a sample-construction ledger), a 5-question quiz, and a separate answer key.</li>
+<li>If the ledger comes back <code>NOT INSTRUMENTED</code>, offer to have the coder print drop counts, then re-run and re-explain. The explainer never guesses a count.</li>
+<li>Ask all five questions at once, no answers in view. Grade against the key: pass = 4/5 with Q1 correct.</li>
+<li>Log the attempt to <code>quality_reports/explainers/understanding_log.md</code>.</li>
+</ol>
+<p><strong>Modes / Flags:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 48%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Invocation</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>/explain [script]</code></td>
+<td>Explainer + quiz, then offer to run the quiz</td>
+</tr>
+<tr class="even">
+<td><code>/explain all</code></td>
+<td>Every script <code>--status</code> flags as missing or stale</td>
+</tr>
+<tr class="odd">
+<td><code>--quiz</code></td>
+<td>Ask the five questions, grade, log</td>
+</tr>
+<tr class="even">
+<td><code>--grade</code></td>
+<td>Grade answers already in the conversation</td>
+</tr>
+<tr class="odd">
+<td><code>--microworld</code></td>
+<td>Also build an interactive single-file HTML micro-world</td>
+</tr>
+<tr class="even">
+<td><code>--status</code></td>
+<td>Coverage table only</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Agents dispatched:</strong> Explainer; coder only if the ledger needs instrumenting.</p>
+<p><strong>Output artifacts:</strong></p>
+<ul>
+<li><code>quality_reports/explainers/{script}_explainer.md</code>, <code>{script}_quiz.md</code>, <code>{script}_quiz_key.md</code></li>
+<li><code>quality_reports/explainers/understanding_log.md</code></li>
+</ul>
+<p><strong>Gate:</strong> INV-26. <code>/write results</code> warns when the script behind the tables has no passing attempt; <code>/submit</code> blocks until every script behind a paper exhibit has a current explainer and a passing attempt at its current fingerprint. Pass/fail only — it never enters the weighted score.</p>
 <hr>
 </section>
 <section id="write" class="level2">
@@ -871,6 +964,45 @@ ul.task-list li input[type="checkbox"] {
 <p><strong>What to do next:</strong> Review each drafted section for accuracy and voice. The Writer uses TBD placeholders for missing results — fill these in or re-run after <code>/analyze</code> completes. Run <code>/review --proofread</code> for manuscript polish, or <code>/review --peer</code> for simulated peer review.</p>
 <hr>
 </section>
+<section id="paper-format" class="level2">
+<h2 class="anchored" data-anchor-id="paper-format"><code>/paper-format</code></h2>
+<p><strong>Syntax:</strong> <code>/paper-format [audit | scaffold | table1 | show] [target file]</code> (default: <code>audit</code>)</p>
+<p>Applies the mandatory paper house style. The specification lives in <code>.claude/rules/paper-organization.md</code>; this skill operationalizes it. The writer-critic and verifier enforce the same invariants.</p>
+<p><strong>Modes / Flags:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 31%">
+<col style="width: 68%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Mode</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>audit [main.tex]</code> (default)</td>
+<td>Pass/fail list against INV-23 (floats collected at the end of <code>main.tex</code>, none in section files), INV-24 (Table 1 = pre-treatment characteristics, two group columns, no difference/SD/p-value column), INV-25 (<code>threeparttable</code> / <code>subcaption</code> wrappers), booktabs. No edits unless asked</td>
+</tr>
+<tr class="even">
+<td><code>scaffold [main.tex]</code></td>
+<td>Insert the TABLES and FIGURES blocks after the bibliography and move inline floats into them</td>
+</tr>
+<tr class="odd">
+<td><code>table1</code></td>
+<td>Build Table 1 from the project’s panel: bare <code>tabular</code> plus the canonical wrapper in <code>main.tex</code></td>
+</tr>
+<tr class="even">
+<td><code>show</code></td>
+<td>Print the table, figure, and Table 1 templates for copy-paste</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Agents dispatched:</strong> None.</p>
+<p><strong>What to do next:</strong> Fix float placement with <code>scaffold</code>, then re-run <code>audit</code>. <code>/coherence</code> also flags INV-23 and INV-24 violations mechanically.</p>
+<hr>
+</section>
 <section id="review" class="level2">
 <h2 class="anchored" data-anchor-id="review"><code>/review</code></h2>
 <p><strong>Syntax:</strong> <code>/review [file path or --flag] [journal]</code></p>
@@ -879,7 +1011,7 @@ ul.task-list li input[type="checkbox"] {
 <ol type="1">
 <li>Detect review mode from arguments: auto-detect by file extension, or use explicit flag.</li>
 <li>Dispatch the appropriate critic agent(s).</li>
-<li>Run mechanical lint (for code reviews) before the judgment review.</li>
+<li>Run the mechanical pass before the judgment review: lint for code reviews, <code>scripts/style_metrics.py</code> whenever the writer-critic is dispatched (it has no Bash, so <code>/review</code> hands it the counts).</li>
 <li>Produce scored reports. Critics never edit files — they produce reports only.</li>
 <li>Save reports to <code>quality_reports/</code> with HTML versions and dashboard refresh.</li>
 </ol>
@@ -902,7 +1034,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td><em>(auto <code>.R</code>/<code>.py</code>/<code>.jl</code>)</em></td>
-<td>Code review: coder-critic standalone (categories 4–12)</td>
+<td>Code review: coder-critic standalone (categories 5–16)</td>
 </tr>
 <tr class="odd">
 <td><em>(auto <code>.tex</code> in <code>talks/</code>)</em></td>
@@ -910,7 +1042,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td><code>--peer [journal]</code></td>
-<td>Full simulated peer review: editor desk review, referee dispatch, editorial decision</td>
+<td>Full simulated peer review: editor desk review, referee dispatch on a fenced copy of the manuscript, editorial decision</td>
 </tr>
 <tr class="odd">
 <td><code>--peer --r2 [journal]</code></td>
@@ -930,11 +1062,11 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td><code>--proofread [file]</code></td>
-<td>Manuscript polish only: writer-critic 6-category review</td>
+<td>Manuscript polish only: <code>style_metrics.py</code> counts, then writer-critic categories 4, 5, 6, 8 of 8</td>
 </tr>
 <tr class="even">
 <td><code>--code [file]</code></td>
-<td>Code review only: coder-critic categories 4–12 (no strategy comparison)</td>
+<td>Code review only: coder-critic categories 5–16 (no strategy comparison)</td>
 </tr>
 <tr class="odd">
 <td><code>--replicate [lang]</code></td>
@@ -942,7 +1074,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td><code>--all</code></td>
-<td>All critics in parallel + weighted aggregate score</td>
+<td>All critics in parallel; <code>scripts/score.py</code> computes the weighted aggregate</td>
 </tr>
 </tbody>
 </table>
@@ -974,7 +1106,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td><code>--peer</code></td>
-<td>Editor + domain-referee + methods-referee (3 sequential phases)</td>
+<td>Editor + domain-referee + methods-referee (3 sequential phases; referees read a fenced copy outside the repo)</td>
 <td><code>quality_reports/reviews/YYYY-MM-DD_desk_review.md</code>, <code>_referee_domain.md</code>, <code>_referee_methods.md</code>, <code>_editorial_decision.md</code></td>
 </tr>
 <tr class="even">
@@ -1015,11 +1147,11 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td><code>--all</code></td>
 <td>All critics in parallel (theorist-critic included when theory section exists)</td>
-<td><code>quality_reports/</code> + weighted aggregate score</td>
+<td><code>quality_reports/</code> + weighted aggregate score (computed by <code>score.py</code>)</td>
 </tr>
 </tbody>
 </table>
-<p><strong>Peer review details:</strong> The editor reads the paper and decides DESK REJECT or SEND TO REFEREES. If sent, the editor assigns each referee a disposition (STRUCTURAL, CREDIBILITY, MEASUREMENT, POLICY, THEORY, or SKEPTIC) plus one critical and one constructive pet peeve from the journal’s referee pool. Both referees review independently and blind. Every major comment must include “what would change my mind.” The editor then classifies each concern as FATAL, ADDRESSABLE, or TASTE and produces an editorial decision: Accept / Minor Revisions / Major Revisions / Reject. When a journal name is provided, the entire flow calibrates to that journal’s profile.</p>
+<p><strong>Peer review details:</strong> The editor reads the paper and decides DESK REJECT or SEND TO REFEREES. If sent, the editor assigns each referee a disposition (STRUCTURAL, CREDIBILITY, MEASUREMENT, POLICY, THEORY, or SKEPTIC) plus one critical and one constructive pet peeve from the journal’s referee pool. Both referees review independently and blind. In round 1 they read a fenced copy of the manuscript outside the repository, away from earlier verdicts in <code>quality_reports/reviews/</code>; <code>--peer --r2</code> deliberately reuses round 1. Every major comment must include “what would change my mind.” The editor then classifies each concern as FATAL, ADDRESSABLE, or TASTE and produces an editorial decision: Accept / Minor Revisions / Major Revisions / Reject. When a journal name is provided, the entire flow calibrates to that journal’s profile.</p>
 <p><strong>R&amp;R rounds:</strong> Round 2 skips desk review. Same referees check whether each prior concern was resolved, partially resolved, or not addressed. Round 3 (max) allows Accept, Minor, or Reject only.</p>
 <p><strong>Scoring:</strong></p>
 <table class="caption-top table">
@@ -1054,7 +1186,7 @@ ul.task-list li input[type="checkbox"] {
 <tr class="odd">
 <td>Causal Audit</td>
 <td>Yes</td>
-<td>80 commit</td>
+<td>Verdict: SOUND or MINOR ISSUES to proceed</td>
 </tr>
 <tr class="even">
 <td>Proofread</td>
@@ -1064,6 +1196,106 @@ ul.task-list li input[type="checkbox"] {
 </tbody>
 </table>
 <p><strong>What to do next:</strong> Read the reports. For peer review, address MUST items first, then SHOULD items. For code review, fix critical and major issues, then re-run. For <code>--all</code>, check which components are below 80 and focus there.</p>
+<hr>
+</section>
+<section id="coherence" class="level2">
+<h2 class="anchored" data-anchor-id="coherence"><code>/coherence</code></h2>
+<p><strong>Syntax:</strong> <code>/coherence [file path] [--deep] [--fix] [--strict] [--json]</code></p>
+<p>Is the paper internally sound? Not whether it is any good — that is <code>/review</code>. Every deterministic finding is checkable: a reference resolves or it does not, a number appears in the cited table or it does not.</p>
+<p><strong>What happens:</strong></p>
+<ol type="1">
+<li><strong>Layer 1 (always):</strong> <code>scripts/paper_coherence.py</code> checks cross-references, citation keys, <code>\input</code> and graphics targets, claim numbers against the cells of the tables they cite, derived arithmetic, orphan floats, duplicate macros, abstract length (INV-5), and Table 1 columns (INV-24). Standard library only; exits 1 on a blocking finding.</li>
+<li><strong>Layer 2 (<code>--deep</code>):</strong> coherence-finder runs once per non-empty check group (specification, claims, continuity, notation, theory), each in its own context; one coherence-skeptic per group with findings tries to refute them; coherence-consolidator merges and ranks the survivors.</li>
+<li>Save the report and refresh the dashboard.</li>
+</ol>
+<p><strong>Modes / Flags:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 48%">
+<col style="width: 52%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Invocation</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>/coherence</code></td>
+<td>Layer 1 over the whole paper</td>
+</tr>
+<tr class="even">
+<td><code>/coherence [file]</code></td>
+<td>Layer 1 scoped to one file</td>
+</tr>
+<tr class="odd">
+<td><code>--deep</code></td>
+<td>Layer 1 + the reasoning pass (advisory, never blocks)</td>
+</tr>
+<tr class="even">
+<td><code>--fix</code></td>
+<td>Apply only unambiguous mechanical fixes (a mistyped label, a wrong graphic extension). Never edits a claim number</td>
+</tr>
+<tr class="odd">
+<td><code>--strict</code></td>
+<td>Promote minor findings to blocking (before submission)</td>
+</tr>
+<tr class="even">
+<td><code>--json</code></td>
+<td>Emit the index only, no markdown</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Agents dispatched:</strong> None for Layer 1. With <code>--deep</code>: coherence-finder × check group, coherence-skeptic × group with findings, coherence-consolidator once.</p>
+<p><strong>Output artifacts:</strong> <code>quality_reports/coherence/YYYY-MM-DD_report.md</code> and <code>quality_reports/coherence/index.json</code>.</p>
+<p><strong>What to do next:</strong> Fix blocking findings first; the report gives the nearest table cell for each number mismatch. A PASS with 0 table cells indexed means the tables could not be parsed, not that the paper is sound. Run this before <code>/deepread</code> and <code>/review --peer</code>.</p>
+<hr>
+</section>
+<section id="deepread" class="level2">
+<h2 class="anchored" data-anchor-id="deepread"><code>/deepread</code></h2>
+<p><strong>Syntax:</strong> <code>/deepread [--dry-run | --segment segNN | --skeptic | path/to/section.tex]</code></p>
+<p>A referee-grade technical reading of a near-final draft. Every model call runs on Codex (<code>codex exec</code>, read-only sandbox), so a run costs no Claude tokens. Runs only when you type it; never edits the paper.</p>
+<p><strong>What happens:</strong></p>
+<ol type="1">
+<li><code>scripts/deepread.py</code> splits the paper into sections (via <code>paper_coherence.py --segments</code>), each carrying the tables, notes, and equations it cites.</li>
+<li>Readers comment on each segment in parallel: <code>general</code> always, <code>rigor</code> if it has equations, <code>evidence</code> if it has tables, <code>skeptic</code> with <code>--skeptic</code>.</li>
+<li>One verifier per segment tries to refute each comment; a consolidator merges duplicates and ranks; an overall assessment closes the report.</li>
+</ol>
+<p><strong>Modes / Flags:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 31%">
+<col style="width: 68%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Flag</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>--dry-run</code></td>
+<td>Print segments, agent count, and projected token cost, then stop. Run this first</td>
+</tr>
+<tr class="even">
+<td><code>--segment segNN</code></td>
+<td>One section only</td>
+</tr>
+<tr class="odd">
+<td><code>--skeptic</code></td>
+<td>Add the adversarial reader (~+50% cost)</td>
+</tr>
+<tr class="even">
+<td><code>--jobs N</code>, <code>--min-segment-words N</code>, <code>--debug DIR</code>, <code>--out PATH</code></td>
+<td>Parallelism, segment merging, raw transcripts, report path</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Agents dispatched:</strong> None — Codex readers driven by a Python script, with prompts in <code>scripts/deepread_prompts/</code>. Requires the <code>codex</code> CLI.</p>
+<p><strong>Output artifacts:</strong> <code>quality_reports/deepread/YYYY-MM-DD_report.md</code> — funnel (comments raised vs.&nbsp;survived, tokens spent vs.&nbsp;projected), overall assessment, and comments anchored to exact quotes. No score, no verdict.</p>
+<p><strong>What to do next:</strong> Run <code>/coherence</code> first so the readers do not spend comments on stale numbers. A full run on a 14-segment paper measured ~2.4M Codex tokens and ~30 minutes.</p>
 <hr>
 </section>
 <section id="revise" class="level2">
@@ -1239,14 +1471,10 @@ ul.task-list li input[type="checkbox"] {
 <li>For <code>target</code>: analyze contribution and recommend journals.</li>
 <li>For <code>package</code>: build AEA-compliant replication package with master script and documentation.</li>
 <li>For <code>audit</code>: run 10-point replication verification.</li>
-<li>For <code>final</code>: run comprehensive review + replication audit + score gate enforcement.</li>
+<li>For <code>final</code>: run comprehensive review + replication audit + gate enforcement (<code>python3 scripts/score.py --gate submission</code>, then <code>python3 scripts/verify.py --mode submission</code>).</li>
 </ol>
 <p><strong>Modes / Flags:</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 31%">
-<col style="width: 68%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Mode</th>
@@ -1268,7 +1496,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td><code>final [journal]</code></td>
-<td>Full gate: score &gt;= 95, all components &gt;= 80. Produces cover letter or blocks with issues</td>
+<td>Full gate: score &gt;= 95, all components &gt;= 80, every non-conditional component scored, and the understanding gate (INV-26, see <a href="#explain"><code>/explain</code></a>). Produces cover letter or blocks with issues</td>
 </tr>
 </tbody>
 </table>
@@ -1325,10 +1553,6 @@ ul.task-list li input[type="checkbox"] {
 <p>Each subcommand is lightweight — no multi-agent orchestration.</p>
 <p><strong>Subcommands:</strong></p>
 <table class="caption-top table">
-<colgroup>
-<col style="width: 48%">
-<col style="width: 52%">
-</colgroup>
 <thead>
 <tr class="header">
 <th>Subcommand</th>
@@ -1338,7 +1562,7 @@ ul.task-list li input[type="checkbox"] {
 <tbody>
 <tr class="odd">
 <td><code>commit [message]</code></td>
-<td>Stage changes, create commit. Notes quality score if available. Never stages <code>.env</code> or credentials.</td>
+<td>Stage changes, run <code>score.py --gate commit</code>, create commit. Stops and names the low components if the score is below 80; passes with a notice when nothing is scored yet. Never stages <code>.env</code> or credentials. The git pre-commit gate (<a href="./hooks.html#post-merge">hooks</a>) runs on every commit, including ones made outside this skill.</td>
 </tr>
 <tr class="even">
 <td><code>compile [file]</code></td>
@@ -1350,7 +1574,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td><code>lint [file\|dir]</code></td>
-<td>Grep-based mechanical linting for R/Python/Julia against prohibited patterns. Catches <code>setwd()</code>, absolute paths, missing seed, <code>T</code>/<code>F</code> literals, <code>sapply()</code>, and more. Severity-graded (HIGH/MEDIUM/LOW). Always advisory.</td>
+<td>Grep-based mechanical linting for R/Python/Julia against prohibited patterns. Catches <code>setwd()</code>, absolute paths, missing seed, <code>T</code>/<code>F</code> literals, <code>sapply()</code>, and more. Severity-graded (HIGH/MEDIUM/LOW). Advisory here; the git pre-commit gate blocks HIGH findings in staged analysis scripts.</td>
 </tr>
 <tr class="odd">
 <td><code>journal</code></td>
@@ -1362,7 +1586,7 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="odd">
 <td><code>dashboard [--open]</code></td>
-<td>Regenerate the project dashboard HTML. Opens in browser by default.</td>
+<td>Alias kept for <a href="#dashboard"><code>/dashboard</code></a>: runs <code>generate_dashboard.py</code> and opens the page by default.</td>
 </tr>
 <tr class="even">
 <td><code>deploy</code></td>
@@ -1374,17 +1598,52 @@ ul.task-list li input[type="checkbox"] {
 </tr>
 <tr class="even">
 <td><code>upgrade</code></td>
-<td>Upgrade <code>.claude/</code> to the latest clo-author release. Preserves domain profile, custom journal profiles, and settings. Does not touch <code>paper/</code>, <code>scripts/</code>, <code>data/</code>, or any user content.</td>
+<td>Upgrade to the latest clo-author release. Shows the plan and waits for approval. Replaces <code>.claude/</code> (keeps the domain profile, custom journal profiles, and <code>settings.local.json</code>; your additions to <code>settings.json</code> move into <code>settings.local.json</code>), the scaffold scripts in <code>scripts/</code> marked <code>clo-author: infrastructure</code> plus <code>scripts/deepread_prompts/</code>, and <code>.githooks/</code> (then runs <code>install-hooks.sh</code>). Copies <code>paper/preambles/header.tex</code> only if missing. Never touches your analysis scripts, <code>paper/</code>, or <code>data/</code>. Finishes by running <code>check_scaffold.py</code> and <code>test_hooks.py</code>. See <a href="./user-guide.html#sec-upgrading">Upgrading</a>.</td>
 </tr>
 </tbody>
 </table>
-<p><strong>What to do next:</strong> Run <code>validate-bib</code> before commits to catch broken citations. Run <code>lint</code> before <code>/review --code</code> to clear mechanical violations. Run <code>dashboard</code> after any significant work to refresh the project overview.</p>
+<p><strong>What to do next:</strong> Run <code>validate-bib</code> before commits to catch broken citations. Run <code>lint</code> before <code>/review --code</code> to clear mechanical violations. Run <code>/dashboard</code> after any significant work to refresh the project overview.</p>
+<hr>
+</section>
+<section id="dashboard" class="level2">
+<h2 class="anchored" data-anchor-id="dashboard"><code>/dashboard</code></h2>
+<p><strong>Syntax:</strong> <code>/dashboard [refresh | create | add-changelog TITLE]</code></p>
+<p>Builds <code>project_dashboard.html</code>: one scrollable page with ten sections (overview, data, identification, literature, code, quality, history, plans, paper, changelog). <code>scripts/generate_dashboard.py</code> writes the operational skeleton; Claude hand-writes the research sections.</p>
+<p><strong>Modes / Flags:</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 31%">
+<col style="width: 68%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Mode</th>
+<th>Description</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>refresh</code> (default)</td>
+<td>Rebuild the operational sections (data, code, quality, history) from disk. Authored research sections and the changelog are preserved. If no dashboard exists yet, the script creates the skeleton first</td>
+</tr>
+<tr class="even">
+<td><code>create</code></td>
+<td><code>generate_dashboard.py --fresh</code>, then ask for the research question, causal chain, contributions, and risks and write those sections</td>
+</tr>
+<tr class="odd">
+<td><code>add-changelog TITLE</code></td>
+<td>Append a dated changelog entry (append-only)</td>
+</tr>
+</tbody>
+</table>
+<p><strong>Agents dispatched:</strong> None.</p>
+<p><strong>Output artifacts:</strong> <code>project_dashboard.html</code> in the project root. The Code section shows each script’s understanding status (PASSED / UNTESTED / STALE / MISSING) from <code>explainer_status.py</code> — the early warning for the INV-26 gate at <code>/submit</code>.</p>
 <hr>
 </section>
 <section id="freeze" class="level2">
 <h2 class="anchored" data-anchor-id="freeze"><code>/freeze</code></h2>
 <p><strong>Syntax:</strong> <code>/freeze [dirs]</code> or <code>/freeze off</code></p>
-<p>Session-scoped edit guard. Blocks Write and Edit operations on files outside the specified directories.</p>
+<p>Edit guard. Blocks Write and Edit operations on files outside the specified directories until you turn it off.</p>
 <p><strong>What happens:</strong></p>
 <ol type="1">
 <li>Parse directory arguments from the command.</li>
@@ -1423,7 +1682,7 @@ ul.task-list li input[type="checkbox"] {
 <ul>
 <li><code>.claude/</code> is always editable regardless of freeze scope (we cannot freeze ourselves out of configuration changes)</li>
 <li>Paths are relative to the project root</li>
-<li>Session-scoped — resets when the conversation ends</li>
+<li>Persists until <code>/freeze off</code> — the guard file stays on disk across conversations and nothing clears it automatically (<a href="./hooks.html#session-guard">session-guard</a>)</li>
 <li>Only blocks Claude’s Edit and Write tools, not the user’s editor</li>
 </ul>
 <p><strong>When to use:</strong> During focused writing sessions (freeze everything except <code>paper/</code>), during code review (freeze everything except notes), or when editing data pipelines (freeze <code>paper/</code> to prevent accidental manuscript changes).</p>
@@ -1432,7 +1691,7 @@ ul.task-list li input[type="checkbox"] {
 <section id="careful" class="level2">
 <h2 class="anchored" data-anchor-id="careful"><code>/careful</code></h2>
 <p><strong>Syntax:</strong> <code>/careful</code> or <code>/careful off</code></p>
-<p>Session-scoped destructive command guard. Blocks Bash commands matching dangerous patterns before they execute.</p>
+<p>Destructive command guard. Blocks Bash commands matching dangerous patterns before they execute, until you turn it off. It does not prompt before file writes.</p>
 <p><strong>What happens:</strong></p>
 <ol type="1">
 <li>Write guard configuration to <code>.claude/state/session-guards.json</code>.</li>
@@ -1484,7 +1743,7 @@ ul.task-list li input[type="checkbox"] {
 </table>
 <p><strong>Behavior:</strong></p>
 <ul>
-<li>Session-scoped — resets when the conversation ends</li>
+<li>Persists until <code>/careful off</code> — the guard file stays on disk across conversations and nothing clears it automatically</li>
 <li>Only blocks Claude’s Bash tool, not the user’s terminal</li>
 <li>Non-destructive commands pass through without delay</li>
 <li><code>rm</code> without <code>-rf</code> (single file deletion) is still allowed</li>
@@ -1641,7 +1900,7 @@ ul.task-list li input[type="checkbox"] {
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/hugosantanna\.github\.io\/clo-author\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

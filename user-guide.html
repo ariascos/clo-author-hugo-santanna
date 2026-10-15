@@ -2,14 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.38">
 
-<link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>User Guide – The Clo-Author</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -66,21 +68,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-fdd259eaf9296a602f9f2594b91304b4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-1e421a9c73e24ddbaf9719a3c33ffac8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-b9862f91d0a1d344de8539a32e8a5ff2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-10a0879e8cb5ddd784eb9f3673ca8224.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -360,10 +362,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#your-first-review" id="toc-your-first-review" class="nav-link" data-scroll-target="#your-first-review">Your First Review</a></li>
   <li><a href="#your-first-draft" id="toc-your-first-draft" class="nav-link" data-scroll-target="#your-first-draft">Your First Draft</a></li>
   <li><a href="#running-the-full-pipeline" id="toc-running-the-full-pipeline" class="nav-link" data-scroll-target="#running-the-full-pipeline">Running the Full Pipeline</a></li>
+  <li><a href="#sec-checking" id="toc-sec-checking" class="nav-link" data-scroll-target="#sec-checking">Checking the Paper</a></li>
   <li><a href="#revising-after-referee-reports" id="toc-revising-after-referee-reports" class="nav-link" data-scroll-target="#revising-after-referee-reports">Revising After Referee Reports</a></li>
   <li><a href="#creating-a-talk" id="toc-creating-a-talk" class="nav-link" data-scroll-target="#creating-a-talk">Creating a Talk</a></li>
   <li><a href="#session-guards" id="toc-session-guards" class="nav-link" data-scroll-target="#session-guards">Session Guards</a></li>
   <li><a href="#quality-gates" id="toc-quality-gates" class="nav-link" data-scroll-target="#quality-gates">Quality Gates</a></li>
+  <li><a href="#managing-long-sessions" id="toc-managing-long-sessions" class="nav-link" data-scroll-target="#managing-long-sessions">Managing Long Sessions</a>
+  <ul class="collapse">
+  <li><a href="#compaction-discipline" id="toc-compaction-discipline" class="nav-link" data-scroll-target="#compaction-discipline">Compaction discipline</a></li>
+  <li><a href="#rewind-correct-compact-or-clear" id="toc-rewind-correct-compact-or-clear" class="nav-link" data-scroll-target="#rewind-correct-compact-or-clear">Rewind, correct, compact, or clear</a></li>
+  </ul></li>
   <li><a href="#troubleshooting" id="toc-troubleshooting" class="nav-link" data-scroll-target="#troubleshooting">Troubleshooting</a>
   <ul class="collapse">
   <li><a href="#latex-wont-compile" id="toc-latex-wont-compile" class="nav-link" data-scroll-target="#latex-wont-compile">LaTeX Won’t Compile</a></li>
@@ -402,7 +410,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <section id="a-typical-workflow" class="level2">
 <h2 class="anchored" data-anchor-id="a-typical-workflow">A Typical Workflow</h2>
-<p><strong>Every interaction follows the same loop: you describe, agents execute, critics score, you approve.</strong> Claude plans the work, dispatches specialized agents, and presents results for your sign-off. For complex tasks, it asks 3–5 clarifying questions before committing to a plan.</p>
+<p><strong>Every interaction follows the same loop: you describe, agents execute, critics score, you approve.</strong> Claude dispatches specialized agents and presents results for your sign-off. Before a multi-agent pipeline run (<code>/new-project</code>, <code>/analyze</code>, <code>/write full</code>, <code>/revise</code>) or a change across many files, it saves a plan to <code>quality_reports/plans/</code> and waits for your approval; smaller tasks go ahead without one. It asks clarifying questions only when different readings of your request would lead to materially different work.</p>
 <div class="cell" data-layout-align="default">
 <div class="cell-output-display">
 <div>
@@ -433,7 +441,7 @@ flowchart LR
 <h2 class="anchored" data-anchor-id="your-first-review">Your First Review</h2>
 <p><strong>Simulated peer review catches fatal problems before real referees do.</strong> One command dispatches two independent reviewers calibrated to your target journal.</p>
 <p><strong>What you type:</strong> <code>/review --peer JHR paper/main.tex</code></p>
-<p><strong>What happens behind the scenes:</strong> The editor does a desk review — checks scope, assigns each referee a disposition (Credibility, Policy, Skeptic, etc.) and pet peeves that shape their review personality. Two blind referees then review independently: a domain-referee (subject expertise) and a methods-referee (empirical methods). Neither sees the other’s report.</p>
+<p><strong>What happens behind the scenes:</strong> The editor does a desk review — checks scope, assigns each referee a disposition (Credibility, Policy, Skeptic, etc.) and pet peeves that shape their review personality. Two blind referees then review independently: a domain-referee (subject expertise) and a methods-referee (empirical methods). Neither sees the other’s report. In round 1 both read a fenced copy of the manuscript outside the repository, so earlier verdicts in <code>quality_reports/reviews/</code> can’t anchor them.</p>
 <p><strong>What you see:</strong> An editorial decision that classifies every concern as FATAL, ADDRESSABLE, or TASTE:</p>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Editorial Decision --- Journal of Human Resources</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>**Decision:** Major Revisions</span>
@@ -480,10 +488,56 @@ Paragraph 6 [ROADMAP]: Section-by-section guide</code></pre>
 <li><strong>Strategy</strong> — the strategist classifies your paper type and designs the identification strategy. The strategist-critic runs a 4-phase adversarial review. You see a strategy memo with assumptions, pseudo-code, and a robustness plan.</li>
 <li><strong>Execution</strong> — the coder translates the strategy memo into numbered scripts; the writer drafts the manuscript from actual results. Both are reviewed by their paired critics. You see scripts, tables, figures, and LaTeX sections.</li>
 <li><strong>Review</strong> — the editor dispatches two blind referees. You see an editorial decision with classified concerns and action items.</li>
-<li><strong>Submission</strong> — the verifier runs a 10-check audit on the replication package. The final gate enforces score &gt;= 95 with all components &gt;= 80.</li>
+<li><strong>Submission</strong> — the verifier runs a 10-check audit on the replication package. The final gate enforces score &gt;= 95 with all components &gt;= 80, plus the understanding gate: a passing <code>/explain</code> quiz for every script behind a paper exhibit (see <a href="#sec-checking">Checking the Paper</a>).</li>
 </ol>
 <p><strong>What you see:</strong> At each gate, a summary with scores and the next decision point. The pipeline never advances without your approval.</p>
 <p><strong>What to do next:</strong> Read the strategy memo carefully — it becomes the contract the coder implements. Review referee reports as you would real ones. For details on any phase, see the <a href="./reference.html">Command Reference</a>.</p>
+<hr>
+</section>
+<section id="sec-checking" class="level2">
+<h2 class="anchored" data-anchor-id="sec-checking">Checking the Paper</h2>
+<p><strong>The critics judge quality. Four more commands check what they don’t: house style, internal consistency, a close technical read, and whether you can explain the code.</strong></p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 21%">
+<col style="width: 39%">
+<col style="width: 39%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Command</th>
+<th>What it checks</th>
+<th>When to run it</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><code>/paper-format</code></td>
+<td>House style: floats at the end of <code>main.tex</code>, Table 1 as pre-treatment characteristics, canonical table and figure wrappers (INV-23/24/25)</td>
+<td>While building tables and figures</td>
+</tr>
+<tr class="even">
+<td><code>/coherence</code></td>
+<td>Cross-references, citation keys, claim numbers against the tables they cite</td>
+<td>Before commits; always before submission</td>
+</tr>
+<tr class="odd">
+<td><code>/deepread</code></td>
+<td>A referee-grade technical read of every section</td>
+<td>On a near-final draft</td>
+</tr>
+<tr class="even">
+<td><code>/explain [script]</code></td>
+<td>Whether you understand the code an agent wrote</td>
+<td>After <code>/analyze</code>; required before <code>/submit</code></td>
+</tr>
+</tbody>
+</table>
+<p><strong><code>/paper-format</code></strong> audits by default and reports each violation with its invariant number. Its <code>scaffold</code> and <code>table1</code> modes build the end-of-paper float blocks and Table 1.</p>
+<p><strong><code>/coherence</code></strong> runs a deterministic parser whose findings are checkable — a reference resolves or it doesn’t, a number appears in the cited table or it doesn’t. Major findings block. <code>--deep</code> adds a reasoning pass: a coherence-finder per check group, a skeptic that tries to refute each group’s findings, and a consolidator that merges the survivors. Reasoning findings are advisory. <code>--fix</code> applies only unambiguous mechanical fixes and never edits a claim number.</p>
+<p><strong><code>/deepread</code></strong> fans commenters across every section, tries to refute each comment, and writes the survivors with an overall assessment to <code>quality_reports/deepread/</code>. It runs on Codex, so it costs no Claude tokens, and it needs the Codex CLI installed and signed in. It runs only when you type it. Start with <code>/deepread --dry-run</code> to see the projected cost.</p>
+<p><strong><code>/explain [script]</code></strong> is the understanding gate (INV-26). The explainer agent writes a delta-explainer (what the code does beyond the strategy memo, with a ledger of every sample restriction) and a five-question quiz with a separate answer key. Pass is 4 of 5 with Q1 correct. <code>/submit</code> blocks until every script behind a paper exhibit has a current explainer and a passing attempt. When a script changes, its explainer goes stale and the gate reopens. The gate is pass/fail and never enters the quality score; <code>/explain --status</code> shows coverage.</p>
+<p><strong><code>/dashboard</code></strong> puts the whole project on one page, <code>project_dashboard.html</code>: data, scripts, quality reports, plans, git history, literature. <code>scripts/generate_dashboard.py</code> writes the operational skeleton and Claude writes the research sections. <code>/dashboard refresh</code> updates it in place without overwriting what you wrote.</p>
 <hr>
 </section>
 <section id="revising-after-referee-reports" class="level2">
@@ -546,10 +600,10 @@ Paragraph 6 [ROADMAP]: Section-by-section guide</code></pre>
 </section>
 <section id="session-guards" class="level2">
 <h2 class="anchored" data-anchor-id="session-guards">Session Guards</h2>
-<p><strong>Two commands protect you from expensive mistakes.</strong> Both are session-scoped — they reset when the conversation ends.</p>
-<p><code>/freeze paper/</code> locks a directory from edits for the rest of the session. Use it when you are reviewing code but jotting notes about the paper — the system will refuse to modify frozen paths, preventing accidental overwrites while your attention is elsewhere.</p>
-<p><code>/careful</code> activates confirmation prompts before every file write. Use it before working on a critical branch, during final pre-submission edits, or any time the cost of a wrong edit exceeds the cost of an extra confirmation step.</p>
-<p>Neither command persists across sessions. Start a new conversation and all guards are cleared.</p>
+<p><strong>Two commands protect you from expensive mistakes.</strong> Both write <code>.claude/state/session-guards.json</code>, and nothing clears that file automatically — a guard stays on until you turn it off.</p>
+<p><code>/freeze paper/</code> restricts edits to the directories you name — here, only <code>paper/</code> — and refuses to modify files anywhere else. Use it when you are polishing the paper and want scripts and data out of reach while your attention is there.</p>
+<p><code>/careful</code> blocks destructive shell commands: <code>rm -rf</code>, <code>git reset --hard</code>, <code>git push --force</code>, <code>git clean -f</code>, and similar. It does not prompt before file writes. Use it before working on a critical branch, during final pre-submission edits, or any time a wrong command would cost more than the guard does.</p>
+<p>Both persist across conversations. Run <code>/freeze off</code> or <code>/careful off</code> when you are done — an edit refused days later may be an old <code>/freeze</code> still in force.</p>
 <hr>
 </section>
 <section id="quality-gates" class="level2">
@@ -572,7 +626,7 @@ Paragraph 6 [ROADMAP]: Section-by-section guide</code></pre>
 <tr class="odd">
 <td><strong>Commit</strong></td>
 <td>&gt;= 80</td>
-<td>Work can be committed to the repository</td>
+<td><code>/tools commit</code> commits (with a notice when nothing has been scored yet)</td>
 </tr>
 <tr class="even">
 <td><strong>PR</strong></td>
@@ -581,14 +635,38 @@ Paragraph 6 [ROADMAP]: Section-by-section guide</code></pre>
 </tr>
 <tr class="odd">
 <td><strong>Submission</strong></td>
-<td>&gt;= 95 + all components &gt;= 80</td>
+<td>&gt;= 95 + every component scored and &gt;= 80 + the understanding gate</td>
 <td>Work can be submitted to a journal</td>
 </tr>
 </tbody>
 </table>
-<p>Scores are weighted aggregates of individual critic scores. Each critic starts at 100 and deducts for issues found. The system manages this automatically — you will rarely think about it unless a score drops below 80, which blocks commits until the flagged issues are fixed.</p>
-<p><strong>Recovering from a low score:</strong> Run <code>/review --all</code> to get a per-component breakdown. Fix critical issues first (they carry the largest deductions). Re-run the relevant review to update the score. For the full scoring formula and component weights, see <a href="./rules.html#sec-gates">Rules &amp; Invariants</a>.</p>
+<p>Scores are weighted aggregates of the critics’ scores, computed by <code>scripts/score.py</code> from each critic’s latest entry in the research journal. Most critics start at 100 and deduct for issues found. The strategist-critic gives a verdict instead (SOUND, MINOR ISSUES, MAJOR ISSUES, CRITICAL ERRORS), which maps to 95 / 85 / 65 / 40 for the aggregate. Components never scored drop out and the rest are renormalized. Only <code>/tools commit</code> blocks on the score; the git pre-commit hook checks the scaffold and lint, not the score.</p>
+<p><strong>Recovering from a low score:</strong> Run <code>python3 scripts/score.py</code> to see the per-component table and every gate’s status. Fix critical issues first (they carry the largest deductions). Re-run the relevant review to update the score. For the full scoring formula and component weights, see <a href="./rules.html#sec-gates">Rules &amp; Invariants</a>.</p>
 <hr>
+</section>
+<section id="managing-long-sessions" class="level2">
+<h2 class="anchored" data-anchor-id="managing-long-sessions">Managing Long Sessions</h2>
+<section id="compaction-discipline" class="level3">
+<h3 class="anchored" data-anchor-id="compaction-discipline">Compaction discipline</h3>
+<p>Borrowed from Goldsmith-Pinkham’s Claude Code for Economists workflow:</p>
+<ul>
+<li><strong>Manual <code>/compact</code> before natural stopping points</strong>, not at the threshold. You control what gets summarized.</li>
+<li><strong>Aim for 5–10 turn focused sessions.</strong> Long sessions drift; short, scoped sessions keep output sharp.</li>
+<li><strong>Start fresh between phases.</strong> Don’t carry “discovery residue” into execution.</li>
+<li><strong>Before <code>/compact</code> or session end, run <code>/checkpoint</code>.</strong> That persists state to memory, SESSION_REPORT, and the research journal — so the next session reads real context, not an auto-summary.</li>
+</ul>
+</section>
+<section id="rewind-correct-compact-or-clear" class="level3">
+<h3 class="anchored" data-anchor-id="rewind-correct-compact-or-clear">Rewind, correct, compact, or clear</h3>
+<p>Choose the right context management action:</p>
+<ul>
+<li><strong>Rewind</strong> when Claude took a wrong approach – removes the failed attempt from context entirely. Re-prompt with constraints upfront. Strictly superior to correction when the entire approach was wrong.</li>
+<li><strong>Correct</strong> when the approach was right but a detail was wrong (“use state-level clustering”) – the context of the prior attempt is useful.</li>
+<li><strong>Compact</strong> when context is bloated but the current trajectory is correct.</li>
+<li><strong>Clear</strong> when you need a fresh start on a new task.</li>
+</ul>
+<p>Rewind keeps failed exploration out of context, saving tokens and avoiding confusion on subsequent turns.</p>
+</section>
 </section>
 <section id="troubleshooting" class="level2">
 <h2 class="anchored" data-anchor-id="troubleshooting">Troubleshooting</h2>
@@ -606,9 +684,10 @@ Paragraph 6 [ROADMAP]: Section-by-section guide</code></pre>
 <h3 class="anchored" data-anchor-id="hooks-not-firing">Hooks Not Firing</h3>
 <p><strong>Symptom:</strong> No file protection or context survival.</p>
 <ol type="1">
-<li>Check hooks are configured in <code>.claude/settings.json</code></li>
-<li>Ensure Python 3 is available: <code>which python3</code></li>
-<li>Check hook file permissions: <code>ls -la .claude/hooks/</code></li>
+<li>Read the session-start notice: <code>hook-health.py</code> reports hooks that point at missing files, logged errors, and hooks that never run (see <a href="./hooks.html#hook-health">Hooks &amp; Automation</a>)</li>
+<li>Check <code>.claude/state/hook-log.jsonl</code> — every hook logs there</li>
+<li>Run <code>python3 scripts/test_hooks.py</code></li>
+<li>Ensure Python 3 (<code>which python3</code>) and Claude Code 2.1.295 or later (<code>claude --version</code>)</li>
 <li>Hook blocking an edit you want to make? See <a href="./hooks.html#protect-files">Hooks &amp; Automation</a> for how to customize protected patterns.</li>
 </ol>
 </section>
@@ -616,7 +695,7 @@ Paragraph 6 [ROADMAP]: Section-by-section guide</code></pre>
 <h3 class="anchored" data-anchor-id="claude-ignores-rules">Claude Ignores Rules</h3>
 <p><strong>Symptom:</strong> Claude doesn’t follow conventions in <code>.claude/rules/</code>.</p>
 <ol type="1">
-<li>Rules use <code>paths:</code> frontmatter — check the path matches your files</li>
+<li>Seven of the 13 rule files use <code>paths:</code> frontmatter and load only when Claude reads a matching file; the other six always load. Check that the rule’s paths match your files</li>
 <li>Too many rules? Claude follows ~150 instructions reliably. Consolidate.</li>
 <li>Try: “Read <code>.claude/rules/[rule].md</code> and follow it for this task”</li>
 </ol>
@@ -626,15 +705,15 @@ Paragraph 6 [ROADMAP]: Section-by-section guide</code></pre>
 <p><strong>Symptom:</strong> Claude forgets what you were working on.</p>
 <ol type="1">
 <li>Point Claude to the plan: “Read <code>quality_reports/plans/[latest].md</code>”</li>
-<li>Check session log: “Read <code>quality_reports/session_logs/[latest].md</code>”</li>
+<li>Check the session report: “Read the latest entry in <code>SESSION_REPORT.md</code>”</li>
 <li>The <code>post-compact-restore.py</code> hook should print recovery info automatically. See <a href="./hooks.html#post-compact-restore">Hooks &amp; Automation</a> for details.</li>
 </ol>
 </section>
 <section id="quality-score-too-low" class="level3">
 <h3 class="anchored" data-anchor-id="quality-score-too-low">Quality Score Too Low</h3>
-<p><strong>Symptom:</strong> Score stuck below 80, can’t commit.</p>
+<p><strong>Symptom:</strong> Score stuck below 80, <code>/tools commit</code> refuses to commit.</p>
 <ol type="1">
-<li>Run <code>/review --all</code> to get detailed issue breakdown</li>
+<li>Run <code>python3 scripts/score.py</code> to see each component’s score and what was left out</li>
 <li>Fix critical issues first (they cost the most points)</li>
 <li>Check per-component scores — one weak component can drag down the aggregate</li>
 </ol>
@@ -643,7 +722,14 @@ Paragraph 6 [ROADMAP]: Section-by-section guide</code></pre>
 </section>
 <section id="sec-upgrading" class="level2">
 <h2 class="anchored" data-anchor-id="sec-upgrading">Upgrading</h2>
-<p>Run <code>/tools upgrade</code> to upgrade your project to the latest clo-author version. It replaces <code>.claude/</code> and <code>templates/</code>, preserving your paper, scripts, data, bibliography, and CLAUDE.md.</p>
+<p>Run <code>/tools upgrade</code> to upgrade your project to the latest clo-author version. It shows you the plan before changing anything, then:</p>
+<ul>
+<li>replaces <code>.claude/</code>, keeping your domain profile, custom journal profiles, and <code>settings.local.json</code>; anything you added to <code>settings.json</code> moves into <code>settings.local.json</code></li>
+<li>replaces the scaffold scripts in <code>scripts/</code> (files marked <code>clo-author: infrastructure</code>) and <code>scripts/deepread_prompts/</code></li>
+<li>copies <code>.githooks/</code> and runs <code>scripts/install-hooks.sh</code></li>
+<li>copies <code>paper/preambles/header.tex</code> only if you have none, and adds new <code>templates/</code> files (asking before overwriting changed ones)</li>
+<li>runs <code>python3 scripts/check_scaffold.py</code> and <code>python3 scripts/test_hooks.py</code>, then reports what changed</li>
+</ul>
 <div class="callout callout-style-default callout-note callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -654,10 +740,10 @@ Note
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><strong>Your files are safe.</strong> The upgrade only touches <code>.claude/</code> (the infrastructure) and <code>templates/</code>. Your paper, scripts, data, bibliography, and all research content are never modified or deleted.</p>
+<p><strong>Your files are safe.</strong> The upgrade never touches your analysis scripts (anything without the infrastructure marker), <code>paper/</code> (beyond adding a missing <code>header.tex</code>), <code>data/</code>, <code>explorations/</code>, <code>quality_reports/</code>, CLAUDE.md, or your bibliography.</p>
 </div>
 </div>
-<p><strong>Manual alternative:</strong> Download the <a href="https://github.com/hugosantanna/clo-author/releases">latest release</a>, delete your <code>.claude/</code> directory, and copy the new one in. Your CLAUDE.md stays yours — the infrastructure reads whatever paths you have there.</p>
+<p><strong>Manual alternative:</strong> Download the <a href="https://github.com/hugosantanna/clo-author/releases">latest release</a>, replace <code>.claude/</code>, <code>.githooks/</code>, and the marked scripts in <code>scripts/</code> with the new ones, then run <code>scripts/install-hooks.sh</code> and <code>python3 scripts/check_scaffold.py</code>. Your CLAUDE.md stays yours — the infrastructure reads whatever paths you have there.</p>
 
 
 </section>
@@ -749,7 +835,7 @@ Note
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/hugosantanna\.github\.io\/clo-author\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }

@@ -2,14 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.38">
 
-<link rel="icon" type="image/svg+xml" href="./favicon.svg">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>Hooks &amp; Automation – The Clo-Author</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -66,21 +68,21 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <script src="site_libs/quarto-search/fuse.min.js"></script>
 <script src="site_libs/quarto-search/quarto-search.js"></script>
 <meta name="quarto:offset" content="./">
+<link href="./favicon.svg" rel="icon" type="image/svg+xml">
 <script src="site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="site_libs/quarto-html/popper.min.js"></script>
 <script src="site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="site_libs/quarto-html/anchor.min.js"></script>
 <link href="site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-fdd259eaf9296a602f9f2594b91304b4.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
-<link href="site_libs/quarto-html/quarto-syntax-highlighting-bb133401eb1928132202f6efeefbc5fe.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-dark-1e421a9c73e24ddbaf9719a3c33ffac8.css" rel="stylesheet" class="quarto-color-scheme quarto-color-alternate" id="quarto-text-highlighting-styles">
+<link href="site_libs/quarto-html/quarto-syntax-highlighting-1a92c51c28b4a19710835de13aeaa27f.css" rel="stylesheet" class="quarto-color-scheme-extra" id="quarto-text-highlighting-styles">
 <script src="site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
-<link href="site_libs/bootstrap/bootstrap-dark-b9862f91d0a1d344de8539a32e8a5ff2.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
-<link href="site_libs/bootstrap/bootstrap-45f38feec4c6d3ad185969c2b5aa4b3b.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme" id="quarto-bootstrap" data-mode="light">
+<link href="site_libs/bootstrap/bootstrap-dark-10a0879e8cb5ddd784eb9f3673ca8224.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme quarto-color-alternate" id="quarto-bootstrap" data-mode="dark">
+<link href="site_libs/bootstrap/bootstrap-dedf5c7fe1beb211ad32037b48154902.min.css" rel="stylesheet" append-hash="true" class="quarto-color-scheme-extra" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "navbar",
   "copy-button": false,
@@ -355,12 +357,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#how-hooks-work" id="toc-how-hooks-work" class="nav-link active" data-scroll-target="#how-hooks-work">How Hooks Work</a>
   <ul class="collapse">
   <li><a href="#event-types" id="toc-event-types" class="nav-link" data-scroll-target="#event-types">Event Types</a></li>
-  <li><a href="#exit-code-semantics" id="toc-exit-code-semantics" class="nav-link" data-scroll-target="#exit-code-semantics">Exit Code Semantics</a></li>
+  <li><a href="#exit-codes-and-output" id="toc-exit-codes-and-output" class="nav-link" data-scroll-target="#exit-codes-and-output">Exit Codes and Output</a></li>
+  <li><a href="#how-clo-author-hooks-fail-loudly" id="toc-how-clo-author-hooks-fail-loudly" class="nav-link" data-scroll-target="#how-clo-author-hooks-fail-loudly">How clo-author Hooks Fail: Loudly</a></li>
   <li><a href="#configuration" id="toc-configuration" class="nav-link" data-scroll-target="#configuration">Configuration</a></li>
   </ul></li>
-  <li><a href="#the-seven-hooks" id="toc-the-seven-hooks" class="nav-link" data-scroll-target="#the-seven-hooks">The Seven Hooks</a>
+  <li><a href="#the-hooks" id="toc-the-hooks" class="nav-link" data-scroll-target="#the-hooks">The Hooks</a>
   <ul class="collapse">
-  <li><a href="#protect-files" id="toc-protect-files" class="nav-link" data-scroll-target="#protect-files">1. protect-files.sh</a>
+  <li><a href="#protect-files" id="toc-protect-files" class="nav-link" data-scroll-target="#protect-files">1. protect-files.py</a>
   <ul class="collapse">
   <li><a href="#what-it-does" id="toc-what-it-does" class="nav-link" data-scroll-target="#what-it-does">What it does</a></li>
   <li><a href="#protected-patterns-default" id="toc-protected-patterns-default" class="nav-link" data-scroll-target="#protected-patterns-default">Protected patterns (default)</a></li>
@@ -377,7 +380,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#exit-behavior-1" id="toc-exit-behavior-1" class="nav-link" data-scroll-target="#exit-behavior-1">Exit behavior</a></li>
   <li><a href="#activating-and-deactivating" id="toc-activating-and-deactivating" class="nav-link" data-scroll-target="#activating-and-deactivating">Activating and deactivating</a></li>
   </ul></li>
-  <li><a href="#post-edit-lint" id="toc-post-edit-lint" class="nav-link" data-scroll-target="#post-edit-lint">3. post-edit-lint.sh</a>
+  <li><a href="#post-edit-lint" id="toc-post-edit-lint" class="nav-link" data-scroll-target="#post-edit-lint">3. post-edit-lint.py</a>
   <ul class="collapse">
   <li><a href="#what-it-does-2" id="toc-what-it-does-2" class="nav-link" data-scroll-target="#what-it-does-2">What it does</a></li>
   <li><a href="#how-it-works-1" id="toc-how-it-works-1" class="nav-link" data-scroll-target="#how-it-works-1">How it works</a></li>
@@ -402,16 +405,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <ul class="collapse">
   <li><a href="#what-it-does-4" id="toc-what-it-does-4" class="nav-link" data-scroll-target="#what-it-does-4">What it does</a></li>
   <li><a href="#how-it-works-2" id="toc-how-it-works-2" class="nav-link" data-scroll-target="#how-it-works-2">How it works</a></li>
-  <li><a href="#recovery-actions-printed" id="toc-recovery-actions-printed" class="nav-link" data-scroll-target="#recovery-actions-printed">Recovery actions printed</a></li>
   <li><a href="#exit-behavior-5" id="toc-exit-behavior-5" class="nav-link" data-scroll-target="#exit-behavior-5">Exit behavior</a></li>
   <li><a href="#why-the-pair-exists" id="toc-why-the-pair-exists" class="nav-link" data-scroll-target="#why-the-pair-exists">Why the pair exists</a></li>
   </ul></li>
-  <li><a href="#post-merge" id="toc-post-merge" class="nav-link" data-scroll-target="#post-merge">7. post-merge.sh</a>
+  <li><a href="#hook-health" id="toc-hook-health" class="nav-link" data-scroll-target="#hook-health">7. hook-health.py</a>
   <ul class="collapse">
   <li><a href="#what-it-does-5" id="toc-what-it-does-5" class="nav-link" data-scroll-target="#what-it-does-5">What it does</a></li>
-  <li><a href="#how-it-works-3" id="toc-how-it-works-3" class="nav-link" data-scroll-target="#how-it-works-3">How it works</a></li>
-  <li><a href="#why-it-exists" id="toc-why-it-exists" class="nav-link" data-scroll-target="#why-it-exists">Why it exists</a></li>
+  <li><a href="#exit-behavior-6" id="toc-exit-behavior-6" class="nav-link" data-scroll-target="#exit-behavior-6">Exit behavior</a></li>
   </ul></li>
+  <li><a href="#post-merge" id="toc-post-merge" class="nav-link" data-scroll-target="#post-merge">8. Git hooks: pre-commit and post-merge</a></li>
   </ul></li>
   <li><a href="#settings-configuration" id="toc-settings-configuration" class="nav-link" data-scroll-target="#settings-configuration">Settings Configuration</a>
   <ul class="collapse">
@@ -424,7 +426,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#step-2-write-the-logic" id="toc-step-2-write-the-logic" class="nav-link" data-scroll-target="#step-2-write-the-logic">Step 2: Write the logic</a></li>
   <li><a href="#step-3-register-in-settings.json" id="toc-step-3-register-in-settings.json" class="nav-link" data-scroll-target="#step-3-register-in-settings.json">Step 3: Register in settings.json</a></li>
   <li><a href="#step-4-test" id="toc-step-4-test" class="nav-link" data-scroll-target="#step-4-test">Step 4: Test</a></li>
-  <li><a href="#example-pre-commit-quality-check" id="toc-example-pre-commit-quality-check" class="nav-link" data-scroll-target="#example-pre-commit-quality-check">Example: Pre-commit quality check</a></li>
+  <li><a href="#example-lint-before-claude-commits" id="toc-example-lint-before-claude-commits" class="nav-link" data-scroll-target="#example-lint-before-claude-commits">Example: Lint before Claude commits</a></li>
   </ul></li>
   </ul>
 </nav>
@@ -490,7 +492,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <tr class="odd">
 <td><code>PreCompact</code></td>
 <td>Before context compaction</td>
-<td>Yes — exit 2 shows a message</td>
+<td>No — a <code>systemMessage</code> shows the user a reminder</td>
 <td>Capture session state before memory loss</td>
 </tr>
 <tr class="even">
@@ -502,21 +504,65 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tbody>
 </table>
 </section>
-<section id="exit-code-semantics" class="level2">
-<h2 class="anchored" data-anchor-id="exit-code-semantics">Exit Code Semantics</h2>
-<p>Every hook communicates its result through its exit code:</p>
+<section id="exit-codes-and-output" class="level2">
+<h2 class="anchored" data-anchor-id="exit-codes-and-output">Exit Codes and Output</h2>
+<p>Claude Code reads a hook’s exit code and any JSON it prints on stdout:</p>
 <ul>
-<li><strong>Exit 0</strong> — pass. The operation proceeds (or the advisory message is silent).</li>
-<li><strong>Exit 2</strong> — block or message. For <code>PreToolUse</code>, this <strong>blocks</strong> the tool call and shows the hook’s stderr as an error message. For <code>PreCompact</code>, this shows the hook’s stdout as a visible message in the transcript but does not prevent compaction.</li>
+<li><strong>Exit 0</strong> — success. JSON on stdout is honored: <code>permissionDecision: "deny"</code> blocks a tool call, <code>additionalContext</code> puts text in front of Claude, and <code>systemMessage</code> shows the user a warning. Plain stdout reaches Claude only on <code>SessionStart</code> (and <code>UserPromptSubmit</code>); for other events it goes to the debug log. Stderr on exit 0 is never shown.</li>
+<li><strong>Exit 2</strong> — blocking error. For <code>PreToolUse</code> it blocks the tool call and shows stderr.</li>
+<li><strong>Any other non-zero exit, a timeout, or a script that can’t start</strong> — a hook failure. By default the action proceeds and the transcript shows the hook’s name with the first line of stderr. A hook that sets <code>"onFailure": "block"</code> (Claude Code 2.1.295+) turns a failure into a block instead.</li>
 </ul>
-<p>Any other exit code is treated as a hook failure and ignored.</p>
+<p>One trap: when <code>python3</code> can’t find the script file it exits 2, so a hook whose <code>.py</code> file is missing or renamed already blocks every matching tool call, with or without <code>onFailure</code>.</p>
+</section>
+<section id="how-clo-author-hooks-fail-loudly" class="level2">
+<h2 class="anchored" data-anchor-id="how-clo-author-hooks-fail-loudly">How clo-author Hooks Fail: Loudly</h2>
+<p>Every hook here runs through <code>.claude/hooks/_hooklib.py</code>, which gives each run one of three outcomes:</p>
+<table class="caption-top table">
+<colgroup>
+<col style="width: 31%">
+<col style="width: 20%">
+<col style="width: 48%">
+</colgroup>
+<thead>
+<tr class="header">
+<th>Outcome</th>
+<th>When</th>
+<th>What you see</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td><strong>acted</strong></td>
+<td>The hook did its job (linted a file, blocked an edit, restored context)</td>
+<td>Its output</td>
+</tr>
+<tr class="even">
+<td><strong>skipped</strong></td>
+<td>Nothing to do (a <code>.txt</code> edit, no guard active)</td>
+<td>Nothing</td>
+</tr>
+<tr class="odd">
+<td><strong>error</strong></td>
+<td>The hook could not do its job</td>
+<td>A one-line notice in the transcript: <code>clo-author hook &lt;name&gt;: &lt;reason&gt;</code></td>
+</tr>
+</tbody>
+</table>
+<p>What an error does to the action depends on the hook:</p>
+<ul>
+<li><strong>Advisory hooks</strong> (lint, restore, health, pre-compact) keep the default. The action proceeds and you see the notice.</li>
+<li><strong>Guards</strong> (<code>protect-files.py</code>, <code>session-guard.py</code>) set <code>"onFailure": "block"</code>. A guard that cannot answer blocks the action, because a guard that fails open lets through exactly what it exists to stop. In a test, a corrupted <code>/careful</code> state file let writes through silently under the old setting; with <code>"block"</code> the write stopped and the error named the file.</li>
+</ul>
+<p>The cost of failing closed: a broken guard also blocks the edit that would fix it. Fix it by hand in your editor — the error message and <code>hook-health.py</code> name the file. <code>scripts/test_hooks.py</code> and <code>scripts/check_scaffold.py</code> both fail if a <code>PreToolUse</code> hook in <code>settings.json</code> lacks <code>"onFailure": "block"</code>.</p>
+<p><strong>A payload missing a field the hook depends on is an error, not a skip.</strong> Two hooks in this template once sat dead for months because they read a field Claude Code never sends, found it empty, and exited cleanly as if there were nothing to do. <code>require()</code> in <code>_hooklib.py</code> turns that case into a visible failure.</p>
+<p>Every outcome is appended to <code>.claude/state/hook-log.jsonl</code> (gitignored). At session start, <a href="#hook-health"><code>hook-health.py</code></a> reads that log and speaks up when something is wrong. <code>python3 scripts/test_hooks.py</code> feeds every hook synthetic payloads and checks all three outcomes.</p>
 </section>
 <section id="configuration" class="level2">
 <h2 class="anchored" data-anchor-id="configuration">Configuration</h2>
 <p>Hooks are registered in <code>.claude/settings.json</code> under the <code>hooks</code> key. Each event type maps to an array of hook groups, where each group has:</p>
 <ul>
 <li><strong><code>matcher</code></strong> — a regex pattern for filtering. For <code>PreToolUse</code> and <code>PostToolUse</code>, it matches tool names (e.g., <code>"Edit|Write"</code>). For <code>SessionStart</code>, it matches session types (e.g., <code>"compact|resume"</code>). Omit the matcher to fire on every event of that type.</li>
-<li><strong><code>hooks</code></strong> — an array of hook definitions, each with <code>type</code>, <code>command</code>, and <code>timeout</code> (in seconds).</li>
+<li><strong><code>hooks</code></strong> — an array of hook definitions, each with <code>type</code>, <code>command</code>, <code>timeout</code> (in seconds), and optionally <code>onFailure</code> (<code>"continue"</code>, the default, or <code>"block"</code>).</li>
 </ul>
 <div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb1"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"hooks"</span><span class="fu">:</span> <span class="fu">{</span></span>
@@ -526,23 +572,24 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
-<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"</span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/protect-files.sh"</span><span class="fu">,</span></span>
-<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">5</span></span>
-<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
-<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
-<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
-<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
-<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"python3 </span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/protect-files.py"</span><span class="fu">,</span></span>
+<span id="cb1-10"><a href="#cb1-10" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">5</span><span class="fu">,</span></span>
+<span id="cb1-11"><a href="#cb1-11" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"onFailure"</span><span class="fu">:</span> <span class="st">"block"</span></span>
+<span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
+<span id="cb1-13"><a href="#cb1-13" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
+<span id="cb1-14"><a href="#cb1-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb1-15"><a href="#cb1-15" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb1-16"><a href="#cb1-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb1-17"><a href="#cb1-17" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>The environment variable <code>$CLAUDE_PROJECT_DIR</code> resolves to the project root at runtime. Always use it in hook commands so paths stay portable.</p>
 <hr>
 </section>
 </section>
-<section id="the-seven-hooks" class="level1">
-<h1>The Seven Hooks</h1>
+<section id="the-hooks" class="level1">
+<h1>The Hooks</h1>
 <section id="protect-files" class="level2">
-<h2 class="anchored" data-anchor-id="protect-files">1. protect-files.sh</h2>
-<p><strong>Event:</strong> <code>PreToolUse</code> (matcher: <code>Edit|Write</code>) | <strong>Timeout:</strong> 5s | <strong>Blocking:</strong> Yes</p>
+<h2 class="anchored" data-anchor-id="protect-files">1. protect-files.py</h2>
+<p><strong>Event:</strong> <code>PreToolUse</code> (matcher: <code>Edit|Write</code>) | <strong>Timeout:</strong> 5s | <strong>Blocking:</strong> Yes | <strong>On failure:</strong> blocks</p>
 <section id="what-it-does" class="level3">
 <h3 class="anchored" data-anchor-id="what-it-does">What it does</h3>
 <p>Some files should never be touched by an agent. Strategy memos after approval, referee reports from real journals, the hook configuration itself — these are inputs or infrastructure, not outputs. This hook enforces that boundary.</p>
@@ -550,16 +597,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="protected-patterns-default" class="level3">
 <h3 class="anchored" data-anchor-id="protected-patterns-default">Protected patterns (default)</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="va">PROTECTED_PATTERNS</span><span class="op">=</span><span class="va">(</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"settings.json"</span></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"strategy-memo-*.md"</span></span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="st">"referee-report-*.md"</span></span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>  <span class="st">"quality-score-*.json"</span></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a><span class="va">)</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>PROTECTED_PATTERNS <span class="op">=</span> [</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>    <span class="st">"settings.json"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="st">"strategy-memo-*.md"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">"referee-report-*.md"</span>,</span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>    <span class="st">"quality-score-*.json"</span>,</span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>These defaults protect:</p>
 <ul>
 <li><strong><code>settings.json</code></strong> — the hook configuration itself. Accidental edits here could disable all hooks.</li>
-<li><strong><code>strategy-memo-*.md</code></strong> — approved strategy memos. The strategist-critic scores these; Claude should not modify them after approval.</li>
+<li><strong><code>strategy-memo-*.md</code></strong> — approved strategy memos. The strategist-critic reviews these; Claude should not modify them after approval.</li>
 <li><strong><code>referee-report-*.md</code></strong> — real referee reports. These are external inputs that Claude classifies and responds to, never rewrites.</li>
 <li><strong><code>quality-score-*.json</code></strong> — critic scores. Separation of powers: creators cannot edit their own scores.</li>
 </ul>
@@ -567,57 +614,47 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="how-it-works" class="level3">
 <h3 class="anchored" data-anchor-id="how-it-works">How it works</h3>
 <ol type="1">
-<li>Reads the tool input JSON from stdin</li>
-<li>Extracts the <code>file_path</code> from the tool’s input parameters</li>
-<li>Compares the basename against each protected pattern using bash glob matching</li>
-<li>If a pattern matches, prints an error message to stderr and exits with code 2 (blocking the edit)</li>
-<li>If no pattern matches, exits with code 0 (allowing the edit)</li>
+<li>Reads the tool input JSON from stdin and requires <code>tool_input.file_path</code> (a missing path is a visible error)</li>
+<li>Compares the basename against each protected pattern with shell-style glob matching (<code>fnmatch</code>)</li>
+<li>If a pattern matches, prints a <code>permissionDecision: "deny"</code> with the reason, which blocks the edit</li>
+<li>If no pattern matches, exits silently and the edit proceeds</li>
 </ol>
 </section>
 <section id="exit-behavior" class="level3">
 <h3 class="anchored" data-anchor-id="exit-behavior">Exit behavior</h3>
-<ul>
-<li><strong>Exit 0</strong> — file is not protected, edit proceeds</li>
-<li><strong>Exit 2</strong> — file is protected, edit is blocked with the message: <code>"Protected file: &lt;filename&gt;. Edit manually or remove protection in .claude/hooks/protect-files.sh"</code></li>
-</ul>
+<p>Exits 0 in both cases; the deny decision travels as JSON. The block message reads: <code>"Protected file: &lt;filename&gt;. Edit it by hand, or remove the pattern '&lt;pattern&gt;' from .claude/hooks/protect-files.py."</code></p>
 </section>
 <section id="customizing" class="level3">
 <h3 class="anchored" data-anchor-id="customizing">Customizing</h3>
-<p>Add or remove entries in the <code>PROTECTED_PATTERNS</code> array. The matching uses bash glob syntax on the <strong>basename</strong> only (not the full path), so <code>"*.bib"</code> would protect all <code>.bib</code> files regardless of directory.</p>
-<p>For path-specific protection, replace the basename check with a full-path match:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Protect a specific file by full path</span></span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="st">"</span><span class="va">$FILE</span><span class="st">"</span> <span class="ot">==</span> <span class="pp">*</span>/paper/main.tex <span class="kw">]];</span> <span class="cf">then</span></span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">"Protected: main.tex. Edit manually."</span> <span class="op">&gt;&amp;</span><span class="dv">2</span></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>  <span class="bu">exit</span> 2</span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Add or remove entries in <code>PROTECTED_PATTERNS</code>. Matching is on the <strong>basename</strong> only (not the full path), so <code>"*.bib"</code> would protect all <code>.bib</code> files regardless of directory. For path-specific protection, compare <code>hook.require("tool_input.file_path")</code> against a full path in <code>body()</code>.</p>
 <hr>
 </section>
 </section>
 <section id="session-guard" class="level2">
 <h2 class="anchored" data-anchor-id="session-guard">2. session-guard.py</h2>
-<p><strong>Event:</strong> <code>PreToolUse</code> (matcher: <code>Edit|Write|Bash</code>) | <strong>Timeout:</strong> 5s | <strong>Blocking:</strong> Yes</p>
+<p><strong>Event:</strong> <code>PreToolUse</code> (matcher: <code>Edit|Write|Bash</code>) | <strong>Timeout:</strong> 5s | <strong>Blocking:</strong> Yes | <strong>On failure:</strong> blocks</p>
 <section id="what-it-does-1" class="level3">
 <h3 class="anchored" data-anchor-id="what-it-does-1">What it does</h3>
-<p>Two guards in one hook, both session-scoped and both opt-in. When neither guard is active, the hook reads a single JSON file, finds nothing, and exits — zero overhead in the common case.</p>
+<p>Two guards in one hook, both opt-in. When neither guard is active, the hook reads a single JSON file, finds nothing, and exits — zero overhead in the common case.</p>
 <p><strong>Freeze</strong> locks edits to a set of allowed directories. Invoke <code>/freeze paper/</code> and every Write or Edit targeting a file outside <code>paper/</code> gets blocked. The <code>.claude/</code> directory is always exempt (we cannot freeze ourselves out of configuration changes).</p>
 <p><strong>Careful</strong> blocks destructive Bash commands. Invoke <code>/careful</code> and patterns like <code>rm -rf</code>, <code>git reset --hard</code>, and <code>git push --force</code> are intercepted before they execute. Non-destructive Bash commands pass through untouched.</p>
 </section>
 <section id="guard-state" class="level3">
 <h3 class="anchored" data-anchor-id="guard-state">Guard state</h3>
 <p>Both guards read from a single file: <code>.claude/state/session-guards.json</code>. The <code>/freeze</code> and <code>/careful</code> skills write this file; the hook only reads it.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"freeze"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"active"</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"allowed_paths"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"paper/"</span><span class="ot">,</span> <span class="st">"scripts/"</span><span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"activated_at"</span><span class="fu">:</span> <span class="st">"2026-05-09T14:30:00"</span><span class="fu">,</span></span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"reason"</span><span class="fu">:</span> <span class="st">"User invoked /freeze"</span></span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"careful"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"active"</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"activated_at"</span><span class="fu">:</span> <span class="st">"2026-05-09T14:30:00"</span><span class="fu">,</span></span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"reason"</span><span class="fu">:</span> <span class="st">"User invoked /careful"</span></span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
-<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb3"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"freeze"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"active"</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"allowed_paths"</span><span class="fu">:</span> <span class="ot">[</span><span class="st">"paper/"</span><span class="ot">,</span> <span class="st">"scripts/"</span><span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"activated_at"</span><span class="fu">:</span> <span class="st">"2026-05-09T14:30:00"</span><span class="fu">,</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"reason"</span><span class="fu">:</span> <span class="st">"User invoked /freeze"</span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">},</span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"careful"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"active"</span><span class="fu">:</span> <span class="kw">true</span><span class="fu">,</span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"activated_at"</span><span class="fu">:</span> <span class="st">"2026-05-09T14:30:00"</span><span class="fu">,</span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"reason"</span><span class="fu">:</span> <span class="st">"User invoked /careful"</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="freeze-logic" class="level3">
 <h3 class="anchored" data-anchor-id="freeze-logic">Freeze logic</h3>
@@ -686,7 +723,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="exit-behavior-1" class="level3">
 <h3 class="anchored" data-anchor-id="exit-behavior-1">Exit behavior</h3>
-<p>The hook always exits 0. Blocking is communicated through stdout JSON (<code>{"decision": "block", "reason": "..."}</code>) rather than exit codes — this is the newer Claude Code hook protocol for Python hooks.</p>
+<p>When it can answer, the hook exits 0, and blocking is communicated through stdout JSON (<code>hookSpecificOutput.permissionDecision: "deny"</code> with a <code>permissionDecisionReason</code>) rather than exit codes — the current Claude Code protocol for <code>PreToolUse</code> decisions. When it cannot (for example, <code>session-guards.json</code> is not valid JSON), it exits 1, and <code>"onFailure": "block"</code> makes Claude Code block the call. Delete or fix the state file by hand to recover.</p>
 </section>
 <section id="activating-and-deactivating" class="level3">
 <h3 class="anchored" data-anchor-id="activating-and-deactivating">Activating and deactivating</h3>
@@ -724,12 +761,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </tr>
 </tbody>
 </table>
-<p>Both guards are session-scoped. They reset when the conversation ends.</p>
+<p>Both guards stay on until you turn them off — across conversations too, since <code>.claude/state/session-guards.json</code> persists and nothing clears it automatically. If edits are blocked and you don’t remember freezing, check that file or run <code>/freeze off</code>.</p>
 <hr>
 </section>
 </section>
 <section id="post-edit-lint" class="level2">
-<h2 class="anchored" data-anchor-id="post-edit-lint">3. post-edit-lint.sh</h2>
+<h2 class="anchored" data-anchor-id="post-edit-lint">3. post-edit-lint.py</h2>
 <p><strong>Event:</strong> <code>PostToolUse</code> (matcher: <code>Edit|Write</code>) | <strong>Timeout:</strong> 10s | <strong>Blocking:</strong> No (advisory)</p>
 <section id="what-it-does-2" class="level3">
 <h3 class="anchored" data-anchor-id="what-it-does-2">What it does</h3>
@@ -738,10 +775,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <section id="how-it-works-1" class="level3">
 <h3 class="anchored" data-anchor-id="how-it-works-1">How it works</h3>
 <ol type="1">
-<li>Reads the edited file path from the <code>CLAUDE_TOOL_ARG_FILE_PATH</code> environment variable (set by Claude Code)</li>
+<li>Reads the edited file path from the JSON payload Claude Code sends on stdin (<code>tool_input.file_path</code>)</li>
 <li>Filters by extension — only runs on <code>.R</code>, <code>.py</code>, and <code>.jl</code> files</li>
 <li>Skips files inside <code>.claude/</code> (hooks, agents, and other configuration scripts should not be linted as analysis code)</li>
 <li>Delegates to <code>lint-scripts.sh</code> for the actual analysis</li>
+<li>Returns any findings as <code>hookSpecificOutput.additionalContext</code>, which is how a <code>PostToolUse</code> hook puts text in front of Claude (plain stdout only reaches the transcript)</li>
 </ol>
 </section>
 <section id="exit-behavior-2" class="level3">
@@ -752,12 +790,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="lint-scripts" class="level2">
 <h2 class="anchored" data-anchor-id="lint-scripts">4. lint-scripts.sh</h2>
-<p><strong>Not a hook itself</strong> — this is the linter that <code>post-edit-lint.sh</code> calls. It can also be run standalone via <code>/tools lint</code>.</p>
+<p><strong>Not a hook itself</strong> — this is the linter that <code>post-edit-lint.py</code> calls. It can also be run standalone via <code>/tools lint</code>.</p>
 <section id="usage" class="level3">
 <h3 class="anchored" data-anchor-id="usage">Usage</h3>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb5"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="ex">lint-scripts.sh</span> <span class="op">&lt;</span>file<span class="op">&gt;</span>       <span class="co"># Lint a single file</span></span>
-<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a><span class="ex">lint-scripts.sh</span> <span class="op">&lt;</span>dir<span class="op">&gt;</span>        <span class="co"># Lint all scripts in a directory (recursive)</span></span>
-<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a><span class="ex">lint-scripts.sh</span>              <span class="co"># Lint scripts/ in the current project</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb4"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="ex">lint-scripts.sh</span> <span class="op">&lt;</span>file<span class="op">&gt;</span>       <span class="co"># Lint a single file</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="ex">lint-scripts.sh</span> <span class="op">&lt;</span>dir<span class="op">&gt;</span>        <span class="co"># Lint all scripts in a directory (recursive)</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="ex">lint-scripts.sh</span>              <span class="co"># Lint scripts/ in the current project</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="what-it-checks" class="level3">
 <h3 class="anchored" data-anchor-id="what-it-checks">What it checks</h3>
@@ -995,7 +1033,7 @@ Status: 3 issue(s) found -- review before committing</code></pre>
 <h3 class="anchored" data-anchor-id="what-it-captures">What it captures</h3>
 <ol type="1">
 <li><strong>Active plan</strong> — finds the most recent non-completed plan in <code>quality_reports/plans/</code>, extracts its status (draft/approved/in-progress) and the first unchecked task</li>
-<li><strong>Recent decisions</strong> — scans the most recent session log for decision markers (lines containing “Decision:”, “Decided:”, “Chose:”, or bullet points) and captures the last 3</li>
+<li><strong>Recent decisions</strong> — the last three bullets under <strong>Decisions:</strong> in the newest <code>SESSION_REPORT.md</code> entry</li>
 <li><strong>Compaction timestamp</strong> — records when compaction occurred</li>
 </ol>
 </section>
@@ -1006,7 +1044,6 @@ Status: 3 issue(s) found -- review before committing</code></pre>
 <section id="side-effects" class="level3">
 <h3 class="anchored" data-anchor-id="side-effects">Side effects</h3>
 <ul>
-<li>Appends a compaction note to the most recent session log in <code>quality_reports/session_logs/</code>, documenting when compaction happened</li>
 <li>Prints a context survival checklist to the transcript as a reminder:</li>
 </ul>
 <pre><code>Context Survival Checklist:
@@ -1016,7 +1053,7 @@ Status: 3 issue(s) found -- review before committing</code></pre>
 </section>
 <section id="exit-behavior-4" class="level3">
 <h3 class="anchored" data-anchor-id="exit-behavior-4">Exit behavior</h3>
-<p>Always exits 2, which makes the message visible in the transcript. This is intentional — the checklist serves as a reminder to run <code>/checkpoint</code> before compaction if you have not already.</p>
+<p>Always exits 0, so compaction is never blocked. The checklist reaches you as a <code>systemMessage</code> (stderr on exit 0 would go only to the debug log). It is a reminder to run <code>/checkpoint</code> before compaction if you have not already.</p>
 <hr>
 </section>
 </section>
@@ -1030,28 +1067,15 @@ Status: 3 issue(s) found -- review before committing</code></pre>
 <section id="how-it-works-2" class="level3">
 <h3 class="anchored" data-anchor-id="how-it-works-2">How it works</h3>
 <ol type="1">
-<li>Checks the session type — only runs when the session type is <code>"compact"</code> (not on fresh starts)</li>
+<li>Reads the <code>source</code> field of the SessionStart payload and runs only for <code>compact</code> or <code>resume</code> (not on fresh starts)</li>
 <li>Reads and deletes the <code>pre-compact-state.json</code> file (one-time consumption)</li>
-<li>Independently finds the most recent plan and session log (as a fallback if the state file is missing)</li>
-<li>Prints a restoration message with:
-<ul>
-<li>Pre-compaction state (plan path, current task, recent decisions)</li>
-<li>Active plan file and status</li>
-<li>Session log location</li>
-<li>Recovery action steps</li>
-</ul></li>
+<li>Finds the active plan, summarizes <code>quality_reports/pipeline_state.json</code>, and reads the newest <code>SESSION_REPORT.md</code> entry’s status</li>
+<li>Prints a plain-text restoration message (no terminal color codes, since SessionStart stdout goes straight into Claude’s context) ending with: read the active plan and check <code>git status</code> before continuing</li>
 </ol>
-</section>
-<section id="recovery-actions-printed" class="level3">
-<h3 class="anchored" data-anchor-id="recovery-actions-printed">Recovery actions printed</h3>
-<pre><code>Recovery Actions:
-  1. Read the active plan to understand current objectives
-  2. Check git status/diff for uncommitted changes
-  3. Continue from where you left off</code></pre>
 </section>
 <section id="exit-behavior-5" class="level3">
 <h3 class="anchored" data-anchor-id="exit-behavior-5">Exit behavior</h3>
-<p>Always exits 0. The restoration message appears in Claude’s context as informational output.</p>
+<p>Exits 0 when it restores (or has nothing to restore). An error exits 1 with a one-line notice; session start proceeds either way, since the hook keeps the default <code>onFailure</code>.</p>
 </section>
 <section id="why-the-pair-exists" class="level3">
 <h3 class="anchored" data-anchor-id="why-the-pair-exists">Why the pair exists</h3>
@@ -1059,103 +1083,134 @@ Status: 3 issue(s) found -- review before committing</code></pre>
 <hr>
 </section>
 </section>
-<section id="post-merge" class="level2">
-<h2 class="anchored" data-anchor-id="post-merge">7. post-merge.sh</h2>
-<p><strong>Event:</strong> Git post-merge (not a Claude Code hook) | <strong>Timeout:</strong> N/A | <strong>Blocking:</strong> No</p>
+<section id="hook-health" class="level2">
+<h2 class="anchored" data-anchor-id="hook-health">7. hook-health.py</h2>
+<p><strong>Event:</strong> <code>SessionStart</code> (matcher: <code>startup|resume</code>) | <strong>Timeout:</strong> 5s | <strong>Blocking:</strong> No (silent when healthy)</p>
 <section id="what-it-does-5" class="level3">
 <h3 class="anchored" data-anchor-id="what-it-does-5">What it does</h3>
-<p>A standard Git hook (not a Claude Code hook) that prints a reminder after any <code>git merge</code> or <code>git pull</code> to update the session report.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"=== SESSION MERGED TO MAIN ==="</span></span>
-<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">""</span></span>
-<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Remember to append a summary to SESSION_REPORT.md if you haven't already."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Catches the failure a hook cannot report about itself: never running at all. At session start it checks three things and stays silent unless one fails:</p>
+<ol type="1">
+<li>Every hook command in <code>.claude/settings.json</code> and <code>settings.local.json</code> points at a file that exists (and, for shell scripts, is executable).</li>
+<li>Errors logged in <code>.claude/state/hook-log.jsonl</code> since the last check.</li>
+<li>Liveness: a hook on <code>PreToolUse</code> or <code>PostToolUse</code> that has logged nothing across three or more logged sessions is configured but not running.</li>
+</ol>
 </section>
-<section id="how-it-works-3" class="level3">
-<h3 class="anchored" data-anchor-id="how-it-works-3">How it works</h3>
-<p>Git hooks live in <code>.git/hooks/</code> by default, but this script is stored in <code>.claude/hooks/</code> alongside the Claude Code hooks for organizational convenience. To activate it, symlink or copy it to <code>.git/hooks/post-merge</code>.</p>
-</section>
-<section id="why-it-exists" class="level3">
-<h3 class="anchored" data-anchor-id="why-it-exists">Why it exists</h3>
-<p>Merges to main are significant project events that should be logged. This hook is a simple reminder — it does not enforce logging, just nudges.</p>
+<section id="exit-behavior-6" class="level3">
+<h3 class="anchored" data-anchor-id="exit-behavior-6">Exit behavior</h3>
+<p>Always exits 0. Problems go to you as a <code>systemMessage</code> and to Claude as <code>additionalContext</code>, with an instruction to mention them before other work.</p>
 <hr>
 </section>
+</section>
+<section id="post-merge" class="level2">
+<h2 class="anchored" data-anchor-id="post-merge">8. Git hooks: pre-commit and post-merge</h2>
+<p>These are git hooks, not Claude Code hooks. They live in <code>.githooks/</code>; <code>scripts/install-hooks.sh</code> points git at that folder (<code>git config core.hooksPath .githooks</code>) once per clone.</p>
+<p><strong>pre-commit</strong> runs on every commit, including ones made outside Claude:</p>
+<ul>
+<li>blocks when <code>scripts/check_scaffold.py</code> finds a broken reference, a missing hook file, or a weight that disagrees between <code>permissions.md</code> and <code>quality-gates.json</code></li>
+<li>blocks when <code>.claude/hooks/</code> or settings changed and <code>scripts/test_hooks.py</code> fails, or when enforcement scripts changed and <code>scripts/test_scripts.py</code> fails</li>
+<li>blocks on HIGH lint findings in staged analysis scripts (<code>setwd()</code>, absolute paths, …)</li>
+<li>prints paper-coherence findings for staged <code>.tex</code> files as advice; they block at <code>/submit</code></li>
+</ul>
+<p>Bypass with <code>SKIP_GATE=1 git commit ...</code> and say why in the message. It does not check the quality score; <code>/tools commit</code> does that once critics have scored.</p>
+<p><strong>post-merge</strong></p>
+<p><strong>Event:</strong> Git post-merge | <strong>Blocking:</strong> No</p>
+<p>A standard Git hook (not a Claude Code hook) that prints a reminder after any <code>git merge</code> or <code>git pull</code> to update the session report.</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb7"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"=== SESSION MERGED TO MAIN ==="</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">""</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Remember to append a summary to SESSION_REPORT.md if you haven't already."</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>Merges to main are significant project events that should be logged. This hook is a simple reminder — it does not enforce logging, just nudges.</p>
+<hr>
 </section>
 </section>
 <section id="settings-configuration" class="level1">
 <h1>Settings Configuration</h1>
 <p>The full hooks section of <code>.claude/settings.json</code> for this project:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"hooks"</span><span class="fu">:</span> <span class="fu">{</span></span>
-<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"PreToolUse"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
-<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"matcher"</span><span class="fu">:</span> <span class="st">"Edit|Write"</span><span class="fu">,</span></span>
-<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
-<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
-<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"</span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/protect-files.sh"</span><span class="fu">,</span></span>
-<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">5</span></span>
-<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
-<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
-<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span><span class="ot">,</span></span>
-<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
-<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"matcher"</span><span class="fu">:</span> <span class="st">"Edit|Write|Bash"</span><span class="fu">,</span></span>
-<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb10-17"><a href="#cb10-17" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
-<span id="cb10-18"><a href="#cb10-18" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
-<span id="cb10-19"><a href="#cb10-19" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"python3 </span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/session-guard.py"</span><span class="fu">,</span></span>
-<span id="cb10-20"><a href="#cb10-20" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">5</span></span>
-<span id="cb10-21"><a href="#cb10-21" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
-<span id="cb10-22"><a href="#cb10-22" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
-<span id="cb10-23"><a href="#cb10-23" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb10-24"><a href="#cb10-24" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb10-25"><a href="#cb10-25" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"PostToolUse"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb10-26"><a href="#cb10-26" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
-<span id="cb10-27"><a href="#cb10-27" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"matcher"</span><span class="fu">:</span> <span class="st">"Edit|Write"</span><span class="fu">,</span></span>
-<span id="cb10-28"><a href="#cb10-28" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb10-29"><a href="#cb10-29" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
-<span id="cb10-30"><a href="#cb10-30" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
-<span id="cb10-31"><a href="#cb10-31" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"</span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/post-edit-lint.sh"</span><span class="fu">,</span></span>
-<span id="cb10-32"><a href="#cb10-32" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">10</span></span>
-<span id="cb10-33"><a href="#cb10-33" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
-<span id="cb10-34"><a href="#cb10-34" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
-<span id="cb10-35"><a href="#cb10-35" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb10-36"><a href="#cb10-36" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb10-37"><a href="#cb10-37" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"PreCompact"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb10-38"><a href="#cb10-38" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
-<span id="cb10-39"><a href="#cb10-39" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb10-40"><a href="#cb10-40" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
-<span id="cb10-41"><a href="#cb10-41" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
-<span id="cb10-42"><a href="#cb10-42" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"python3 </span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/pre-compact.py"</span><span class="fu">,</span></span>
-<span id="cb10-43"><a href="#cb10-43" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">10</span></span>
-<span id="cb10-44"><a href="#cb10-44" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
-<span id="cb10-45"><a href="#cb10-45" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
-<span id="cb10-46"><a href="#cb10-46" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb10-47"><a href="#cb10-47" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
-<span id="cb10-48"><a href="#cb10-48" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"SessionStart"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb10-49"><a href="#cb10-49" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
-<span id="cb10-50"><a href="#cb10-50" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"matcher"</span><span class="fu">:</span> <span class="st">"compact|resume"</span><span class="fu">,</span></span>
-<span id="cb10-51"><a href="#cb10-51" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb10-52"><a href="#cb10-52" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
-<span id="cb10-53"><a href="#cb10-53" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
-<span id="cb10-54"><a href="#cb10-54" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"python3 </span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/post-compact-restore.py"</span><span class="fu">,</span></span>
-<span id="cb10-55"><a href="#cb10-55" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">5</span></span>
-<span id="cb10-56"><a href="#cb10-56" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
-<span id="cb10-57"><a href="#cb10-57" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
-<span id="cb10-58"><a href="#cb10-58" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
-<span id="cb10-59"><a href="#cb10-59" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
-<span id="cb10-60"><a href="#cb10-60" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
-<span id="cb10-61"><a href="#cb10-61" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb8"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"hooks"</span><span class="fu">:</span> <span class="fu">{</span></span>
+<span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"PreToolUse"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb8-4"><a href="#cb8-4" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"matcher"</span><span class="fu">:</span> <span class="st">"Edit|Write"</span><span class="fu">,</span></span>
+<span id="cb8-6"><a href="#cb8-6" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
+<span id="cb8-8"><a href="#cb8-8" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
+<span id="cb8-9"><a href="#cb8-9" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"python3 </span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/protect-files.py"</span><span class="fu">,</span></span>
+<span id="cb8-10"><a href="#cb8-10" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">5</span><span class="fu">,</span></span>
+<span id="cb8-11"><a href="#cb8-11" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"onFailure"</span><span class="fu">:</span> <span class="st">"block"</span></span>
+<span id="cb8-12"><a href="#cb8-12" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
+<span id="cb8-13"><a href="#cb8-13" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
+<span id="cb8-14"><a href="#cb8-14" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb8-15"><a href="#cb8-15" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb8-16"><a href="#cb8-16" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"matcher"</span><span class="fu">:</span> <span class="st">"Edit|Write|Bash"</span><span class="fu">,</span></span>
+<span id="cb8-17"><a href="#cb8-17" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb8-18"><a href="#cb8-18" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
+<span id="cb8-19"><a href="#cb8-19" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
+<span id="cb8-20"><a href="#cb8-20" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"python3 </span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/session-guard.py"</span><span class="fu">,</span></span>
+<span id="cb8-21"><a href="#cb8-21" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">5</span><span class="fu">,</span></span>
+<span id="cb8-22"><a href="#cb8-22" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"onFailure"</span><span class="fu">:</span> <span class="st">"block"</span></span>
+<span id="cb8-23"><a href="#cb8-23" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
+<span id="cb8-24"><a href="#cb8-24" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
+<span id="cb8-25"><a href="#cb8-25" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb8-26"><a href="#cb8-26" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb8-27"><a href="#cb8-27" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"PreCompact"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb8-28"><a href="#cb8-28" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb8-29"><a href="#cb8-29" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb8-30"><a href="#cb8-30" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
+<span id="cb8-31"><a href="#cb8-31" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
+<span id="cb8-32"><a href="#cb8-32" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"python3 </span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/pre-compact.py"</span><span class="fu">,</span></span>
+<span id="cb8-33"><a href="#cb8-33" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">10</span></span>
+<span id="cb8-34"><a href="#cb8-34" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
+<span id="cb8-35"><a href="#cb8-35" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
+<span id="cb8-36"><a href="#cb8-36" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb8-37"><a href="#cb8-37" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb8-38"><a href="#cb8-38" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"SessionStart"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb8-39"><a href="#cb8-39" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb8-40"><a href="#cb8-40" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"matcher"</span><span class="fu">:</span> <span class="st">"startup|resume"</span><span class="fu">,</span></span>
+<span id="cb8-41"><a href="#cb8-41" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb8-42"><a href="#cb8-42" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
+<span id="cb8-43"><a href="#cb8-43" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
+<span id="cb8-44"><a href="#cb8-44" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"python3 </span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/hook-health.py"</span><span class="fu">,</span></span>
+<span id="cb8-45"><a href="#cb8-45" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">5</span></span>
+<span id="cb8-46"><a href="#cb8-46" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
+<span id="cb8-47"><a href="#cb8-47" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
+<span id="cb8-48"><a href="#cb8-48" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span><span class="ot">,</span></span>
+<span id="cb8-49"><a href="#cb8-49" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb8-50"><a href="#cb8-50" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"matcher"</span><span class="fu">:</span> <span class="st">"compact|resume"</span><span class="fu">,</span></span>
+<span id="cb8-51"><a href="#cb8-51" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb8-52"><a href="#cb8-52" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
+<span id="cb8-53"><a href="#cb8-53" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
+<span id="cb8-54"><a href="#cb8-54" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"python3 </span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/post-compact-restore.py"</span><span class="fu">,</span></span>
+<span id="cb8-55"><a href="#cb8-55" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">5</span></span>
+<span id="cb8-56"><a href="#cb8-56" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
+<span id="cb8-57"><a href="#cb8-57" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
+<span id="cb8-58"><a href="#cb8-58" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb8-59"><a href="#cb8-59" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span><span class="fu">,</span></span>
+<span id="cb8-60"><a href="#cb8-60" aria-hidden="true" tabindex="-1"></a>    <span class="dt">"PostToolUse"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb8-61"><a href="#cb8-61" aria-hidden="true" tabindex="-1"></a>      <span class="fu">{</span></span>
+<span id="cb8-62"><a href="#cb8-62" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"matcher"</span><span class="fu">:</span> <span class="st">"Edit|Write"</span><span class="fu">,</span></span>
+<span id="cb8-63"><a href="#cb8-63" aria-hidden="true" tabindex="-1"></a>        <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb8-64"><a href="#cb8-64" aria-hidden="true" tabindex="-1"></a>          <span class="fu">{</span></span>
+<span id="cb8-65"><a href="#cb8-65" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
+<span id="cb8-66"><a href="#cb8-66" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"python3 </span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/post-edit-lint.py"</span><span class="fu">,</span></span>
+<span id="cb8-67"><a href="#cb8-67" aria-hidden="true" tabindex="-1"></a>            <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">10</span></span>
+<span id="cb8-68"><a href="#cb8-68" aria-hidden="true" tabindex="-1"></a>          <span class="fu">}</span></span>
+<span id="cb8-69"><a href="#cb8-69" aria-hidden="true" tabindex="-1"></a>        <span class="ot">]</span></span>
+<span id="cb8-70"><a href="#cb8-70" aria-hidden="true" tabindex="-1"></a>      <span class="fu">}</span></span>
+<span id="cb8-71"><a href="#cb8-71" aria-hidden="true" tabindex="-1"></a>    <span class="ot">]</span></span>
+<span id="cb8-72"><a href="#cb8-72" aria-hidden="true" tabindex="-1"></a>  <span class="fu">}</span></span>
+<span id="cb8-73"><a href="#cb8-73" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <section id="structure-breakdown" class="level3">
 <h3 class="anchored" data-anchor-id="structure-breakdown">Structure breakdown</h3>
 <ul>
 <li><strong>Top-level keys</strong> are event names: <code>PreToolUse</code>, <code>PostToolUse</code>, <code>PreCompact</code>, <code>SessionStart</code>.</li>
-<li>Each event maps to an <strong>array of hook groups</strong>. Multiple groups on the same event fire sequentially.</li>
+<li>Each event maps to an <strong>array of hook groups</strong>. All hooks that match an event run in parallel, so one hook cannot rely on another having run first.</li>
 <li>Each group has an optional <strong><code>matcher</code></strong> (regex) and a required <strong><code>hooks</code></strong> array.</li>
 <li>Each hook in the array specifies:
 <ul>
 <li><code>type</code> — always <code>"command"</code> for shell/Python scripts</li>
 <li><code>command</code> — the script to execute, quoted to handle spaces in paths</li>
 <li><code>timeout</code> — maximum execution time in seconds; the hook is killed if it exceeds this</li>
+<li><code>onFailure</code> — <code>"block"</code> on the two guards, so a crash, timeout, or unexpected exit code blocks the call; omitted (default <code>"continue"</code>) on advisory hooks</li>
 </ul></li>
 </ul>
 </section>
@@ -1175,47 +1230,47 @@ Status: 3 issue(s) found -- review before committing</code></pre>
 <section id="step-1-write-the-script" class="level2">
 <h2 class="anchored" data-anchor-id="step-1-write-the-script">Step 1: Write the script</h2>
 <p>Create a new file in <code>.claude/hooks/</code>. Make it executable.</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">touch</span> .claude/hooks/my-custom-hook.sh</span>
-<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> +x .claude/hooks/my-custom-hook.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb9"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="fu">touch</span> .claude/hooks/my-custom-hook.sh</span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a><span class="fu">chmod</span> +x .claude/hooks/my-custom-hook.sh</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="step-2-write-the-logic" class="level2">
 <h2 class="anchored" data-anchor-id="step-2-write-the-logic">Step 2: Write the logic</h2>
-<p>The script receives the tool input as JSON on stdin (for <code>PreToolUse</code> and <code>PostToolUse</code>). For <code>PostToolUse</code>, the edited file path is also available in <code>$CLAUDE_TOOL_ARG_FILE_PATH</code>.</p>
+<p>The script receives the tool input as JSON on stdin (for <code>PreToolUse</code> and <code>PostToolUse</code>); the edited file path is <code>tool_input.file_path</code>. To show Claude a message from a <code>PostToolUse</code> hook, print JSON with <code>hookSpecificOutput.additionalContext</code>.</p>
 <p>Here is an example hook that warns when a LaTeX file is edited without compiling:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a><span class="co"># warn-latex-compile.sh --- Advisory reminder after LaTeX edits</span></span>
-<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a><span class="va">FILE</span><span class="op">=</span><span class="st">"</span><span class="va">${CLAUDE_TOOL_ARG_FILE_PATH</span><span class="op">:-</span><span class="va">}</span><span class="st">"</span></span>
-<span id="cb12-5"><a href="#cb12-5" aria-hidden="true" tabindex="-1"></a><span class="kw">[[</span> <span class="ot">-z</span> <span class="st">"</span><span class="va">$FILE</span><span class="st">"</span> <span class="kw">]]</span> <span class="kw">&amp;&amp;</span> <span class="bu">exit</span> 0</span>
-<span id="cb12-6"><a href="#cb12-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Only fire on .tex files</span></span>
-<span id="cb12-8"><a href="#cb12-8" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="st">"</span><span class="va">$FILE</span><span class="st">"</span> <span class="kw">in</span></span>
-<span id="cb12-9"><a href="#cb12-9" aria-hidden="true" tabindex="-1"></a>  <span class="pp">*</span><span class="ss">.tex</span><span class="kw">)</span> <span class="cf">;;</span></span>
-<span id="cb12-10"><a href="#cb12-10" aria-hidden="true" tabindex="-1"></a>  <span class="pp">*</span><span class="kw">)</span> <span class="bu">exit</span> 0 <span class="cf">;;</span></span>
-<span id="cb12-11"><a href="#cb12-11" aria-hidden="true" tabindex="-1"></a><span class="cf">esac</span></span>
-<span id="cb12-12"><a href="#cb12-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-13"><a href="#cb12-13" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"LaTeX file edited: </span><span class="va">$FILE</span><span class="st">"</span></span>
-<span id="cb12-14"><a href="#cb12-14" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Remember to compile with: cd paper &amp;&amp; latexmk main.tex"</span></span>
-<span id="cb12-15"><a href="#cb12-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb12-16"><a href="#cb12-16" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span> 0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb10"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a><span class="co"># warn-latex-compile.sh --- Advisory reminder after LaTeX edits</span></span>
+<span id="cb10-3"><a href="#cb10-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-4"><a href="#cb10-4" aria-hidden="true" tabindex="-1"></a><span class="va">FILE</span><span class="op">=</span><span class="va">$(</span><span class="ex">python3</span> <span class="at">-c</span> <span class="st">'import json,sys; print(json.load(sys.stdin).get("tool_input",{}).get("file_path",""))'</span><span class="va">)</span></span>
+<span id="cb10-5"><a href="#cb10-5" aria-hidden="true" tabindex="-1"></a><span class="kw">[[</span> <span class="ot">-z</span> <span class="st">"</span><span class="va">$FILE</span><span class="st">"</span> <span class="kw">]]</span> <span class="kw">&amp;&amp;</span> <span class="bu">exit</span> 0</span>
+<span id="cb10-6"><a href="#cb10-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-7"><a href="#cb10-7" aria-hidden="true" tabindex="-1"></a><span class="co"># Only fire on .tex files</span></span>
+<span id="cb10-8"><a href="#cb10-8" aria-hidden="true" tabindex="-1"></a><span class="cf">case</span> <span class="st">"</span><span class="va">$FILE</span><span class="st">"</span> <span class="kw">in</span></span>
+<span id="cb10-9"><a href="#cb10-9" aria-hidden="true" tabindex="-1"></a>  <span class="pp">*</span><span class="ss">.tex</span><span class="kw">)</span> <span class="cf">;;</span></span>
+<span id="cb10-10"><a href="#cb10-10" aria-hidden="true" tabindex="-1"></a>  <span class="pp">*</span><span class="kw">)</span> <span class="bu">exit</span> 0 <span class="cf">;;</span></span>
+<span id="cb10-11"><a href="#cb10-11" aria-hidden="true" tabindex="-1"></a><span class="cf">esac</span></span>
+<span id="cb10-12"><a href="#cb10-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-13"><a href="#cb10-13" aria-hidden="true" tabindex="-1"></a><span class="va">MSG</span><span class="op">=</span><span class="st">"LaTeX file edited: </span><span class="va">$FILE</span><span class="st">. Compile with: cd paper &amp;&amp; latexmk main.tex"</span></span>
+<span id="cb10-14"><a href="#cb10-14" aria-hidden="true" tabindex="-1"></a><span class="ex">python3</span> <span class="at">-c</span> <span class="st">'import json,sys; print(json.dumps({"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":sys.argv[1]}}))'</span> <span class="st">"</span><span class="va">$MSG</span><span class="st">"</span></span>
+<span id="cb10-15"><a href="#cb10-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb10-16"><a href="#cb10-16" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span> 0</span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
 <section id="step-3-register-in-settings.json" class="level2">
 <h2 class="anchored" data-anchor-id="step-3-register-in-settings.json">Step 3: Register in settings.json</h2>
 <p>Add an entry under the appropriate event type:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"PostToolUse"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"matcher"</span><span class="fu">:</span> <span class="st">"Edit|Write"</span><span class="fu">,</span></span>
-<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
-<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
-<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"</span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/warn-latex-compile.sh"</span><span class="fu">,</span></span>
-<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">5</span></span>
-<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
-<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
-<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
-<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb11"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"PostToolUse"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"matcher"</span><span class="fu">:</span> <span class="st">"Edit|Write"</span><span class="fu">,</span></span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>        <span class="fu">{</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"</span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/warn-latex-compile.sh"</span><span class="fu">,</span></span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>          <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">5</span></span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a>        <span class="fu">}</span></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>      <span class="ot">]</span></span>
+<span id="cb11-12"><a href="#cb11-12" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb11-13"><a href="#cb11-13" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb11-14"><a href="#cb11-14" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="callout callout-style-default callout-important callout-titled">
 <div class="callout-header d-flex align-content-center">
 <div class="callout-icon-container">
@@ -1226,55 +1281,68 @@ Important
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<p><code>settings.json</code> is a protected file by default. Edit it manually — the <code>protect-files.sh</code> hook will block Claude from modifying it.</p>
+<p><code>settings.json</code> is a protected file by default. Edit it manually — the <code>protect-files.py</code> hook will block Claude from modifying it.</p>
 </div>
 </div>
 </section>
 <section id="step-4-test" class="level2">
 <h2 class="anchored" data-anchor-id="step-4-test">Step 4: Test</h2>
 <p>The simplest test is to trigger the event. For a <code>PostToolUse</code> hook on <code>Edit|Write</code>, just ask Claude to edit a file matching your hook’s filter. Watch for the hook’s output in the transcript.</p>
-<p>For standalone testing of the script itself:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">'{"tool_name": "Edit", "tool_input": {"file_path": "paper/main.tex"}}'</span> <span class="dt">\</span></span>
-<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">|</span> <span class="va">CLAUDE_PROJECT_DIR</span><span class="op">=</span><span class="st">"</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st">"</span> <span class="ex">.claude/hooks/my-custom-hook.sh</span></span>
-<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Exit code: </span><span class="va">$?</span><span class="st">"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<p>For standalone testing of the script itself (and add a case to <code>scripts/test_hooks.py</code> so it stays tested):</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb12"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">'{"tool_name": "Edit", "tool_input": {"file_path": "paper/main.tex"}}'</span> <span class="dt">\</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">|</span> <span class="va">CLAUDE_PROJECT_DIR</span><span class="op">=</span><span class="st">"</span><span class="va">$(</span><span class="bu">pwd</span><span class="va">)</span><span class="st">"</span> <span class="ex">.claude/hooks/my-custom-hook.sh</span></span>
+<span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="bu">echo</span> <span class="st">"Exit code: </span><span class="va">$?</span><span class="st">"</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 </section>
-<section id="example-pre-commit-quality-check" class="level2">
-<h2 class="anchored" data-anchor-id="example-pre-commit-quality-check">Example: Pre-commit quality check</h2>
-<p>A hook that runs the linter before every <code>git commit</code> command:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb15"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
-<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># pre-commit-lint.sh --- Lint all staged R/Python/Julia files before commit</span></span>
-<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="va">INPUT</span><span class="op">=</span><span class="va">$(</span><span class="fu">cat</span><span class="va">)</span></span>
-<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a><span class="va">TOOL</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">"</span><span class="va">$INPUT</span><span class="st">"</span> <span class="kw">|</span> <span class="ex">jq</span> <span class="at">-r</span> <span class="st">'.tool_name'</span><span class="va">)</span></span>
-<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a><span class="va">COMMAND</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">"</span><span class="va">$INPUT</span><span class="st">"</span> <span class="kw">|</span> <span class="ex">jq</span> <span class="at">-r</span> <span class="st">'.tool_input.command // empty'</span><span class="va">)</span></span>
-<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Only fire on Bash tool calls that are git commits</span></span>
-<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a><span class="kw">[[</span> <span class="st">"</span><span class="va">$TOOL</span><span class="st">"</span> <span class="ot">!=</span> <span class="st">"Bash"</span> <span class="kw">]]</span> <span class="kw">&amp;&amp;</span> <span class="bu">exit</span> 0</span>
-<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a><span class="kw">[[</span> <span class="st">"</span><span class="va">$COMMAND</span><span class="st">"</span> <span class="ot">!=</span> git<span class="dt">\ </span>commit<span class="pp">*</span> <span class="kw">]]</span> <span class="kw">&amp;&amp;</span> <span class="bu">exit</span> 0</span>
-<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Find staged script files</span></span>
-<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a><span class="va">STAGED</span><span class="op">=</span><span class="va">$(</span><span class="fu">git</span> diff <span class="at">--cached</span> <span class="at">--name-only</span> <span class="at">--diff-filter</span><span class="op">=</span>ACM <span class="dt">\</span></span>
-<span id="cb15-14"><a href="#cb15-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-E</span> <span class="st">'\.(R|py|jl)$'</span> <span class="kw">||</span> <span class="fu">true</span><span class="va">)</span></span>
-<span id="cb15-15"><a href="#cb15-15" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-16"><a href="#cb15-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-n</span> <span class="st">"</span><span class="va">$STAGED</span><span class="st">"</span> <span class="kw">]];</span> <span class="cf">then</span></span>
-<span id="cb15-17"><a href="#cb15-17" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">"Linting staged scripts before commit..."</span></span>
-<span id="cb15-18"><a href="#cb15-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> f <span class="kw">in</span> <span class="va">$STAGED</span><span class="kw">;</span> <span class="cf">do</span></span>
-<span id="cb15-19"><a href="#cb15-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="va">$CLAUDE_PROJECT_DIR</span><span class="st">"</span><span class="ex">/.claude/hooks/lint-scripts.sh</span> <span class="st">"</span><span class="va">$f</span><span class="st">"</span></span>
-<span id="cb15-20"><a href="#cb15-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">done</span></span>
-<span id="cb15-21"><a href="#cb15-21" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
-<span id="cb15-22"><a href="#cb15-22" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb15-23"><a href="#cb15-23" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span> 0  <span class="co"># Advisory only --- change to exit 2 to block on lint failures</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<section id="example-lint-before-claude-commits" class="level2">
+<h2 class="anchored" data-anchor-id="example-lint-before-claude-commits">Example: Lint before Claude commits</h2>
+<div class="callout callout-style-default callout-note callout-titled">
+<div class="callout-header d-flex align-content-center">
+<div class="callout-icon-container">
+<i class="callout-icon"></i>
+</div>
+<div class="callout-title-container flex-fill">
+Note
+</div>
+</div>
+<div class="callout-body-container callout-body">
+<p>You don’t need this for clo-author itself: the git pre-commit gate in <code>.githooks/pre-commit</code> (see <a href="#post-merge">Git hooks</a>) already blocks HIGH lint findings on every commit, including commits made outside Claude. The example shows how a Claude-side <code>PreToolUse</code> hook on <code>Bash</code> works.</p>
+</div>
+</div>
+<p>A hook that runs the linter before every <code>git commit</code> command Claude issues:</p>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb13"><pre class="sourceCode bash code-with-copy"><code class="sourceCode bash"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co">#!/bin/bash</span></span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="co"># pre-commit-lint.sh --- Lint all staged R/Python/Julia files before commit</span></span>
+<span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-4"><a href="#cb13-4" aria-hidden="true" tabindex="-1"></a><span class="va">INPUT</span><span class="op">=</span><span class="va">$(</span><span class="fu">cat</span><span class="va">)</span></span>
+<span id="cb13-5"><a href="#cb13-5" aria-hidden="true" tabindex="-1"></a><span class="va">TOOL</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">"</span><span class="va">$INPUT</span><span class="st">"</span> <span class="kw">|</span> <span class="ex">jq</span> <span class="at">-r</span> <span class="st">'.tool_name'</span><span class="va">)</span></span>
+<span id="cb13-6"><a href="#cb13-6" aria-hidden="true" tabindex="-1"></a><span class="va">COMMAND</span><span class="op">=</span><span class="va">$(</span><span class="bu">echo</span> <span class="st">"</span><span class="va">$INPUT</span><span class="st">"</span> <span class="kw">|</span> <span class="ex">jq</span> <span class="at">-r</span> <span class="st">'.tool_input.command // empty'</span><span class="va">)</span></span>
+<span id="cb13-7"><a href="#cb13-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-8"><a href="#cb13-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Only fire on Bash tool calls that are git commits</span></span>
+<span id="cb13-9"><a href="#cb13-9" aria-hidden="true" tabindex="-1"></a><span class="kw">[[</span> <span class="st">"</span><span class="va">$TOOL</span><span class="st">"</span> <span class="ot">!=</span> <span class="st">"Bash"</span> <span class="kw">]]</span> <span class="kw">&amp;&amp;</span> <span class="bu">exit</span> 0</span>
+<span id="cb13-10"><a href="#cb13-10" aria-hidden="true" tabindex="-1"></a><span class="kw">[[</span> <span class="st">"</span><span class="va">$COMMAND</span><span class="st">"</span> <span class="ot">!=</span> git<span class="dt">\ </span>commit<span class="pp">*</span> <span class="kw">]]</span> <span class="kw">&amp;&amp;</span> <span class="bu">exit</span> 0</span>
+<span id="cb13-11"><a href="#cb13-11" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-12"><a href="#cb13-12" aria-hidden="true" tabindex="-1"></a><span class="co"># Find staged script files</span></span>
+<span id="cb13-13"><a href="#cb13-13" aria-hidden="true" tabindex="-1"></a><span class="va">STAGED</span><span class="op">=</span><span class="va">$(</span><span class="fu">git</span> diff <span class="at">--cached</span> <span class="at">--name-only</span> <span class="at">--diff-filter</span><span class="op">=</span>ACM <span class="dt">\</span></span>
+<span id="cb13-14"><a href="#cb13-14" aria-hidden="true" tabindex="-1"></a>  <span class="kw">|</span> <span class="fu">grep</span> <span class="at">-E</span> <span class="st">'\.(R|py|jl)$'</span> <span class="kw">||</span> <span class="fu">true</span><span class="va">)</span></span>
+<span id="cb13-15"><a href="#cb13-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-16"><a href="#cb13-16" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">[[</span> <span class="ot">-n</span> <span class="st">"</span><span class="va">$STAGED</span><span class="st">"</span> <span class="kw">]];</span> <span class="cf">then</span></span>
+<span id="cb13-17"><a href="#cb13-17" aria-hidden="true" tabindex="-1"></a>  <span class="bu">echo</span> <span class="st">"Linting staged scripts before commit..."</span></span>
+<span id="cb13-18"><a href="#cb13-18" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> f <span class="kw">in</span> <span class="va">$STAGED</span><span class="kw">;</span> <span class="cf">do</span></span>
+<span id="cb13-19"><a href="#cb13-19" aria-hidden="true" tabindex="-1"></a>    <span class="st">"</span><span class="va">$CLAUDE_PROJECT_DIR</span><span class="st">"</span><span class="ex">/.claude/hooks/lint-scripts.sh</span> <span class="st">"</span><span class="va">$f</span><span class="st">"</span></span>
+<span id="cb13-20"><a href="#cb13-20" aria-hidden="true" tabindex="-1"></a>  <span class="cf">done</span></span>
+<span id="cb13-21"><a href="#cb13-21" aria-hidden="true" tabindex="-1"></a><span class="cf">fi</span></span>
+<span id="cb13-22"><a href="#cb13-22" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb13-23"><a href="#cb13-23" aria-hidden="true" tabindex="-1"></a><span class="bu">exit</span> 0  <span class="co"># Advisory only --- change to exit 2 to block on lint failures</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 <p>Register it under <code>PreToolUse</code> with matcher <code>"Bash"</code>:</p>
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb16"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"matcher"</span><span class="fu">:</span> <span class="st">"Bash"</span><span class="fu">,</span></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"</span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/pre-commit-lint.sh"</span><span class="fu">,</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">15</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
-<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb14"><pre class="sourceCode json code-with-copy"><code class="sourceCode json"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="fu">{</span></span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"matcher"</span><span class="fu">:</span> <span class="st">"Bash"</span><span class="fu">,</span></span>
+<span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  <span class="dt">"hooks"</span><span class="fu">:</span> <span class="ot">[</span></span>
+<span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>    <span class="fu">{</span></span>
+<span id="cb14-5"><a href="#cb14-5" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"type"</span><span class="fu">:</span> <span class="st">"command"</span><span class="fu">,</span></span>
+<span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"command"</span><span class="fu">:</span> <span class="st">"</span><span class="ch">\"</span><span class="st">$CLAUDE_PROJECT_DIR</span><span class="ch">\"</span><span class="st">/.claude/hooks/pre-commit-lint.sh"</span><span class="fu">,</span></span>
+<span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>      <span class="dt">"timeout"</span><span class="fu">:</span> <span class="dv">15</span></span>
+<span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>    <span class="fu">}</span></span>
+<span id="cb14-9"><a href="#cb14-9" aria-hidden="true" tabindex="-1"></a>  <span class="ot">]</span></span>
+<span id="cb14-10"><a href="#cb14-10" aria-hidden="true" tabindex="-1"></a><span class="fu">}</span></span></code></pre></div><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></div>
 
 
 </section>
@@ -1367,7 +1435,7 @@ Important
     }
       var localhostRegex = new RegExp(/^(?:http|https):\/\/localhost\:?[0-9]*\//);
       var mailtoRegex = new RegExp(/^mailto:/);
-        var filterRegex = new RegExp('/' + window.location.host + '/');
+        var filterRegex = new RegExp("https:\/\/hugosantanna\.github\.io\/clo-author\/");
       var isInternal = (href) => {
           return filterRegex.test(href) || localhostRegex.test(href) || mailtoRegex.test(href);
       }
