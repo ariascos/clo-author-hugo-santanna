@@ -1,15 +1,15 @@
 ---
 title: "Agents"
-subtitle: "Twenty specialists that never edit each other's work"
+subtitle: "Twenty-five specialists that never edit each other's work"
 ---
 
 # Four Architectural Rules {#how-agents-work}
 
-The system uses 20 specialized agents organized into worker-critic pairs. Four rules explain most of the system's behavior.
+The system uses 25 specialized agents, most of them organized into worker-critic pairs. Four rules explain most of the system's behavior.
 
 ## Worker-Critic Pairing
 
-**Every creator has a paired destroyer.** The critic reads the artifact, scores it against a rubric, and lists what must change --- but never edits the file itself. If the score falls below 80, the worker revises and the critic re-evaluates. This cycle repeats up to 3 rounds.
+**Every creator has a paired destroyer.** The critic reads the artifact, scores it against a rubric, and lists what must change --- but never edits the file itself. The strategist-critic gives a verdict instead of points: SOUND, MINOR ISSUES, MAJOR ISSUES, or CRITICAL ERRORS. If the score falls below 80 (or the verdict is MAJOR ISSUES or worse), the worker revises and the critic re-evaluates. This cycle repeats up to 3 rounds.
 
 | Worker | Critic | What's Reviewed |
 |--------|--------|-----------------|
@@ -21,12 +21,15 @@ The system uses 20 specialized agents organized into worker-critic pairs. Four r
 | coder | coder-critic | Code quality, strategy alignment, numerical discipline |
 | writer | writer-critic | Manuscript polish, claims-evidence, LaTeX format |
 | storyteller | storyteller-critic | Talk structure, visual quality, content fidelity |
+| coherence-finder | coherence-skeptic | Internal-consistency findings, one check group at a time |
 
-Three agents have no paired critic because they are infrastructure (orchestrator, verifier) or already serve as reviewers (editor, domain-referee, methods-referee).
+The coherence pair is a chain rather than a loop: `/coherence --deep` runs coherence-finder once per check group, one coherence-skeptic per group tries to refute its findings, and coherence-consolidator merges the survivors. No scores, no revision rounds (see [Coherence Chain](#coherence-chain)).
+
+Nine agents have no paired critic. Two are infrastructure (orchestrator, verifier); three already serve as reviewers (editor, domain-referee, methods-referee); two are later stages of the coherence chain (coherence-skeptic, coherence-consolidator). The explainer's output is tested on the author by a quiz, not scored by a critic. The guide-writer writes documentation, outside the research pipeline.
 
 ## Separation of Powers
 
-**Critics never create. Creators never self-score.** If a critic invocation produces a file in `scripts/`, `paper/`, or `paper/talks/`, the orchestrator flags it as a violation. If a creator reports its own score, the orchestrator discards it and dispatches the critic.
+**Critics never create. Creators never self-score.** Every critic's tool list is read-only (Read, Grep, Glob), so a critic cannot write a file in `scripts/`, `paper/`, or anywhere else. If a creator reports its own score, the orchestrator discards it and dispatches the critic.
 
 This prevents the system from rubber-stamping its own output. A critic who fixes their own findings has incentive to find only fixable issues. Separation keeps criticism honest.
 
@@ -46,7 +49,7 @@ This prevents the system from rubber-stamping its own output. A critic who fixes
 
 **The problem:** operational knowledge evolved faster than identity. A new estimator package required updating checklists, not changing who the coder *is*. Coupling them meant agent files churned constantly.
 
-**Now agents are lean identity files.** Each one is 50--140 lines declaring: role, voice, constraints, tool access, paper-type awareness, and pointers to where the operational knowledge lives. The coder file says "read `analyze/templates/pre-code-report.md` before writing code" --- it does not contain the pre-code report template itself.
+**Now agents are lean identity files.** Each one is roughly 35--210 lines declaring: role, voice, constraints, tool access, paper-type awareness, and pointers to where the operational knowledge lives. The coder file says "read `analyze/templates/pre-code-report.md` before writing code" --- it does not contain the pre-code report template itself.
 
 The operational knowledge --- checklists, rubrics, scoring tables, templates, gotchas --- lives in **skill folders**. When the orchestrator dispatches an agent, it tells the agent which skill invoked it and the agent reads the relevant templates from that skill's directory. This means:
 
@@ -58,6 +61,8 @@ The operational knowledge --- checklists, rubrics, scoring tables, templates, go
 A concrete example: the coder agent file (136 lines) declares its role, tool access, workflow stages, engineering standards, and output expectations. But when `/analyze` dispatches it, the coder reads `analyze/templates/pre-code-report.md` for the pre-code report format, `analyze/templates/r-script-structure.R` for the scaffold, and `analyze/gotchas.md` for known pitfalls. None of that lives in the agent file. If we learn a new gotcha tomorrow, we add one line to `analyze/gotchas.md` --- the agent file never changes.
 
 The strategist-critic works the same way. Its identity file (62 lines) says: "You are a top-5 journal referee. Run 4 sequential phases. Read the causal audit template." The 4-phase audit protocol, the design-specific checklists, and the scoring rubric all live in `review/templates/` and `review/config/`. Updating how we evaluate RDD papers means editing a template, not touching the critic's identity.
+
+**Model and effort live in the frontmatter.** Every agent sets `model: inherit`, so it runs on whatever model your session uses. Some also set `effort:`. High: strategist, strategist-critic, theorist, theorist-critic, methods-referee, editor. Low: coherence-finder, coherence-skeptic, librarian-critic, explorer-critic. Everything else runs at the default (medium on Opus 5.5).
 
 For full agent specifications, see the `.claude/agents/` directory --- each file is self-contained and authoritative.
 
@@ -77,7 +82,7 @@ Together they answer a single question: *what has been done, and what data could
 
 **Activates:** From a research idea or spec. No prerequisites.
 **Produces:** `quality_reports/literature/` and `quality_reports/data-assessment/`
-**Quality gate:** Both critics must score >= 80 before Strategy activates.
+**Quality gate:** No score gate. Strategy needs only one of the two outputs to exist (literature OR data assessment); both critics' scores feed the weighted aggregate, 10% each.
 
 ## Strategy Pair
 
@@ -89,7 +94,7 @@ The **strategist-critic** is the system's most important gatekeeper. It runs a 4
 
 **Activates:** After at least one Discovery output (literature OR data assessment).
 **Produces:** `quality_reports/strategy/` and (when activated) `quality_reports/theory/`
-**Quality gate:** Strategist-critic score >= 80 before Execution activates.
+**Quality gate:** Strategist-critic verdict of SOUND or MINOR ISSUES before Execution activates; theorist-critic >= 80 when the theorist ran.
 
 ## Execution Trio
 
@@ -101,15 +106,17 @@ The **writer** drafts the manuscript after code is approved. It refuses to write
 
 The **coder-critic** reviews both the data-engineer and coder across 16 categories: strategic alignment (does the code match the memo?), code quality (reproducibility, numerics, function design), and infrastructure (checkpointing, error handling, prohibited patterns). The **writer-critic** runs 8 checks: structure, claims-evidence, identification fidelity, AI-pattern detection, LaTeX format, compilation, voice fidelity, and notation consistency.
 
-**Activates:** Data-engineer and coder after a strategist-critic verdict of SOUND or MINOR ISSUES. Writer after coder-critic score >= 80.
+Alongside the trio, the **explainer** runs once code review passes, in parallel with the writer. For each analysis script it writes a delta-explainer (only what departs from the strategy memo, plus a sample-construction ledger with drop counts), a 5-question quiz, and a separate answer key. It tests the author, not the code: `/submit` blocks until every script behind a paper exhibit has a passing quiz at the script's current fingerprint (INV-26).
+
+**Activates:** Data-engineer and coder after a strategist-critic verdict of SOUND or MINOR ISSUES. Writer and explainer after coder-critic score >= 80.
 **Produces:** `data/cleaned/`, `scripts/R/`, `paper/tables/`, `paper/figures/`, `paper/sections/`
 **Quality gate:** Coder-critic and writer-critic both >= 80 before Peer Review.
 
-## Review Team
+## Review Team {#peer-review}
 
 The **editor** performs desk review: reads the abstract and introduction, skims the contribution, verifies novelty, and decides whether to send to referees or desk reject. When it sends, it assigns each referee a contrasting intellectual disposition --- STRUCTURAL ("where's the mechanism?"), CREDIBILITY ("show me the pre-trends"), MEASUREMENT ("how is this measured?"), POLICY ("does this generalize?"), THEORY ("what does the model predict?"), or SKEPTIC ("what would make this go away?"). Each referee also receives randomized pet peeves drawn from pools of critical and constructive tendencies.
 
-The **domain-referee** evaluates substance: contribution and novelty (30%), literature positioning (25%), substantive arguments (20%), external validity (15%), and journal fit (10%). The **methods-referee** evaluates methods with paper-type-specific weights: identification strategy, estimation, inference, robustness, and replication readiness. Neither sees the other's report.
+The **domain-referee** evaluates substance: contribution and novelty (30%), literature positioning (25%), substantive arguments (20%), external validity (15%), and journal fit (10%). The **methods-referee** evaluates methods with paper-type-specific weights: identification strategy, estimation, inference, robustness, and replication readiness. Neither sees the other's report. In round 1 neither sees earlier verdicts either: both read a fenced copy of the manuscript outside the repository, away from `quality_reports/reviews/`. `--peer --r2` deliberately reuses round 1.
 
 After both reports arrive, the editor classifies each concern as FATAL (cannot be fixed), ADDRESSABLE (fixable with revision), or TASTE (referee preference), resolves disagreements with explicit reasoning, and issues a decision.
 
@@ -127,11 +134,19 @@ The **storyteller-critic** checks narrative flow (does the hook work?), visual q
 **Produces:** `paper/talks/` or `paper/quarto/`
 **Quality gate:** Advisory only.
 
+## Coherence Chain {#coherence-chain}
+
+`/coherence --deep` adds a reasoning pass on top of the deterministic parser, run as a three-stage chain. The **coherence-finder** is one definition dispatched once per non-empty check group (specification, claims, continuity, notation, theory), each in its own context, so the groups do not anchor on each other. A **coherence-skeptic** per group with findings tries to refute each one, defaulting to refuted when uncertain. The **coherence-consolidator** merges the same defect seen from different checks and ranks what survives.
+
+**Activates:** On `/coherence --deep`, after `paper_coherence.py --slices` writes one slice per group.
+**Produces:** A `## Reasoning layer` section appended to `quality_reports/coherence/YYYY-MM-DD_report.md`
+**Quality gate:** None. Reasoning findings are advisory and never block; coherence carries no weight in the score.
+
 ## Infrastructure
 
-The **orchestrator** is the project manager. It reads `permissions.md` to determine which agents can activate, validates pre-dispatch (do REQUIRES artifacts exist?) and post-completion (do PRODUCES artifacts exist with required sections?), launches worker-critic pairs in parallel when independent, tracks strike counts, computes weighted overall scores, and maintains structured pipeline state in `pipeline_state.json`. It makes no research decisions --- when judgment is needed, it escalates to the user with a clear question.
+The **orchestrator** is the project manager. It reads `permissions.md` to determine which agents can activate and runs `scripts/pipeline.py check-pre` / `check-post` around every dispatch (do REQUIRES artifacts exist? do PRODUCES artifacts exist with required sections?). It launches worker-critic pairs in parallel when independent and tracks strike counts. It does not do the arithmetic: `scripts/score.py` computes the weighted score, and `pipeline.py status` derives `pipeline_state.json` from the research journal. Its tool list names its dispatch roster as `Agent(...)`, so it can only spawn registry agents. It makes no research decisions --- when judgment is needed, it escalates to the user with a clear question.
 
-The **verifier** checks mechanical correctness in two modes. Standard mode (between phases): LaTeX compilation, script execution, file integrity, output freshness. Submission mode (before journal deposit): package inventory, dependency verification, data provenance, end-to-end execution, output cross-reference, and AEA-format README completeness. It scores binary --- 0 or 100, contributing 5% weight to the overall project score.
+The **verifier** checks mechanical correctness in two modes. It starts from `scripts/verify.py`, which runs the mechanical checks (including the INV-26 understanding gate), and keeps the judgment calls for itself. Standard mode (between phases): LaTeX compilation, script execution, file integrity, output freshness. Submission mode (before journal deposit): package inventory, dependency verification, data provenance, end-to-end execution, output cross-reference, and AEA-format README completeness. It scores binary --- 0 or 100, contributing 5% weight to the overall project score.
 
 **Activates:** Orchestrator runs throughout. Verifier runs between phases and at submission.
 **Produces:** `quality_reports/pipeline_state.json`, `quality_reports/verification_report.md`
@@ -155,17 +170,17 @@ Discovery ──→ Strategy ──→ Execution ──→ Peer Review ──→
                                               (storyteller)
 ```
 
-Each arrow is gated by a critic score. The orchestrator checks `permissions.md` before every dispatch: are the REQUIRES artifacts present? Has the prerequisite critic scored >= 80? If not, the agent does not activate.
+Every arrow but the first is gated by a critic: a strategist-critic verdict of SOUND or MINOR ISSUES out of Strategy, scores >= 80 out of Execution, an editorial decision out of Peer Review. Before every dispatch the orchestrator runs `scripts/pipeline.py check-pre`, which reads `permissions.md`: are the REQUIRES artifacts present? Has the prerequisite critic passed? If not, the agent does not activate.
 
 Re-entry is allowed at any phase except Submission (terminal). A Major Revisions decision from Peer Review triggers re-entry at whatever phase the referee comments require --- sometimes just the writer (clarification), sometimes back to the coder (new analysis), sometimes back to the strategist (fundamental design challenge).
 
-The system distinguishes between phases (sequential gates) and parallel groups (concurrent work within a phase). The librarian and explorer run concurrently. The data-engineer and coder run concurrently. But the writer waits for the coder to finish. These relationships are all declared in one file --- `permissions.md` --- not hardcoded in agent logic.
+The system distinguishes between phases (sequential gates) and parallel groups (concurrent work within a phase). The librarian and explorer run concurrently. The data-engineer and coder run concurrently. But the writer waits for the coder to finish, and runs alongside the explainer. These relationships are all declared in one file --- `permissions.md` --- not hardcoded in agent logic.
 
 ---
 
 # Quick Reference {#agent-catalog}
 
-All 20 agents at a glance.
+All 25 agents at a glance.
 
 | Agent | Phase | Creates / Checks | Paired With |
 |-------|-------|------------------|-------------|
@@ -182,13 +197,18 @@ All 20 agents at a glance.
 | coder-critic | Execution | 16 checks: strategy alignment, code quality, numerics | coder, data-engineer |
 | writer | Execution | Paper manuscript, claim-source map | writer-critic |
 | writer-critic | Execution | 8 checks: structure, claims, format, voice, notation | writer |
+| explainer | Execution | Delta-explainer, sample ledger, 5-question quiz + separate key (INV-26) | None |
 | editor | Peer Review | Desk review, referee dispatch, editorial decision | None |
 | domain-referee | Peer Review | Blind review (substance: contribution, literature, scope) | None |
 | methods-referee | Peer Review | Blind review (methods: ID, estimation, inference, robustness) | None |
 | storyteller | Presentation | Beamer / Quarto talks in 4 formats | storyteller-critic |
 | storyteller-critic | Presentation | Checks narrative, visuals, content fidelity, scope | storyteller |
-| orchestrator | All | Agent dispatch, quality gates, pipeline state | None |
-| verifier | Submission | Compilation, execution, file integrity, AEA audit | None |
+| coherence-finder | `/coherence --deep` | Internal-consistency findings for one check group | coherence-skeptic |
+| coherence-skeptic | `/coherence --deep` | Tries to refute one group's findings, in one batch | coherence-finder |
+| coherence-consolidator | `/coherence --deep` | Merges duplicates across groups, ranks survivors | None |
+| orchestrator | All | Agent dispatch, quality gates (via `pipeline.py`, `score.py`) | None |
+| verifier | Submission | Compilation, execution, file integrity, AEA audit (`verify.py` + judgment) | None |
+| guide-writer | Documentation | Guide pages and docs in a tutorial style | None |
 
 ---
 
@@ -200,6 +220,7 @@ This page teaches the architecture --- the four rules, the skill-centric model, 
 - **Skill templates:** `{skill}/templates/` --- checklists, protocols, report formats
 - **Skill config:** `{skill}/config/` --- scoring rubrics, tolerance thresholds
 - **Permission registry:** `.claude/rules/permissions.md` --- REQUIRES, PRODUCES, escalation targets, quality weights
-- **Lifecycle validation:** `.claude/rules/lifecycle.md` --- pre-dispatch and post-completion checks
+- **Lifecycle validation:** `.claude/rules/lifecycle.md` --- pre-dispatch and post-completion checks, run by `scripts/pipeline.py check-pre` / `check-post`
+- **Weights and thresholds:** `.claude/skills/new-project/config/quality-gates.json`, read by `scripts/score.py`
 
-The permission registry is the single source of truth for agent dispatch. Adding a new agent means adding one entry there and one file in `.claude/agents/`. No other file needs to change.
+The permission registry is the single source of truth for agent dispatch. Adding a new agent means a file in `.claude/agents/` (frontmatter `model: inherit`, optional `effort:`) and an entry in `permissions.md`. If the orchestrator dispatches it, add it to the orchestrator's `Agent(...)` roster; if it is weighted, add it to `quality-gates.json` too --- `check_scaffold.py` fails when the weights in the two files disagree.

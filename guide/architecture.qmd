@@ -10,13 +10,13 @@ The system is configured through six layers, loaded in order of precedence.
 | Layer | Location | Loaded | Purpose |
 |-------|----------|--------|---------|
 | `CLAUDE.md` | Project root | Every session | Project identity, folder structure, commands, output organization |
-| Rules | `.claude/rules/` | Every session | Quality gates, invariants, permissions, lifecycle, workflow |
+| Rules | `.claude/rules/` | 6 every session; 7 when a matching file is read | Quality gates, invariants, permissions, lifecycle, workflow |
 | References | `.claude/references/` | On demand | Domain profile, journal profiles, coding standards |
 | Skills | `.claude/skills/` | When invoked | Rich folders --- routing logic, templates, gotchas, config. The knowledge layer. |
 | Agents | `.claude/agents/` | When dispatched | Lean identity files --- role, voice, constraints. The execution layer. |
-| Hooks | `.claude/hooks/` | Event-driven | Pre-commit lint, pre-compact checklist |
+| Hooks | `.claude/hooks/` | Event-driven | File protection, session guards, post-edit lint, compaction save and restore, hook health |
 
-`CLAUDE.md` and rules are always in context. Everything else loads on demand. For the full layer-by-layer breakdown, see the [Customization Guide](customization.qmd).
+`CLAUDE.md` and six rule files are always in context: 679 lines, under the 700-line budget that `scripts/check_scaffold.py` enforces. The other seven rules carry `paths:` frontmatter and load when Claude reads a matching file (see [How Rules Load](rules.qmd#sec-rule-loading)). Everything else loads on demand. The pre-commit gate is a git hook in `.githooks/`, not a Claude Code hook; both are covered in [Hooks & Automation](hooks.qmd). For the full layer-by-layer breakdown, see the [Customization Guide](customization.qmd).
 
 ---
 
@@ -40,7 +40,7 @@ Level 1 costs almost nothing --- every skill's frontmatter is visible in the ski
 
 ## Skill folder structure
 
-Every skill follows the same layout:
+Skills share one layout:
 
 ```
 skill-name/
@@ -51,7 +51,7 @@ skill-name/
 └── config/           # Machine-readable configuration
 ```
 
-Not every skill uses every subfolder. The `/write` skill has `templates/` (paragraph moves, section templates, cleanup patterns) and `references/` (notation protocol). The `/review` skill has `templates/` (scoring rubrics, referee report template) and `config/` (disposition pool weights). The `/strategize` skill has `templates/` (strategy memo structure, PAP templates, theory memo) and `references/` (PAP interview flow). Each skill carries exactly the knowledge its agents need.
+Not every skill uses every subfolder. The `/write` skill has `templates/` (paragraph moves, section templates, cleanup patterns) and `references/` (notation protocol). The `/review` skill has `templates/` (review checklists, referee report template, disposition pool) and `config/` (scoring rubrics). The `/strategize` skill has `templates/` (strategy memo structure, PAP templates, theory memo) and `references/` (PAP interview flow). Each skill carries exactly the knowledge its agents need.
 
 ## The wiring
 
@@ -64,7 +64,7 @@ The same agent can serve multiple skills. The coder-critic reviews output from b
 
 ## Gotchas as first-class content
 
-Every skill has a `gotchas.md` --- the highest-signal file in the folder. These are known failure modes, accumulated from real pipeline runs. The strategist's gotchas warn that "staggered adoption does not automatically mean DiD is the right choice." The writer's gotchas note that "the cleanup pass can over-correct domain-specific hedging that's actually appropriate." The review skill's gotchas document when cold-read critics produce false positives.
+Thirteen of the 18 skills have a `gotchas.md` --- the highest-signal file in the folder. (`/coherence`, `/dashboard`, `/deepread`, `/explain`, and `/paper-format` have none.) These are known failure modes, accumulated from real pipeline runs. The strategist's gotchas warn that "staggered adoption does not automatically mean DiD is the right choice." The writer's gotchas note that "the cleanup pass can over-correct domain-specific hedging that's actually appropriate." The review skill's gotchas document when cold-read critics produce false positives.
 
 Gotchas are the fastest path to quality improvement. When a failure recurs, it gets a line in `gotchas.md`. The agent reads it before execution. The failure stops recurring.
 
@@ -76,7 +76,7 @@ Adding a new template no longer requires editing a 400-line agent prompt. We cre
 
 # The Permission Registry {#sec-permissions}
 
-Every agent's capabilities, dependencies, and routing are declared in a single file: `.claude/rules/permissions.md`. The Orchestrator reads this registry before dispatching any agent. No other file hardcodes agent relationships.
+Every agent's capabilities, dependencies, and routing are declared in one registry: `.claude/rules/permissions.md`. The Orchestrator reads it, and `scripts/pipeline.py` parses it to check each dispatch. Two other files hold part of the picture. Quality weights live in `.claude/skills/new-project/config/quality-gates.json`; the registry's `QUALITY_WEIGHT` fields mirror them, and `scripts/check_scaffold.py` fails if the two disagree. The orchestrator's `tools: Agent(...)` roster lists the agents it is allowed to dispatch.
 
 ## Reading an entry
 
@@ -99,11 +99,11 @@ Here is the strategist entry, annotated:
 - QUALITY_WEIGHT: 25% (identification validity)
 ```
 
-The `REQUIRES` field uses OR logic --- the strategist can activate after literature review alone, data assessment alone, or both. The `PRODUCES` field specifies not just the output file but the sections that must appear in it. POST-completion validation (see [Section 4](#sec-lifecycle)) checks these sections exist before advancing.
+The `REQUIRES` field uses OR logic --- the strategist can activate after literature review alone, data assessment alone, or both. The `PRODUCES` field specifies not just the output file but the sections that must appear in it. `pipeline.py check-post` (see [Lifecycle Validation](#sec-lifecycle)) checks that these sections exist before the pipeline advances.
 
 ## Adding an agent
 
-Adding a new agent is a one-file change. Create the agent file in `.claude/agents/`, add its entry to `permissions.md`. No other file needs modification --- the Orchestrator discovers agents by reading the registry.
+Create the agent file in `.claude/agents/` and add its entry to `permissions.md`. Two more edits when they apply: add the agent to the orchestrator's `Agent(...)` roster if the orchestrator dispatches it, and to `quality-gates.json` if it carries a weight. `scripts/check_scaffold.py` fails on a roster name with no agent file and on a weight that differs between the two files. Step-by-step in the [Customization Guide](customization.qmd#sec-new-agent).
 
 ---
 
@@ -117,8 +117,8 @@ flowchart TD
     START([Plan approved]):::start --> ID
     ID[1. IDENTIFY\nCheck dependency graph]:::step --> DISP[2. DISPATCH\nLaunch worker-critic pairs]:::step
     DISP --> REV[3. REVIEW\nCritic scores artifact]:::step
-    REV -->|score >= 80| VER[4. VERIFY\nCompile, render, run]:::step
-    REV -->|score < 80| FIX[Worker fixes]:::worker
+    REV -->|">= 80, or SOUND / MINOR"| VER[4. VERIFY\nCompile, render, run]:::step
+    REV -->|"< 80, or MAJOR / CRITICAL"| FIX[Worker fixes]:::worker
     FIX --> REV
     VER --> SC[5. SCORE\nWeighted aggregate]:::step
     SC -->|>= threshold| DONE([Present summary]):::approved
@@ -137,11 +137,11 @@ The Orchestrator reads `permissions.md` and checks which agents have their `REQU
 
 ### Step 2: DISPATCH
 
-Worker-critic pairs launch for all agents whose `REQUIRES` are satisfied. Agents in the same `PARALLEL_GROUP` run concurrently --- for example, the librarian and explorer both belong to the `discovery` group and run simultaneously. Before dispatch, the Orchestrator runs PRE-validation (see [Section 4](#sec-lifecycle)).
+Worker-critic pairs launch for all agents whose `REQUIRES` are satisfied. Agents in the same `PARALLEL_GROUP` run concurrently --- for example, the librarian and explorer both belong to the `discovery` group and run simultaneously. Before dispatch, the Orchestrator runs `pipeline.py check-pre` (see [Lifecycle Validation](#sec-lifecycle)).
 
 ### Step 3: REVIEW
 
-The paired critic evaluates the worker's artifact against its rubric. If the score is below 80, the worker revises and the critic re-reviews. This inner loop runs up to 3 rounds per pair (see [Section 5](#sec-worker-critic)).
+The paired critic evaluates the worker's artifact against its rubric. If the score is below 80, the worker revises and the critic re-reviews. The strategist-critic gives a verdict instead of a score: SOUND or MINOR ISSUES passes, MAJOR ISSUES or CRITICAL ERRORS sends the memo back. This inner loop runs up to 3 rounds per pair (see [Worker-Critic Protocol](#sec-worker-critic)).
 
 ### Step 4: VERIFY
 
@@ -149,7 +149,7 @@ Compile LaTeX, run scripts, check that output files exist at expected paths. If 
 
 ### Step 5: SCORE
 
-Compute the weighted aggregate across all scored components. If the score meets the gate threshold, present the summary to the user. If not, loop back to Step 1 to identify the blocking components.
+Run `scripts/score.py`, which computes the weighted aggregate from the research journal (see [Scoring Protocol](#sec-scoring)). If the score meets the gate threshold, present the summary to the user. If not, loop back to Step 1 to identify the blocking components.
 
 ### Limits
 
@@ -173,28 +173,28 @@ The system never loops indefinitely.
 
 # Lifecycle Validation {#sec-lifecycle}
 
-The Orchestrator runs validation checks at two points: before dispatching an agent and after an agent completes. This implements a fail-fast principle --- missing inputs are caught before work begins, missing outputs are caught before advancement.
+Validation runs at two points: before an agent is dispatched and after it completes. The checks are a script, `scripts/pipeline.py`, which reads each agent's `permissions.md` entry and the research journal; the Orchestrator calls it and acts on the result. This implements a fail-fast principle --- missing inputs are caught before work begins, missing outputs are caught before advancement.
 
 ## PRE-dispatch checks
 
-Before dispatching any agent, the Orchestrator reads its `permissions.md` entry and verifies that `REQUIRES` artifacts exist (file paths globbed, score gates checked against the research journal, directories confirmed non-empty) and that required sections are present in structured artifacts.
-
-If PRE validation fails, the agent is not dispatched.
+`python3 scripts/pipeline.py check-pre <agent>` verifies the agent's `REQUIRES`: paths exist and directories are non-empty, critic scores and verdicts in the research journal meet their thresholds, and OR / AND clauses combine as written. Exit 1 means the agent is not dispatched.
 
 ## POST-completion checks
 
-After an agent completes, the Orchestrator verifies that `PRODUCES` artifacts exist, required sections are present, and the critic score is recorded in the research journal.
+`python3 scripts/pipeline.py check-post <agent>` verifies that the `PRODUCES` artifacts exist and contain their required sections. Exit 1 means the pipeline does not advance; the Orchestrator re-dispatches the agent with the gaps noted. A critic's result gates the *next* agent, so it is checked by that agent's `check-pre`.
 
-If POST validation fails, the pipeline does not advance. The Orchestrator re-dispatches the agent with the specific gaps noted.
+Each condition prints PASS, FAIL, or MANUAL. MANUAL marks a condition only judgment can settle (for example, "Research idea or research spec"); the Orchestrator decides it and says how.
 
 ## What failure looks like
 
 ```
-Cannot dispatch [coder]: missing quality_reports/strategy/{project}/strategy_memo.md
-  → Run /strategize first to produce the strategy memo.
+check-pre coder
+  FAIL   `quality_reports/strategy/minwage/strategy_memo.md` missing or empty
+  FAIL   strategist-critic has no verdict in the research journal
+Cannot dispatch coder: `quality_reports/strategy/minwage/strategy_memo.md` missing or empty
 ```
 
-No agent launches with missing inputs. No agent advances with missing outputs. The Orchestrator includes the validation failure in its report to the user.
+No agent launches with missing inputs. No agent advances with missing outputs. The Orchestrator reports the failure to the user along with the skill that produces the missing input (here, `/strategize`).
 
 ---
 
@@ -221,6 +221,8 @@ flowchart TD
     classDef escalate fill:#f0eee6,stroke:#b33d3d,color:#141413,stroke-width:2px
 ```
 
+The strategist-critic rules by verdict rather than score: SOUND or MINOR ISSUES approves the memo, MAJOR ISSUES or CRITICAL ERRORS sends it back.
+
 ## Cold-read enforcement
 
 On every round, the critic receives only: the artifact, its scoring rubric, the severity level, and the content invariants from [Rules & Invariants](rules.qmd). It does not receive what round this is, what the worker struggled with, prior critic reports, or the research journal. This prevents the critic from softening its evaluation because it knows the worker has already tried twice.
@@ -229,7 +231,7 @@ Round-aware feedback (what to fix and how) flows from the Orchestrator to the wo
 
 ## Separation of powers
 
-Critics never create artifacts. Creators never self-score. If a critic invocation produces a file in `scripts/`, `paper/`, or `paper/talks/`, the Orchestrator flags it as a violation. If a creator reports its own score, the Orchestrator discards it and dispatches the critic.
+Critics never create artifacts. Creators never self-score. Every critic's and referee's tool list is read-only (`Read, Grep, Glob`), so a critic cannot write to `scripts/` or `paper/` in the first place. If a creator reports its own score, the Orchestrator discards it and dispatches the critic.
 
 A critic who fixes its own findings has incentive to find only fixable issues. Separation keeps criticism honest.
 
@@ -262,9 +264,11 @@ For artifacts that gate major phase transitions, the Orchestrator dispatches two
 
 ## Synthesis rules
 
-- **Both >= 80:** Pass. Artifact advances.
-- **One < 80:** Worker fixes issues from the failing critic. Both critics re-evaluate.
-- **Both < 80:** Escalate per the pair's `ESCALATION_TARGET`.
+A critic passes the artifact with a score of 80 or more; the strategist-critic passes it with a verdict of SOUND or MINOR ISSUES.
+
+- **Both pass:** Artifact advances.
+- **One fails:** Worker fixes issues from the failing critic. Both critics re-evaluate.
+- **Both fail:** Escalate per the pair's `ESCALATION_TARGET`.
 
 ## Independence
 
@@ -280,57 +284,41 @@ Dual-critic dispatch activates only for gate artifacts in the full pipeline (`/n
 
 ## The state file
 
-The Orchestrator maintains structured pipeline state in `quality_reports/pipeline_state.json`. The schema tracks:
+Nobody maintains `quality_reports/pipeline_state.json` by hand. `python3 scripts/pipeline.py status` derives it from the research journal and the registry: which agents have run, with rounds and latest result; which can be dispatched now; which are waiting and on what; the overall score; and the first gate that fails. The Orchestrator reruns it after each agent completes and before each phase transition. A trimmed example:
 
 ```json
 {
-  "project": "project-name",
-  "phase": "Execution",
-  "last_updated": "2026-05-09T14:30:00Z",
+  "project": "minwage",
+  "phase": "Strategy",
+  "last_updated": "2026-10-15T14:15:35",
   "agents_completed": [
-    { "agent": "strategist", "critic": "strategist-critic",
-      "score": 88, "rounds": 1, "artifact": "strategy_memo.md" }
+    { "agent": "strategist-critic", "score": null, "verdict": "MINOR ISSUES",
+      "rounds": 1, "report": "quality_reports/strategy/minwage/strategy_review.md",
+      "timestamp": "2026-10-14 11:20" }
   ],
-  "agents_in_progress": [
-    { "agent": "coder", "critic": "coder-critic",
-      "current_round": 2, "max_rounds": 3,
-      "last_score": 72, "issues_remaining": ["missing robustness"] }
+  "agents_in_progress": [],
+  "agents_pending": ["librarian", "explorer", "theorist", "data-engineer", "coder"],
+  "agents_waiting": [
+    { "agent": "writer", "missing": "coder-critic has no score in the research journal" }
   ],
-  "agents_pending": ["writer"],
-  "overall_score": null,
-  "blocked_by": null
+  "overall_score": 85.0,
+  "components": { "identification": 85.0, "code": null, "manuscript": null },
+  "blocked_by": "pr gate: overall 85.0 < 90",
+  "derived_from": "quality_reports/research_journal.md via scripts/pipeline.py status"
 }
 ```
 
-## Write triggers
+## Session recovery
 
-The Orchestrator updates the state file at four points:
-
-1. **After agent completion** --- move from `agents_in_progress` to `agents_completed`
-2. **After critic score** --- update the score and round count
-3. **After phase transition** --- update the `phase` field
-4. **After escalation** --- set `blocked_by`
-
-## Read triggers
-
-On session start (new session or after context compression), the Orchestrator reads `pipeline_state.json` as the first action. The structured state is faster and more reliable than reconstructing from prose logs.
-
-## Session recovery order
-
-| Step | Action | Source |
-|------|--------|--------|
-| 0 | Read pipeline state | `quality_reports/pipeline_state.json` |
-| 1 | Read checkpoint artifacts | `SESSION_REPORT.md`, `quality_reports/research_journal.md` |
-| 2 | Read project config + plan | `CLAUDE.md`, most recent file in `quality_reports/plans/` |
-| 3 | Check recent changes | `git log --oneline -10`, `git diff` |
+After compaction or a resume, the `post-compact-restore.py` SessionStart hook prints the active plan, the pipeline state, and the last `SESSION_REPORT.md` entry into the new context (see [Hooks & Automation](hooks.qmd#post-compact-restore)). Claude reads the files it names and checks `git status` before continuing. In a fresh session, start from `pipeline_state.json` and the most recent plan in `quality_reports/plans/`.
 
 ## Execution traces
 
-After completing a multi-agent skill (`/new-project`, `/analyze`, `/write full`), the Orchestrator generates an execution trace from the pipeline state and saves it to `quality_reports/traces/`. The trace includes a mermaid graph of the agent invocation sequence, a table of rounds and scores per agent, any escalation events, and a pipeline summary with totals.
+After a multi-agent skill (`/new-project`, `/analyze`, `/write full`), `python3 scripts/pipeline.py traces` tabulates rounds, first-pass and final score per agent, and flags HIGH-PERF, FRICTION, and USER ESCALATION. The Orchestrator saves that table with a short reading of the patterns to `quality_reports/traces/YYYY-MM-DD_trace.md`.
 
 ## Relationship to the research journal
 
-`pipeline_state.json` is structured, machine-readable, and overwritten. `research_journal.md` is narrative, append-only, and human-readable. Both are maintained --- the state file is for fast recovery, the journal is for understanding what happened and why.
+The research journal is the record: append-only, one entry per agent invocation, and the input to both `score.py` and `pipeline.py`. A critic result that isn't logged there doesn't count. `pipeline_state.json` is a view of the journal, regenerated whenever it is needed.
 
 ---
 
@@ -338,35 +326,39 @@ After completing a multi-agent skill (`/new-project`, `/analyze`, `/write full`)
 
 ## Weighted aggregation
 
-Each agent's quality weight is declared in its `permissions.md` entry. The Orchestrator reads the registry and computes:
+`scripts/score.py` computes the score; the Orchestrator reports its output and never recomputes it. The script reads each critic's latest entry in the research journal and the weights in `.claude/skills/new-project/config/quality-gates.json`, the single source for weights and thresholds:
 
-$$\text{Overall} = \sum_i w_i \times \text{score}_i$$
+$$\text{Overall} = \frac{\sum_{i \in \text{scored}} w_i \times \text{score}_i}{\sum_{i \in \text{scored}} w_i}$$
 
-where $w_i$ is the agent's `QUALITY_WEIGHT` and $\text{score}_i$ is the critic's final score (0--100). Current weights:
+where $w_i$ is the component's weight and $\text{score}_i$ is the critic's latest score (0--100). Current weights:
 
 | Component | Weight | Source |
 |-----------|--------|--------|
 | Literature coverage | 10% | librarian-critic |
 | Data quality | 10% | explorer-critic |
-| Identification validity | 25% | strategist-critic |
+| Identification validity | 25% | strategist-critic (verdict: SOUND 95, MINOR ISSUES 85, MAJOR ISSUES 65, CRITICAL ERRORS 40) |
 | Theory (when present) | 20% | theorist-critic |
 | Code quality | 15% | coder-critic |
-| Paper quality | 25% | Avg(domain-referee, methods-referee) |
+| Referee: domain | 12.5% | domain-referee |
+| Referee: methods | 12.5% | methods-referee |
 | Manuscript polish | 10% | writer-critic |
-| Replication readiness | 5% | verifier (0 or 100) |
+| Replication readiness | 5% | verifier (pass/fail: 100 or 0) |
+
+The strategist-critic's verdict maps to a number for this aggregate only; everywhere else it gates by verdict.
 
 ## Missing components
 
-If a component has not been scored, it is excluded and remaining weights renormalize. The theory weight applies only when the theorist agent was dispatched (papers with formal theory sections). For applied papers using off-the-shelf estimators, theory is excluded automatically.
+If a component has not been scored, `score.py` excludes it, renormalizes the remaining weights, and lists what it excluded. The theory weight applies only when the theorist ran (papers with formal theory sections), so an applied paper's weights sum to 100% and a theory paper's are renormalized from 120%.
 
 ## Gate thresholds
 
-| Gate | Overall Score | Per-Component Min | Consequence |
-|------|--------------|-------------------|-------------|
-| Commit | >= 80 | None | Allowed |
-| PR | >= 90 | None | Allowed |
-| Submission | >= 95 | >= 80 | Allowed |
-| Below 80 | < 80 | --- | Blocked |
+| Gate | Overall | Per component | Also required | Enforced by |
+|------|---------|---------------|---------------|-------------|
+| Commit | >= 80 | --- | Passes with a notice while nothing is scored | `/tools commit` runs `score.py --gate commit` |
+| PR | >= 90 | --- | --- | `score.py --gate pr` before opening a PR |
+| Submission | >= 95 | >= 80 | Every non-conditional component scored; understanding gate (INV-26) passes | `/submit final` runs `score.py --gate submission` and `verify.py --mode submission` |
+
+The understanding gate is pass/fail and never enters the score: `score.py` runs `explainer_status.py --gate` as part of the submission gate. The git pre-commit gate does not check the score; a new project has no critic scores, and a gate that fails every early commit gets bypassed. See [Quality Gates](rules.qmd#sec-gates) for the coherence gate and the full rules.
 
 ## Severity gradient
 
@@ -382,23 +374,36 @@ Critics calibrate harshness by phase. The Orchestrator includes the severity lev
 
 ---
 
-# Plan-First Protocol {#sec-plan-first}
+# Scripts Enforce the Gates {#sec-scripts}
 
-For any non-trivial task, the system enters plan mode before implementation.
+The model used to do this arithmetic itself, working from prose that disagreed with itself about weights and thresholds: it added up weighted scores, globbed for required files, and estimated hedge counts by reading. Wherever the inputs fully determine the output, the check is now a script in `scripts/`. Agents call it and report the result; they keep only the checks that need judgment.
+
+| Script | What it decides | Called by |
+|--------|-----------------|-----------|
+| `score.py` | Weighted aggregate and the commit / PR / submission gates, from the research journal and `quality-gates.json` | Orchestrator, `/tools commit`, `/submit final` |
+| `pipeline.py` | `check-pre` / `check-post` against the registry; `status` writes the pipeline state; `traces` flags patterns | Orchestrator |
+| `verify.py` | The verifier's mechanical checks: compile, file integrity, output freshness, script inventory, dependency files, master run, exhibit cross-reference, INV-26 | verifier, `/submit final` |
+| `paper_coherence.py` | Cross-references, citation keys, claim numbers against table cells, abstract length (INV-5), Table 1 columns (INV-24) | `/coherence`, pre-commit gate (advisory) |
+| `style_metrics.py` | The writer-critic's countable deductions: AI vocabulary, hedging, em dashes, sentence length | `/review`, which hands the counts to the writer-critic |
+| `check_scaffold.py` | Broken references, missing hook files, weight disagreements between `permissions.md` and `quality-gates.json`, malformed frontmatter, guards without `"onFailure": "block"`, the 700-line always-loaded budget | pre-commit gate, `/tools upgrade` |
+
+**The git pre-commit gate.** `.githooks/pre-commit`, turned on once per clone with `scripts/install-hooks.sh`, runs on every commit, including commits made outside Claude. It blocks on `check_scaffold.py` errors, on failing tests when hooks, scripts, or the registry changed, and on HIGH lint findings in staged analysis scripts. Paper-coherence findings are printed as advice. It does not check the quality score. To bypass it, run `SKIP_GATE=1 git commit ...` and say why in the commit message.
+
+**The scripts are tested.** `scripts/test_scripts.py` runs each enforcement script against a throwaway fixture project; `scripts/test_hooks.py` covers the Claude Code hooks, which are documented in [Hooks & Automation](hooks.qmd).
+
+---
+
+# Plans and Approval {#sec-plan-first}
+
+Plans and approval are reserved for work that is expensive to get wrong: a multi-agent pipeline run (`/new-project`, `/analyze`, `/write full`, `/revise`) or a change across many files. These cost real time and tokens. Medium and small tasks proceed without a written plan.
 
 ## The protocol
 
-1. **Enter plan mode**
-2. **Check memory** --- read `[LEARN]` entries relevant to the task
-3. **Requirements spec** (for complex/ambiguous tasks) --- clarify ambiguities, mark requirements as MUST / SHOULD / MAY, declare clarity status as CLEAR / ASSUMED / BLOCKED
-4. **Draft the plan** --- what changes, which files, in what order
-5. **Save to disk** --- `quality_reports/plans/YYYY-MM-DD_description.md`
-6. **Present to user** --- wait for approval
-7. **Exit plan mode** --- only after approval
-8. **Save session log** --- capture goal and context while fresh
-9. **Implement** --- Orchestrator takes over via the dependency-driven loop
+1. **Write the plan** --- approach, files to change, how it will be verified; save it to `quality_reports/plans/YYYY-MM-DD_description.md`
+2. **Get approval** --- the user approves before work starts
+3. **Implement** --- for pipelines, the Orchestrator takes over via the dependency-driven loop
 
-Plans survive context compression because they are saved to disk. The requirements spec step is optional --- skip it for clear, specific tasks; use it for ambiguous or multi-file work.
+`/new-project` keeps plan mode as its pipeline gate. For a large, ambiguous task, record the answers to clarifying questions as a requirements spec (MUST / SHOULD / MAY; CLEAR / ASSUMED / BLOCKED). Plans survive context compression because they are on disk, and the SessionStart hook points back to the active one.
 
 ## Simplified mode
 
@@ -406,7 +411,7 @@ For standalone R scripts, simulations, and explorations: plan, implement, run, v
 
 ## "Just do it" mode
 
-When the user says "just do it" or "handle it": skip the final approval pause, auto-commit if score >= 80, but still run the full verify-review-fix loop.
+When the user says "just do it" or "handle it": skip the final approval pause, auto-commit if `python3 scripts/score.py --gate commit` passes, but still run the full verify-review-fix loop.
 
 ---
 

@@ -9,7 +9,7 @@ Works for empirical economics out of the box. Adapts to labor, public, health, d
 
 ## What to Expect
 
-When you run a command, Claude enters plan mode, dispatches specialized agents, scores output against quality gates, and presents results for your approval. This is not autocomplete --- it is an orchestrated pipeline where every artifact is created by one agent and reviewed by another before advancing.
+When you run a command, Claude dispatches specialized agents, scores output against quality gates, and presents the results. Before a multi-agent pipeline run or a change across many files, it writes a plan and waits for your approval; smaller tasks go ahead without one. This is not autocomplete --- it is an orchestrated pipeline where every artifact is created by one agent and reviewed by another before advancing.
 
 **The pipeline at a glance:**
 
@@ -17,7 +17,7 @@ When you run a command, Claude enters plan mode, dispatches specialized agents, 
 2. **Strategy** --- identification design, producing a strategy memo with assumptions, pseudo-code, and robustness plan.
 3. **Execution** --- analysis code and paper manuscript, producing scripts, tables, figures, and LaTeX sections.
 4. **Review** --- simulated peer review, producing scored referee reports and an editorial decision.
-5. **Submission** --- replication packaging and quality gate enforcement (aggregate score >= 95, all components >= 80).
+5. **Submission** --- replication packaging and quality gate enforcement (aggregate score >= 95, all components >= 80, and the understanding gate: a passing `/explain` quiz for every script behind a paper exhibit).
 
 You can enter at any stage. Each phase produces structured output saved to `quality_reports/`.
 
@@ -46,7 +46,7 @@ Fill in the **bolded placeholders** with your project details:
 > Read CLAUDE.md and help me set up the project structure.
 > Start with `/discover lit [YOUR TOPIC]`.
 
-Claude reads the configuration, fills in your project details, and begins planning --- it will present a plan for your approval before doing anything.
+Claude reads the configuration, fills in your project details, and starts the literature search. It stops for your approval before multi-agent pipeline runs (`/new-project`, `/analyze`, `/write full`, `/revise`) and changes across many files.
 
 ## Step 4: Start Working
 
@@ -54,7 +54,7 @@ Once setup is done, describe what you need:
 
 - "Review my paper" --- checks identification strategy, code, writing, and LaTeX in parallel
 - `/review --methods paper/main.tex` --- validates your causal design assumptions, clustering, and inference
-- `/analyze Data/cleaned/survey.csv` --- cleans data, runs your specification, produces tables and figures
+- `/analyze data/cleaned/survey.csv` --- cleans data, runs your specification, produces tables and figures
 - `/new-project health insurance` --- walks you through the full pipeline from literature review to submission
 
 ::: {.callout-tip title="Just Want to Try 2 Commands?"}
@@ -70,8 +70,8 @@ Everything else is optional --- explore when you're ready.
 | Page | What you will find |
 |------|--------------------|
 | [User Guide](user-guide.qmd) | Common workflows: first review, first draft, full pipeline, R&R, talks |
-| [Agents](agents.qmd) | What each of the 19 agents does, checks, and assumes |
-| [Rules & Invariants](rules.qmd) | The 22 content invariants, severity gradient, and quality gates |
+| [Agents](agents.qmd) | What each of the 25 agents does, checks, and assumes |
+| [Rules & Invariants](rules.qmd) | The 26 content invariants, severity gradient, and quality gates |
 | [Hooks & Automation](hooks.qmd) | Event-driven scripts: file protection, linting, context survival |
 | [Command Reference](reference.qmd) | Every command, its flags, agents dispatched, and output artifacts |
 | [Architecture](architecture.qmd) | Dependency graph, scoring formula, lifecycle validation |
@@ -81,12 +81,12 @@ Everything else is optional --- explore when you're ready.
 
 ::: {.callout-note collapse="true" title="Day 1 Checklist"}
 - [ ] Fork the repo and clone it locally
+- [ ] Run `scripts/install-hooks.sh` once, so git runs the pre-commit checks
 - [ ] Run `claude` in the project directory
 - [ ] Paste the starter prompt (fill in your project details)
-- [ ] Wait for Claude to customize `CLAUDE.md` for your project
-- [ ] Approve the configuration plan
+- [ ] Wait for Claude to customize `CLAUDE.md` for your project, then check what it filled in
 - [ ] Ask Claude to do something: "Review my paper" or `/discover lit [topic]`
-- [ ] Approve the task plan, watch it work, review the output
+- [ ] Watch it work and review the output (pipeline runs show you a plan to approve first)
 
 That's it. Everything else --- agents, hooks, rules --- runs automatically in the background.
 :::
@@ -109,7 +109,7 @@ If you prefer to configure things yourself instead of letting Claude handle it:
 3. **Common data sources** and identification strategies
 4. **Field conventions** and seminal references
 
-**Configure permissions** --- Review `.claude/settings.json`. The template includes permissions for git, LaTeX, R, and utility scripts.
+**Configure permissions** --- Review `.claude/settings.json`. The template allows git, LaTeX, R, Python, and utility commands, and its deny list blocks destructive ones (`rm -rf`, `git reset --hard`, `git push --force`). Put personal permissions in `.claude/settings.local.json`, which is gitignored.
 
 **Test it:**
 
@@ -123,12 +123,13 @@ If you prefer to configure things yourself instead of letting Claude handle it:
 
 | Tool | Required For | Install |
 |------|-------------|---------|
-| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) | Everything | `npm install -g @anthropic-ai/claude-code` |
+| [Claude Code](https://docs.anthropic.com/en/docs/claude-code) 2.1.295 or later | Everything | `npm install -g @anthropic-ai/claude-code` |
+| Python 3 | Hooks and the gate scripts | [python.org](https://www.python.org/) |
 | XeLaTeX | Paper compilation | [TeX Live](https://tug.org/texlive/) or [MacTeX](https://tug.org/mactex/) |
 | R | Analysis & figures | [r-project.org](https://www.r-project.org/) |
 | [gh CLI](https://cli.github.com/) | GitHub integration | `brew install gh` (macOS) |
 
-Optional: Python, Julia (multi-language analysis), [Quarto](https://quarto.org) (web slides).
+Optional: Julia (multi-language analysis), [Quarto](https://quarto.org) (web slides), the [Codex CLI](https://github.com/openai/codex) (`/deepread`).
 
 ## Origin
 

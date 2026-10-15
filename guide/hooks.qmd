@@ -133,7 +133,7 @@ Add or remove entries in `PROTECTED_PATTERNS`. Matching is on the **basename** o
 
 ### What it does
 
-Two guards in one hook, both session-scoped and both opt-in. When neither guard is active, the hook reads a single JSON file, finds nothing, and exits --- zero overhead in the common case.
+Two guards in one hook, both opt-in. When neither guard is active, the hook reads a single JSON file, finds nothing, and exits --- zero overhead in the common case.
 
 **Freeze** locks edits to a set of allowed directories. Invoke `/freeze paper/` and every Write or Edit targeting a file outside `paper/` gets blocked. The `.claude/` directory is always exempt (we cannot freeze ourselves out of configuration changes).
 
@@ -204,7 +204,7 @@ When it can answer, the hook exits 0, and blocking is communicated through stdou
 | `/careful` | Block destructive commands |
 | `/careful off` | Deactivate careful mode |
 
-Both guards are session-scoped. They reset when the conversation ends.
+Both guards stay on until you turn them off --- across conversations too, since `.claude/state/session-guards.json` persists and nothing clears it automatically. If edits are blocked and you don't remember freezing, check that file or run `/freeze off`.
 
 ---
 
@@ -600,9 +600,13 @@ echo '{"tool_name": "Edit", "tool_input": {"file_path": "paper/main.tex"}}' \
 echo "Exit code: $?"
 ```
 
-## Example: Pre-commit quality check
+## Example: Lint before Claude commits
 
-A hook that runs the linter before every `git commit` command:
+::: {.callout-note}
+You don't need this for clo-author itself: the git pre-commit gate in `.githooks/pre-commit` (see [Git hooks](#post-merge)) already blocks HIGH lint findings on every commit, including commits made outside Claude. The example shows how a Claude-side `PreToolUse` hook on `Bash` works.
+:::
+
+A hook that runs the linter before every `git commit` command Claude issues:
 
 ```bash
 #!/bin/bash

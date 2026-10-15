@@ -7,6 +7,51 @@ subtitle: "Release History"
 
 ---
 
+# 26.09 --- September 2026 {#r2609}
+
+Rebuilt for Opus 5.5 and current Claude Code. Scripts now enforce the gates, so the model no longer does that arithmetic. Hooks that had been failing silently now run, and say so when they break. Rules state goals instead of steps, and load only when relevant. Also includes the June--August work: the paper house style, `/coherence`, `/deepread`, and `/explain`. Requires Claude Code 2.1.295 or later.
+
+## Scripts Enforce the Gates
+
+- **`score.py`** --- weighted aggregate, renormalization, strategist verdict map, and the commit (80) / PR (90) / submission (95, every component ≥ 80, understanding gate) gates. `quality-gates.json` is the single source for the numbers.
+- **`pipeline.py`** --- checks each agent's REQUIRES/PRODUCES before and after dispatch; derives `pipeline_state.json` from the research journal; flags execution traces.
+- **`verify.py`** --- the verifier's mechanical checks, from compilation to the INV-26 understanding gate.
+- **`paper_coherence.py`**, **`style_metrics.py`**, **`check_scaffold.py`** --- INV-5 / INV-24 checks, the writer-critic's countable deductions, and the scaffold's own integrity.
+- **Pre-commit gate** --- `scripts/install-hooks.sh` once per clone; blocks on scaffold errors, failing tests, and HIGH lint findings. See [Hooks](hooks.qmd#post-merge).
+
+## Hooks That Run, and Fail Loudly
+
+Two hooks had been dead for months: one read an environment variable Claude Code never sets, the other checked the wrong field. Both work now. Every hook logs its outcome, `hook-health.py` reports dead or erroring hooks at session start, and the two guards fail closed (`"onFailure": "block"`). See [Hooks](hooks.qmd).
+
+## Consistent, Lighter Rules
+
+- **Contradictions resolved** --- one source for Table 1 and section order; submission at 95 everywhere; strategist-critic gives a verdict instead of points.
+- **Path-scoped rules** --- paper, revision, and pipeline rules load only when matching files are read. Instructions loaded every session dropped from 1,817 to 679 lines.
+- The LaTeX preamble lives in `paper/preambles/header.tex`.
+
+## Written for Current Models
+
+- Plan mode gates pipeline runs and many-file changes, not every task. PDFs are read directly.
+- Effort set per agent: `high` for judgment-heavy roles, `low` for narrow checkers.
+- `/deepread` and `/new-project` run only when you type them. `/review --peer` gives referees a fenced copy of the manuscript.
+
+## New Skills
+
+- **`/paper-format`** --- the mandatory paper house style (INV-23/24/25).
+- **`/coherence`** --- internal-consistency audit: a deterministic parser, plus reasoning finders with `--deep`.
+- **`/deepread`** --- a deep technical read on Codex, at no Claude token cost.
+- **`/explain`** --- an explainer and quiz for agent-written analysis code; feeds the INV-26 gate at `/submit`.
+
+## Also
+
+- `/tools upgrade` now carries the scaffold scripts, `.githooks/`, and a missing preamble, and keeps your `settings.json` additions in `settings.local.json`.
+- `/freeze` and `/careful` stay on until you turn them off; the docs used to say they reset with the conversation.
+- Fixed `/deepread`'s empty description.
+
+Roster: 25 agents, 18 skills. MIT license added.
+
+---
+
 # 26.05 --- May 2026 {#r2605}
 
 ## HTML Report Pipeline
@@ -57,13 +102,6 @@ Skills are now rich directories. Each skill folder contains templates, gotchas, 
 - CalVer adoption (YY.MM)
 - Rewind strategy in workflow.md
 - `pre-compact.py` exit code fix
-| `literature` | Zotero-like filterable bibliography (category, proximity, method filters, sort, search, copy-cite) |
-
-Shared design system in `templates/html/base/` (styles.css + components.js). Dark mode, print support, collapsible sections, filter engine. All skills auto-generate HTML after saving markdown reports.
-
-## Guide Site Overhaul
-
-Migrated from cyberpunk neon (dark, scanlines, pink/cyan glow) to the thariqs aesthetic (ivory background, clay accents, serif headings). All mermaid diagrams updated to match. Readability pass across all pages --- trimmed agent descriptions, broke up dense paragraphs, removed duplicate content.
 
 ---
 
