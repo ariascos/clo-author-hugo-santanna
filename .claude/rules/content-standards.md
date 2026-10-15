@@ -167,29 +167,18 @@ kbl(df, format = "latex", booktabs = TRUE, escape = FALSE,
 
 ```r
 # Write .tex fragment (no \begin{table} wrapper -- added in main.tex)
-writeLines(tex_output, file.path("paper/tables", "reg_main_specification.tex"))
+writeLines(tex_output, here("paper", "tables", "04_estimation", "reg_main_specification.tex"))
 ```
 
 - Output **bare `tabular` environment** (no `\begin{table}` float)
 - The paper's `main.tex` wraps it with `\begin{table}`, `\caption{}`, and `\input{}`
-- Write to `paper/tables/`
+- Write to `paper/tables/<producing script>/`
 
 ### File Naming
 
-```
-tables/
-├── descriptive/
-│   ├── sumstats_main_sample.tex
-│   └── balance_treatment_control.tex
-├── estimation/
-│   ├── reg_main_specification.tex
-│   ├── reg_heterogeneity_gender.tex
-│   └── did_event_study_coefficients.tex
-└── robustness/
-    └── reg_alternative_controls.tex
-```
+Folders follow the **Output Organization** setting in CLAUDE.md. The default, by-script, names each folder after the script that writes it (`tables/04_estimation/` for `scripts/R/04_estimation.R`), per `paper-organization.md` §6. With by-purpose (`tables/robustness/`), the script must name the file it writes, since `verify.py` traces an exhibit by folder name first and then by finding its filename in a script.
 
-Pattern: `{table_type}_{content_description}.tex`
+Within a folder: `{table_type}_{content_description}.tex`
 
 - `sumstats_` for summary statistics
 - `balance_` for balance / pre-treatment tests

@@ -51,7 +51,8 @@
   },
   "gates": {
     "commit": {
-      "overall": 80
+      "overall": 80,
+      "allow_unscored": true
     },
     "pr": {
       "overall": 90

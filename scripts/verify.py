@@ -94,17 +94,23 @@ def exhibits(root: Path) -> List[Path]:
 
 
 def script_for(exhibit: Path, root: Path, scripts: List[Path]) -> Optional[Path]:
-    """By-script layout: paper/tables/<folder>/file.tex is written by scripts/**/<folder>.*
-    (a leading 'script' in the folder name is optional)."""
+    """By-script layout (the default): paper/tables/<folder>/file.tex is written by
+    scripts/**/<folder>.* (a leading 'script' in the folder name is optional).
+    Any layout, including by-purpose: a script whose text names the exhibit's file."""
     rel = exhibit.relative_to(root / "paper")
-    if len(rel.parts) < 3:
-        return None
-    folder = rel.parts[1].lower()
-    keys = {folder, re.sub(r"^script[_-]?", "", folder)}
+    if len(rel.parts) >= 3:
+        folder = rel.parts[1].lower()
+        keys = {folder, re.sub(r"^script[_-]?", "", folder)}
+        for s in scripts:
+            stem = s.stem.lower()
+            if stem in keys or re.sub(r"^script[_-]?", "", stem) in keys:
+                return s
     for s in scripts:
-        stem = s.stem.lower()
-        if stem in keys or re.sub(r"^script[_-]?", "", stem) in keys:
-            return s
+        try:
+            if exhibit.name in s.read_text(errors="replace"):
+                return s
+        except OSError:
+            continue
     return None
 
 
@@ -268,7 +274,7 @@ def check_crossref(root: Path, idx: Optional[pc.Index], scripts: List[Path]) -> 
         if e.resolve() not in referenced:
             r.fail(f"{rel} is never used by the paper (orphan output)")
         if script_for(e, root, scripts) is None:
-            r.fail(f"{rel} cannot be traced to a script (by-script folder layout)")
+            r.fail(f"{rel} cannot be traced to a script (no script folder matches and no script names {e.name})")
     return r
 
 

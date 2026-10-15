@@ -84,9 +84,12 @@ def aggregate(rows: List[dict]) -> Optional[float]:
 
 
 def evaluate_gate(name: str, gate: dict, overall: Optional[float], rows: List[dict], root: Path) -> dict:
-    reasons = []
+    reasons, notes = [], []
     if overall is None:
-        reasons.append("no component has been scored yet")
+        if gate.get("allow_unscored"):
+            notes.append("nothing scored yet; passes until critics have scored")
+        else:
+            reasons.append("no component has been scored yet")
     elif overall < gate["overall"]:
         reasons.append(f"overall {overall} < {gate['overall']}")
     if gate.get("require_all_scored"):
@@ -103,7 +106,7 @@ def evaluate_gate(name: str, gate: dict, overall: Optional[float], rows: List[di
         if proc.returncode != cmd.get("pass_on_exit", 0):
             first = (proc.stdout.strip().splitlines() or proc.stderr.strip().splitlines() or [""])[-1]
             reasons.append(f"{cmd['name']} gate failed (`{cmd['command']}`): {first[:160]}")
-    return {"gate": name, "passed": not reasons, "reasons": reasons}
+    return {"gate": name, "passed": not reasons, "reasons": reasons, "notes": notes}
 
 
 def render(rows: List[dict], overall: Optional[float], gates: List[dict]) -> str:
@@ -120,7 +123,8 @@ def render(rows: List[dict], overall: Optional[float], gates: List[dict]) -> str
     out.append("")
     for g in gates:
         status = "PASS" if g["passed"] else "FAIL"
-        out.append(f"- **{g['gate']}** gate: {status}" + ("" if g["passed"] else " — " + "; ".join(g["reasons"])))
+        detail = g["reasons"] if not g["passed"] else g.get("notes", [])
+        out.append(f"- **{g['gate']}** gate: {status}" + (" — " + "; ".join(detail) if detail else ""))
     return "\n".join(out)
 
 

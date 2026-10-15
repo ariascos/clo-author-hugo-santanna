@@ -97,7 +97,9 @@ def test_score():
 
     empty = project()
     code, out, _ = run("score.py", "--gate", "commit", root=empty)
-    check("nothing scored: gate fails with a clear reason", code == 1 and "no component has been scored" in out, out)
+    check("nothing scored: commit gate passes with a notice (allow_unscored)", code == 0 and "nothing scored yet" in out, out)
+    code, out, _ = run("score.py", "--gate", "pr", root=empty)
+    check("nothing scored: pr gate fails with a clear reason", code == 1 and "no component has been scored" in out, out)
 
 
 def test_pipeline():
@@ -188,6 +190,20 @@ def test_verify():
     check("submission: missing master script fails inventory", d[5]["status"] == "FAIL" and "master" in " ".join(d[5]["details"]), d[5])
     check("submission: missing renv.lock fails dependencies", d[6]["status"] == "FAIL", d[6])
     check("submission: exhibits traced and referenced", d[9]["status"] == "PASS", d[9])
+
+    bp = project()
+    toy_paper(bp, 120, "Treated Group & Control Group")
+    (bp / "paper/tables/robustness").mkdir(parents=True)
+    (bp / "paper/tables/robustness/alt_controls.tex").write_text("\\begin{tabular}{l}\nx \\\\\n\\end{tabular}\n")
+    main = bp / "paper/main.tex"
+    main.write_text(main.read_text().replace("\\end{document}", "\\input{tables/robustness/alt_controls.tex}\n\\end{document}"))
+    robust = bp / "scripts/R/05_robust.R"
+    robust.write_text('writeLines(x, here("paper", "tables", "robustness", "alt_controls.tex"))\n')
+    d = {c["check"]: c for c in json.loads(run("verify.py", "--no-compile", "--mode", "submission", "--json", root=bp)[1])["checks"]}
+    check("by-purpose layout: exhibit traced to the script that names it", d[9]["status"] == "PASS", d[9])
+    robust.write_text("library(here)\n")
+    d = {c["check"]: c for c in json.loads(run("verify.py", "--no-compile", "--mode", "submission", "--json", root=bp)[1])["checks"]}
+    check("exhibit no script writes: cross-reference fails", d[9]["status"] == "FAIL" and "alt_controls" in " ".join(d[9]["details"]), d[9])
 
 
 def test_check_scaffold():

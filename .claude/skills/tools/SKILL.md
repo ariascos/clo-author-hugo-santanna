@@ -33,8 +33,8 @@ The dashboard scans the entire project — paper sections, data, scripts, qualit
 Stage changes, create commit, optionally create PR and merge.
 - Run git status to identify changes
 - Stage relevant files (never stage .env or credentials)
-- Run `python3 scripts/score.py --gate commit`. If critics have scored and the gate fails, stop and
-  report which components pull the score below 80. If nothing has been scored yet, say so and commit.
+- Run `python3 scripts/score.py --gate commit`. If it fails, stop and report which components pull
+  the score below 80. On a project nothing has scored yet it passes with a notice; say so and commit.
 - Create commit with descriptive message; note the score when there is one
 - The git pre-commit hook (`scripts/install-hooks.sh` installs it) runs scaffold integrity and lint
   checks on every commit, including ones made outside this skill
