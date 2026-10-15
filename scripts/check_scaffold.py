@@ -162,6 +162,11 @@ def check(root: Path) -> List[Problem]:
                     m = re.search(r"\.claude/hooks/([^\s\"']+)", h.get("command", ""))
                     if m and not (claude / "hooks" / m.group(1)).exists():
                         probs.append(("ERROR", "settings", f".claude/{name} {event} hook points at missing .claude/hooks/{m.group(1)}"))
+                    if event == "PreToolUse" and h.get("onFailure") != "block":
+                        level = "ERROR" if name == "settings.json" else "WARN"
+                        target = m.group(1) if m else h.get("command", "?")
+                        probs.append((level, "settings", f".claude/{name} PreToolUse hook {target} fails open; "
+                                      'set "onFailure": "block" so a guard that crashes blocks instead of allowing'))
     for hook in sorted((claude / "hooks").glob("*")):
         if hook.is_file() and re.search(r"CLAUDE_TOOL_[A-Z_]+", hook.read_text(errors="replace")):
             probs.append(("ERROR", "hooks", f"{hook.relative_to(root)} reads CLAUDE_TOOL_* env vars; hook input arrives as JSON on stdin"))

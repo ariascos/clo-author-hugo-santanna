@@ -24,7 +24,9 @@ Claude Code reads a hook's exit code and any JSON it prints on stdout:
 
 - **Exit 0** --- success. JSON on stdout is honored: `permissionDecision: "deny"` blocks a tool call, `additionalContext` puts text in front of Claude, and `systemMessage` shows the user a warning. Plain stdout reaches Claude only on `SessionStart` (and `UserPromptSubmit`); for other events it goes to the debug log. Stderr on exit 0 is never shown.
 - **Exit 2** --- blocking error. For `PreToolUse` it blocks the tool call and shows stderr.
-- **Any other non-zero exit** --- a non-blocking error. The action proceeds, and the transcript shows the hook's name with the first line of stderr (`Failed with non-blocking status code: ...`).
+- **Any other non-zero exit, a timeout, or a script that can't start** --- a hook failure. By default the action proceeds and the transcript shows the hook's name with the first line of stderr. A hook that sets `"onFailure": "block"` (Claude Code 2.1.295+) turns a failure into a block instead.
+
+One trap: when `python3` can't find the script file it exits 2, so a hook whose `.py` file is missing or renamed already blocks every matching tool call, with or without `onFailure`.
 
 ## How clo-author Hooks Fail: Loudly
 
@@ -36,7 +38,12 @@ Every hook here runs through `.claude/hooks/_hooklib.py`, which gives each run o
 | **skipped** | Nothing to do (a `.txt` edit, no guard active) | Nothing |
 | **error** | The hook could not do its job | A one-line notice in the transcript: `clo-author hook <name>: <reason>` |
 
-Errors never block: a broken guard that blocked every edit would also block the edit that fixes it.
+What an error does to the action depends on the hook:
+
+- **Advisory hooks** (lint, restore, health, pre-compact) keep the default. The action proceeds and you see the notice.
+- **Guards** (`protect-files.py`, `session-guard.py`) set `"onFailure": "block"`. A guard that cannot answer blocks the action, because a guard that fails open lets through exactly what it exists to stop. In a test, a corrupted `/careful` state file let writes through silently under the old setting; with `"block"` the write stopped and the error named the file.
+
+The cost of failing closed: a broken guard also blocks the edit that would fix it. Fix it by hand in your editor --- the error message and `hook-health.py` name the file. `scripts/test_hooks.py` and `scripts/check_scaffold.py` both fail if a `PreToolUse` hook in `settings.json` lacks `"onFailure": "block"`.
 
 **A payload missing a field the hook depends on is an error, not a skip.** Two hooks in this template once sat dead for months because they read a field Claude Code never sends, found it empty, and exited cleanly as if there were nothing to do. `require()` in `_hooklib.py` turns that case into a visible failure.
 
@@ -47,7 +54,7 @@ Every outcome is appended to `.claude/state/hook-log.jsonl` (gitignored). At ses
 Hooks are registered in `.claude/settings.json` under the `hooks` key. Each event type maps to an array of hook groups, where each group has:
 
 - **`matcher`** --- a regex pattern for filtering. For `PreToolUse` and `PostToolUse`, it matches tool names (e.g., `"Edit|Write"`). For `SessionStart`, it matches session types (e.g., `"compact|resume"`). Omit the matcher to fire on every event of that type.
-- **`hooks`** --- an array of hook definitions, each with `type`, `command`, and `timeout` (in seconds).
+- **`hooks`** --- an array of hook definitions, each with `type`, `command`, `timeout` (in seconds), and optionally `onFailure` (`"continue"`, the default, or `"block"`).
 
 ```json
 {
@@ -59,7 +66,8 @@ Hooks are registered in `.claude/settings.json` under the `hooks` key. Each even
           {
             "type": "command",
             "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.py",
-            "timeout": 5
+            "timeout": 5,
+            "onFailure": "block"
           }
         ]
       }
@@ -76,7 +84,7 @@ The environment variable `$CLAUDE_PROJECT_DIR` resolves to the project root at r
 
 ## 1. protect-files.py {#protect-files}
 
-**Event:** `PreToolUse` (matcher: `Edit|Write`) | **Timeout:** 5s | **Blocking:** Yes
+**Event:** `PreToolUse` (matcher: `Edit|Write`) | **Timeout:** 5s | **Blocking:** Yes | **On failure:** blocks
 
 ### What it does
 
@@ -121,7 +129,7 @@ Add or remove entries in `PROTECTED_PATTERNS`. Matching is on the **basename** o
 
 ## 2. session-guard.py {#session-guard}
 
-**Event:** `PreToolUse` (matcher: `Edit|Write|Bash`) | **Timeout:** 5s | **Blocking:** Yes
+**Event:** `PreToolUse` (matcher: `Edit|Write|Bash`) | **Timeout:** 5s | **Blocking:** Yes | **On failure:** blocks
 
 ### What it does
 
@@ -184,7 +192,7 @@ When `careful.active` is `true` and the tool is Bash:
 
 ### Exit behavior
 
-The hook always exits 0. Blocking is communicated through stdout JSON (`hookSpecificOutput.permissionDecision: "deny"` with a `permissionDecisionReason`) rather than exit codes --- the current Claude Code protocol for `PreToolUse` decisions.
+When it can answer, the hook exits 0, and blocking is communicated through stdout JSON (`hookSpecificOutput.permissionDecision: "deny"` with a `permissionDecisionReason`) rather than exit codes --- the current Claude Code protocol for `PreToolUse` decisions. When it cannot (for example, `session-guards.json` is not valid JSON), it exits 1, and `"onFailure": "block"` makes Claude Code block the call. Delete or fix the state file by hand to recover.
 
 ### Activating and deactivating
 
@@ -359,7 +367,7 @@ Restores context after compaction by reading the state saved by `pre-compact.py`
 
 ### Exit behavior
 
-Always exits 0, and fails open: any error inside the hook exits 0 silently rather than disturbing the session start.
+Exits 0 when it restores (or has nothing to restore). An error exits 1 with a one-line notice; session start proceeds either way, since the hook keeps the default `onFailure`.
 
 ### Why the pair exists
 
@@ -433,7 +441,8 @@ The full hooks section of `.claude/settings.json` for this project:
           {
             "type": "command",
             "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.py",
-            "timeout": 5
+            "timeout": 5,
+            "onFailure": "block"
           }
         ]
       },
@@ -443,7 +452,8 @@ The full hooks section of `.claude/settings.json` for this project:
           {
             "type": "command",
             "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-guard.py",
-            "timeout": 5
+            "timeout": 5,
+            "onFailure": "block"
           }
         ]
       }
@@ -500,12 +510,13 @@ The full hooks section of `.claude/settings.json` for this project:
 ### Structure breakdown
 
 - **Top-level keys** are event names: `PreToolUse`, `PostToolUse`, `PreCompact`, `SessionStart`.
-- Each event maps to an **array of hook groups**. Multiple groups on the same event fire sequentially.
+- Each event maps to an **array of hook groups**. All hooks that match an event run in parallel, so one hook cannot rely on another having run first.
 - Each group has an optional **`matcher`** (regex) and a required **`hooks`** array.
 - Each hook in the array specifies:
   - `type` --- always `"command"` for shell/Python scripts
   - `command` --- the script to execute, quoted to handle spaces in paths
   - `timeout` --- maximum execution time in seconds; the hook is killed if it exceeds this
+  - `onFailure` --- `"block"` on the two guards, so a crash, timeout, or unexpected exit code blocks the call; omitted (default `"continue"`) on advisory hooks
 
 ### Matcher behavior
 

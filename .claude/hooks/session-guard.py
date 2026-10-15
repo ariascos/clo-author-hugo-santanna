@@ -35,8 +35,9 @@ def load_guards(project_dir: Path) -> dict:
         return json.loads(guards_file.read_text())
     except (json.JSONDecodeError, OSError) as exc:
         raise HookError(
-            f"{guards_file} exists but can't be read ({exc}); /freeze and /careful "
-            f"are NOT being enforced until it is fixed or deleted"
+            f"{guards_file} exists but can't be read ({exc}), so /freeze and /careful "
+            f"cannot be checked. Fix or delete that file by hand; with onFailure "
+            f"\"block\" this hook blocks Edit, Write and Bash until then"
         ) from None
 
 

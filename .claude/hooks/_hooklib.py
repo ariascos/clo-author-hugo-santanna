@@ -5,10 +5,13 @@ Every hook run ends in one of three outcomes, and every outcome is logged:
   acted    The hook did its job: printed context, blocked a tool, linted a file.
   skipped  Nothing to do here (a .txt edit, no active guard). Silent.
   error    The hook could not do its job. It exits 1 with a one-line message on
-           stderr, which Claude Code shows in the transcript as
-           "Failed with non-blocking status code: ...". The action proceeds:
-           an error never blocks, because a broken guard that blocks every
-           Edit would also block the edit that fixes it.
+           stderr, which Claude Code shows in the transcript. What happens to
+           the action is set per hook in settings.json. Advisory hooks keep
+           the default, so the action proceeds. The PreToolUse guards set
+           "onFailure": "block" (Claude Code 2.1.295+), so a guard that cannot
+           answer blocks the action rather than allowing what it exists to
+           stop. The cost: a broken guard blocks the edit that would fix it,
+           so it is fixed by hand in an editor; hook-health.py names it.
 
 A payload that lacks a field the hook depends on is an error, not a skip.
 Two hooks in this repo once sat dead for months because they read a field

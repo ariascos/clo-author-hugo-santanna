@@ -131,7 +131,7 @@ def test_session_guard() -> None:
 
     guards.write_text("{not json")
     code, _, err = run_hook("session-guard.py", payload, p)
-    check("corrupt guards file: visible error, not silent pass", code == 1 and "NOT being enforced" in err, err[:200])
+    check("corrupt guards file: visible error, not silent pass", code == 1 and "cannot be checked" in err, err[:200])
 
     expect_error("no tool_input", "session-guard.py", {"tool_name": "Write"})
 
@@ -195,6 +195,11 @@ def test_real_settings_resolve() -> None:
     print(".claude/settings.json")
     code, out, _ = run_hook("hook-health.py", {"source": "startup"}, REPO_COPY)
     check("every hook in the real settings.json points at an existing file", "missing file" not in out and "not executable" not in out, out[:300])
+    settings = json.loads((REPO / ".claude" / "settings.json").read_text())
+    for group in settings.get("hooks", {}).get("PreToolUse", []):
+        for h in group.get("hooks", []):
+            check(f"PreToolUse guard fails closed: {h.get('command', '?').rsplit('/', 1)[-1]}",
+                  h.get("onFailure") == "block", f"(onFailure={h.get('onFailure')!r})")
 
 
 if __name__ == "__main__":
