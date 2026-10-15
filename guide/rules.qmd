@@ -7,51 +7,63 @@ subtitle: "What the system enforces and why"
 
 The system enforces quality through **rule files** --- machine-readable documents that tell each agent what to check, what to flag, and how severely to penalize violations. Every critic reads the relevant rules before reviewing. Every worker reads them before creating.
 
-This page is a reference for all 11 rule files, the 22 content invariants, the severity gradient, and the quality gates. If you fork the repo and change nothing else, these rules still apply.
+This page is a reference for all 13 rule files, the 26 content invariants, the severity gradient, and the quality gates. If you fork the repo and change nothing else, these rules still apply.
 
 ---
 
 # Rule Files Overview {#sec-rule-files}
 
-Eleven files in `.claude/rules/` govern the system. Each file has a clear scope --- no rule appears in two places.
+Thirteen files in `.claude/rules/` govern the system. Each file has a clear scope --- no rule appears in two places.
 
 | File | Purpose | Primary readers |
 |------|---------|-----------------|
-| `agents.md` | Worker-critic pairs, separation of powers, 3-strike escalation | Orchestrator, all agents |
-| `content-invariants.md` | 22 non-negotiable checks (paper, code, talk, traceability) | All critics, verifier, lint hook |
-| `content-standards.md` | Table format, figure format, PDF processing, exploration protocol | Coder, writer, coder-critic, writer-critic |
-| `lifecycle.md` | Pre-dispatch and post-completion validation protocol | Orchestrator |
+| `agents.md` | Worker-critic pairs, separation of powers, effort per agent, 3-strike escalation | Orchestrator, all agents |
+| `content-invariants.md` | 26 non-negotiable checks (paper, house style, code, talk, traceability, understanding) | All critics, verifier, `/coherence`, lint hook |
+| `content-standards.md` | Tabular body format, figure format, PDF processing, exploration protocol | Coder, writer, coder-critic, writer-critic |
+| `lifecycle.md` | Pre-dispatch and post-completion validation via `scripts/pipeline.py` | Orchestrator |
 | `logging.md` | Session report, research journal, and pipeline state formats | Orchestrator, all agents |
 | `meta-governance.md` | Dual-nature rule (template vs. working project), learning promotion | Orchestrator, user |
+| `paper-organization.md` | House style: floats at the end of `main.tex`, Table 1, table and figure wrappers, section order | Writer, writer-critic, verifier, `/paper-format` |
 | `permissions.md` | Agent registry: phase, dependencies, outputs, escalation targets, quality weights | Orchestrator |
 | `quality.md` | Scoring protocol, gate thresholds, severity gradient, deduction scaling | Orchestrator, all critics |
 | `revision.md` | R&R cycle: comment classification and routing | Orchestrator, writer, coder |
-| `workflow.md` | Plan-first protocol, orchestrator loop, dependency graph, context management | Orchestrator, user |
-| `working-paper-format.md` | LaTeX preamble standard, title page format, bibliography setup | Writer, writer-critic, verifier |
+| `understanding.md` | The comprehension gate (INV-26): explainers and quizzes for every script behind a paper exhibit | Explainer, verifier, `/explain`, `/submit` |
+| `workflow.md` | When to plan and get approval, orchestrator loop, dependency graph, context management | Orchestrator, user |
+| `working-paper-format.md` | Document class and layout, the preamble in `paper/preambles/header.tex`, title page, abstract metadata, bibliography | Writer, writer-critic, verifier |
+
+## How rules load {#sec-rule-loading}
+
+Six rules load in every session: `content-invariants`, `logging`, `meta-governance`, `quality`, `understanding`, and `workflow`. The other seven (`agents`, `content-standards`, `lifecycle`, `paper-organization`, `permissions`, `revision`, `working-paper-format`) carry `paths:` frontmatter and load when Claude reads a matching file --- the paper rules on `paper/**` or a `.tex` file, the pipeline rules on `.claude/agents/**` or `quality_reports/**`.
+
+The reason is cost: every always-loaded line is paid for in every session, whether or not the task needs it. Together with `CLAUDE.md`, the always-loaded rules come to 679 lines, down from 1,817, and `scripts/check_scaffold.py` fails if they exceed a 700-line budget. Because a scoped rule loads only on a matching read, the agents and skills that depend on one name it explicitly: the writer-critic and verifier read `paper-organization.md` and `working-paper-format.md`, the orchestrator reads `permissions.md` and `lifecycle.md`, and `/revise` reads `revision.md`.
 
 ## What each file governs
 
 **agents.md** defines the adversarial pairing system. Every worker has a paired critic. Critics never create artifacts; creators never self-score. When a pair fails to converge after 3 rounds, the file specifies where to escalate (often back to the user for fundamental disagreements).
 
-**content-invariants.md** lists the 22 non-negotiable rules that every agent checks. These are the "constitution" of the system --- violations produce deductions, not suggestions. Critics cite invariant numbers (e.g., "violates INV-3") in their reports. See [Section 2](#sec-invariants) for the full table.
+**content-invariants.md** lists the 26 non-negotiable rules that every agent checks. These are the "constitution" of the system --- violations produce deductions, not suggestions (INV-26 is the exception: a pass/fail gate, never a score). Critics cite invariant numbers (e.g., "violates INV-3") in their reports. See [Content Invariants](#sec-invariants) for the full table.
 
-**content-standards.md** specifies how tables, figures, and PDFs should look. It covers booktabs formatting, coefficient display conventions (including AEA no-stars policy), preferred R packages (`modelsummary`, `fixest::etable`), figure typography (serif fonts, no in-plot titles), and the exploration folder lifecycle.
+**content-standards.md** specifies how the tabular body, figures, and PDFs should look. It covers booktabs formatting, coefficient display conventions (including AEA no-stars policy), preferred R packages (`modelsummary`, `fixest::etable`), figure typography (serif fonts, no in-plot titles), reading PDFs with page ranges, and the exploration folder lifecycle. Table 1, the table and figure wrappers, and float placement live in `paper-organization.md`.
 
-**lifecycle.md** defines PRE-dispatch and POST-completion validation. Before dispatching any agent, the Orchestrator checks that required input artifacts exist and contain the right sections. After completion, it verifies outputs were created and the critic score was recorded. This prevents launching agents with missing inputs or advancing past agents with missing outputs.
+**lifecycle.md** defines PRE-dispatch and POST-completion validation. `scripts/pipeline.py check-pre <agent>` checks that required inputs exist and that the critic results they depend on are in the research journal; `check-post <agent>` checks that the declared outputs exist with their required sections. Each condition prints PASS, FAIL, or MANUAL. This prevents launching agents with missing inputs or advancing past agents with missing outputs.
 
-**logging.md** standardizes three persistence mechanisms: the session report (append-only human-readable log), the research journal (structured agent-by-agent entries with scores), and the pipeline state JSON (machine-readable status for session recovery).
+**logging.md** standardizes three persistence mechanisms: the session report (append-only human-readable log), the research journal (structured agent-by-agent entries with scores and verdicts), and the pipeline state JSON. The research journal is the record: `scripts/score.py` computes scores and `scripts/pipeline.py status` derives the pipeline state from it, so a critic result that isn't logged there doesn't count.
 
 **meta-governance.md** addresses the repo's dual nature as both a working project and a public template. The "one rule" is simple: before committing, ask whether another researcher forking the repo would benefit. Project-specific state goes in `.claude/state/`; reusable patterns go in the repo itself. It also governs learning promotion --- patterns validated across 3+ projects can be elevated to new invariants, but only with user approval.
 
-**permissions.md** is the agent registry. Each agent's entry declares its phase, parallel group, required inputs, expected outputs, paired critic, escalation target, and quality weight. The Orchestrator reads this file to determine what to dispatch and when. Adding a new agent means adding an entry here --- no other file needs to change.
+**paper-organization.md** is the house style and the single source for float placement, Table 1, the table and figure wrappers, and section order (INV-23, INV-24, INV-25). Section files hold prose and `\cref{}` only; tables and figures sit in TABLES and FIGURES blocks at the end of `main.tex`. `/paper-format` applies it; the writer-critic deducts for deviations and the verifier fails on them.
 
-**quality.md** defines how individual critic scores aggregate into the project-wide score that gates submission. It also specifies the severity gradient --- the same violation costs more in later phases. See [Section 3](#sec-severity) and [Section 4](#sec-gates) for details.
+**permissions.md** is the agent registry. Each agent's entry declares its phase, parallel group, required inputs, expected outputs, paired critic, escalation target, and quality weight. The Orchestrator reads this file to determine what to dispatch and when, and `scripts/pipeline.py` parses it for the dispatch checks. Adding a new agent means adding an entry here, plus the orchestrator's `Agent(...)` roster if the orchestrator dispatches it and `quality-gates.json` if it carries a weight; `scripts/check_scaffold.py` fails if the weights in the two files disagree.
+
+**quality.md** defines how individual critic scores aggregate into the project-wide score that gates submission. `scripts/score.py` does the arithmetic, from the research journal and `.claude/skills/new-project/config/quality-gates.json`. It also specifies the severity gradient --- the same violation costs more in later phases. See [Severity Gradient](#sec-severity) and [Quality Gates](#sec-gates) for details.
 
 **revision.md** handles the R&R cycle. When real referee reports arrive, `/revise` classifies each comment as NEW ANALYSIS (routed to coder), CLARIFICATION (routed to writer), DISAGREE (flagged for user), or MINOR (writer handles directly). The system never autonomously pushes back on referees --- DISAGREE items always require human judgment.
 
-**workflow.md** covers the plan-first protocol (plan before coding, save plans to disk, get user approval), the orchestrator's dependency-driven loop (identify, dispatch, review, verify, score), standalone vs. pipeline mode, and context management (compaction discipline, session recovery).
+**understanding.md** covers the comprehension gate (INV-26). Every script that produces a paper exhibit needs a current explainer and a passing quiz attempt; `/explain` writes both. The gate is pass/fail at `/submit` and a warning at `/write results`, and it never enters the weighted score: a quiz result is a fact about the author, not the artifact.
 
-**working-paper-format.md** specifies the LaTeX preamble, title page conventions, abstract format, section ordering, and bibliography setup. It distinguishes required items (blocking deductions if violated) from recommended items (advisory, no penalty). The writer-critic checks every paper against this standard.
+**workflow.md** covers when to write a plan and get approval (before multi-agent pipeline runs and changes across many files; smaller tasks proceed without one), the orchestrator's dependency-driven loop (identify, dispatch, review, verify, score), standalone vs. pipeline mode, and context management (`/checkpoint` before `/compact`, session recovery). The fuller advice on when to compact, rewind, or clear is in the [User Guide](user-guide.qmd#managing-long-sessions).
+
+**working-paper-format.md** specifies the document class and layout, the design choices in the reference preamble (`paper/preambles/header.tex`), title page conventions, abstract metadata, and bibliography setup; section order follows `paper-organization.md`. It distinguishes required items (blocking deductions if violated) from recommended items (advisory, no penalty). The writer-critic checks every paper against this standard.
 
 ---
 
@@ -67,15 +79,15 @@ These are non-negotiable. Violations produce deductions, not suggestions. Critic
 | INV-2 | Every figure has a caption with note (what, how to read, source) | Paper | writer-critic | -5 |
 | INV-3 | No `\hline` --- use booktabs (`\toprule`, `\midrule`, `\bottomrule`). No vertical rules | Paper | writer-critic | -3 |
 | INV-4 | Significance stars follow journal profile (AEA: no stars) | Paper | writer-critic | -3 |
-| INV-5 | Abstract is 150 words or fewer | Paper | writer-critic | -5 |
+| INV-5 | Abstract is 150 words or fewer | Paper | writer-critic, `/coherence` | -5 |
 | INV-6 | JEL codes and keywords present after abstract | Paper | writer-critic | -5 |
-| INV-7 | Notation consistent across all sections | Paper | writer-critic | -5 |
+| INV-7 | Notation consistent across all sections | Paper | writer-critic, `/coherence` | -5 |
 | INV-8 | Every causal claim has a corresponding identification section | Paper | writer-critic | -10 |
 | INV-9 | `biblatex` + `biber`, not `natbib` + `bibtex` | Paper | writer-critic, verifier | -3 |
 | INV-10 | `hyperref` loaded second-to-last; `cleveref` loaded after it | Paper | writer-critic, verifier | -2 |
-| INV-11 | Numbers in text match tables/figures exactly | Paper | writer-critic | -5 |
+| INV-11 | Numbers in text match tables/figures exactly | Paper | writer-critic, `/coherence` | -5 |
 | INV-12 | No titles inside figures; titles go in LaTeX `\caption{}` | Paper | writer-critic | -3 |
-| INV-13 | Scripts export bare `tabular` --- no `\begin{table}`, `\caption`, or notes | Paper / Code | writer-critic, coder-critic | -3 |
+| INV-13 | Scripts export bare `tabular` --- no `\begin{table}`, `\caption`, or notes | Paper / Code | writer-critic, coder-critic, `/coherence` | -3 |
 | INV-14 | `set.seed()` called exactly once, at top, if stochastic | Code | coder-critic, verifier | -5 |
 | INV-15 | All packages loaded at top, before any computation | Code | coder-critic, verifier | -3 |
 | INV-16 | No absolute paths; use `here()` / `pathlib.Path` / `joinpath(@__DIR__)` | Code | coder-critic, verifier | -5 |
@@ -85,6 +97,10 @@ These are non-negotiable. Violations produce deductions, not suggestions. Critic
 | INV-20 | Talk notation matches paper exactly | Talk | storyteller-critic | -5 |
 | INV-21 | Every claim on a slide is traceable to the paper | Talk | storyteller-critic | -5 |
 | INV-22 | Every numerical claim has an entry in the claim-source map | Traceability | writer-critic | -5 |
+| INV-23 | Tables and figures collected in TABLES and FIGURES blocks at the end of `main.tex`; section files hold prose and `\cref{}` only | Paper house style | writer-critic, verifier, `/paper-format`, `/coherence` | Rubric; verifier FAIL |
+| INV-24 | Table 1 is pre-treatment characteristics: treated vs. control columns, thematic panels, unit counts at the bottom; no difference, SD, or p-value column | Paper house style | writer-critic, verifier, `/paper-format`, `/coherence` | Rubric; verifier FAIL |
+| INV-25 | Canonical wrappers: `threeparttable` with exhaustive notes for tables; `subcaption` multi-panel with the overall `\caption{}` on top for figures | Paper house style | writer-critic, verifier, `/paper-format` | Rubric; verifier FAIL |
+| INV-26 | Every script behind a paper exhibit has a current explainer and a passing quiz attempt at its current fingerprint | Understanding | `explainer_status.py --gate` at `/submit`, verifier | None --- pass/fail gate, never a score |
 
 ## Invariants by Category
 
@@ -123,6 +139,22 @@ Talk invariants enforce fidelity between the presentation and the paper:
 ### Traceability (INV-22)
 
 **INV-22** (claim-source map) is the audit trail. Every numerical claim in the manuscript --- "treatment effect of 4.5 percentage points" --- must have an entry in `quality_reports/claim_source_map_{project}.md` that traces it to a specific script line and output file. This makes it possible for a referee (or a future you) to verify any number in the paper by following the chain from text to table to code.
+
+### Paper house style (INV-23 through INV-25)
+
+These encode the house layout in `paper-organization.md`, which coauthors and target journals expect. `/paper-format` applies them; the writer-critic deducts and the verifier fails on violations.
+
+**INV-23** (floats at end) keeps section files to prose and `\cref{}`. Every table and figure lives in the TABLES and FIGURES blocks after the bibliography in `main.tex`.
+
+**INV-24** (Table 1) fixes the first table as a two-group comparison at baseline. The N lives in unit-count rows at the bottom, not in a column, and there is deliberately no difference or test column.
+
+**INV-25** (wrappers) gives every table the same `threeparttable` wrapper with exhaustive notes (sample, variable definitions, specification columns, SE clustering, stars) and every figure the same `subcaption` wrapper.
+
+INV-5 (abstract length) and INV-24 are also checked mechanically by `scripts/paper_coherence.py`, the deterministic layer of `/coherence`, which flags an abstract over 150 words and a Table 1 with extra columns.
+
+### Understanding (INV-26)
+
+**INV-26** (comprehension gate) asks whether you can explain the code, not whether it is correct. Every script that writes to `paper/tables/` or `paper/figures/` needs a current explainer in `quality_reports/explainers/` and a passing quiz attempt; when the script changes, its fingerprint changes and the gate reopens. `/explain` produces both. It is pass/fail at `/submit` (`python3 scripts/explainer_status.py --gate`) and never enters the score. See `.claude/rules/understanding.md`.
 
 ---
 
@@ -170,47 +202,62 @@ The simulated referees are intentionally harsh because real referees are harsh. 
 
 # Quality Gates {#sec-gates}
 
-Quality scores determine what actions are allowed. The system uses a **weighted aggregate** of individual critic scores, with hard thresholds at each gate.
+Quality scores determine what actions are allowed. The system uses a **weighted aggregate** of individual critic scores, with hard thresholds at each gate. `scripts/score.py` computes the aggregate and checks the gates; nobody does the arithmetic by hand.
 
-## The Four Gates
+## The Score Gates
 
-| Gate | Overall score | Per-component minimum | What it means |
-|------|--------------|----------------------|---------------|
-| **Commit** | >= 80 | None | Work can be committed to the repository |
-| **PR** | >= 90 | None | Work can be opened as a pull request |
-| **Submission** | >= 95 | >= 80 per component | Work can be submitted to a journal |
-| **Blocked** | < 80 | --- | Work cannot be committed; issues must be fixed first |
+| Gate | Overall score | Per-component minimum | Enforced by | What it means |
+|------|--------------|----------------------|-------------|---------------|
+| **Commit** | >= 80 | None | `/tools commit` runs `score.py --gate commit` | Work can be committed. Passes with a notice while no critic has scored yet |
+| **PR** | >= 90 | None | `score.py --gate pr` | Work can be opened as a pull request |
+| **Submission** | >= 95 | >= 80 per component | `/submit final` runs `score.py --gate submission`, then `verify.py --mode submission` | Work can be submitted to a journal. Every non-conditional component must also be scored, and the understanding gate must pass |
+
+The git pre-commit gate (`.githooks/pre-commit`) runs on every commit but does not check the score: a new project has no critic scores yet, and a gate that fails every early commit gets bypassed. It blocks on scaffold integrity and on HIGH lint findings instead (see [Hooks & Automation](hooks.qmd#post-merge)).
+
+## Gates That Are Not Scores
+
+Two checks sit outside the weighted aggregate. They are pass/fail and never deduct.
+
+| Gate | What blocks | Where |
+|------|-------------|-------|
+| **Coherence** (`/coherence` Layer 1, `scripts/paper_coherence.py`) | Major findings: broken references, missing citation keys, claim numbers that match no table cell, INV-5, INV-24. Minor findings only under `--strict`. `--deep` reasoning findings never block | Any phase, zero tolerance. For `/submit final` the coherence skill sets `--strict`, so minor findings must be zero too. At commit, the pre-commit gate prints findings as advice only |
+| **Understanding** (INV-26, `scripts/explainer_status.py --gate`) | Any script behind a paper exhibit without a current explainer and a passing quiz | `/submit`; `score.py` runs it as part of the submission gate |
+
+The understanding gate is kept out of the score by design: a quiz result is a fact about the author, not the artifact. Folding it in would let good code compensate for an author who cannot explain it.
 
 ## How Scores Aggregate
 
-Each critic produces a score from 0 to 100 by starting at 100 and deducting for issues found. These individual scores combine via a weighted average:
+Each critic produces a score from 0 to 100 by starting at 100 and deducting for issues found. The strategist-critic is the exception: it gives a verdict (SOUND / MINOR ISSUES / MAJOR ISSUES / CRITICAL ERRORS), and execution may start on SOUND or MINOR ISSUES. `score.py` reads each critic's latest entry in the research journal and combines them with the weights in `.claude/skills/new-project/config/quality-gates.json`, the single source for weights and thresholds:
 
 | Component | Weight | Source |
 |-----------|--------|--------|
 | Literature coverage | 10% | librarian-critic |
 | Data quality | 10% | explorer-critic |
-| Identification validity | 25% | strategist-critic |
+| Identification validity | 25% | strategist-critic (verdict mapped to SOUND 95, MINOR ISSUES 85, MAJOR ISSUES 65, CRITICAL ERRORS 40) |
 | Theory (when present) | 20% | theorist-critic |
 | Code quality | 15% | coder-critic |
-| Paper quality | 25% | Avg(domain-referee + methods-referee) |
+| Referee: domain | 12.5% | domain-referee |
+| Referee: methods | 12.5% | methods-referee |
 | Manuscript polish | 10% | writer-critic |
 | Replication readiness | 5% | Verifier (pass/fail, mapped to 0 or 100) |
 
-**Theory weight** applies only to papers with a formal theory section (econometric methods, theory + empirics, structural identification). For applied papers using off-the-shelf estimators, the theory row is excluded and remaining weights renormalize.
+The verdict map applies to this aggregate only; everywhere else the strategist-critic gates by verdict. The two referees at 12.5% each are the same as averaging them into one 25% component.
+
+**Theory weight** applies only when the theorist ran (papers with a formal theory section: econometric methods, theory + empirics, structural identification). An applied paper's weights sum to 100%; a theory paper's are renormalized from 120%.
 
 ## When Components Are Missing
 
 Not every project has every component. If a component has not been scored:
 
-- It is excluded from the weighted average
+- It is excluded from the weighted average, and `score.py` lists it as excluded
 - Remaining weights are renormalized proportionally
-- Example: no literature review yet --- weights become 11%, 28%, 17%, 28%, 11%, 6%
+- Example: no literature review yet on an applied paper --- data 11%, identification 28%, code 17%, each referee 14%, manuscript 11%, replication 6%
 
-This means you can run partial pipelines (e.g., just Strategy + Execution) and still get meaningful scores.
+This means you can run partial pipelines (e.g., just Strategy + Execution) and still get meaningful scores. The submission gate is the exception: there, every non-conditional component must have been scored.
 
 ## The Per-Component Minimum
 
-For submission, the aggregate score must be >= 95 **and** no individual component can be below 80. A perfect literature review cannot compensate for broken identification. A beautiful manuscript cannot compensate for code that does not reproduce.
+For submission, the aggregate score must be >= 95 **and** no individual component can be below 80 **and** every non-conditional component must be scored. A perfect literature review cannot compensate for broken identification. A beautiful manuscript cannot compensate for code that does not reproduce. A missing referee report cannot be renormalized away.
 
 This rule prevents the "average-up" problem --- where excellence in one area masks serious deficiencies in another.
 
@@ -235,7 +282,7 @@ A score of 95 is difficult to achieve. It requires all components to be polished
 
 # Working Paper Format
 
-The `working-paper-format.md` rule file specifies the LaTeX standard that all papers must follow. The full reference preamble, title page conventions, and bibliography setup are documented there. Here is a summary of what the writer-critic enforces.
+The `working-paper-format.md` rule file specifies the LaTeX standard that all papers must follow. The reference preamble itself is `paper/preambles/header.tex` (a paper starts with `\documentclass[12pt]{article}` and `\input{preambles/header}`); the rule documents each design choice, the title page conventions, and the bibliography setup. Here is a summary of what the writer-critic enforces.
 
 ## Required (Blocking Deductions)
 
@@ -275,22 +322,25 @@ Different agents check different subsets of the rules. This table shows which in
 
 | Agent | Checks | Action on violation |
 |-------|--------|-------------------|
-| **writer-critic** | INV-1 through INV-13, INV-22 | Deduct per scoring rubric |
+| **writer-critic** | INV-1 through INV-13, INV-22, INV-23, INV-24, INV-25 | Deduct per scoring rubric |
 | **coder-critic** | INV-13 through INV-19 | Deduct per scoring rubric |
 | **storyteller-critic** | INV-20, INV-21 | Deduct per scoring rubric |
-| **verifier** | INV-9, INV-10, INV-14, INV-15, INV-16, INV-19 | FAIL (binary --- no partial credit) |
-| **lint hook** | INV-14, INV-15, INV-16, INV-19 | Advisory warning (non-blocking) |
+| **verifier** | INV-9, INV-10, INV-14, INV-15, INV-16, INV-19, INV-23, INV-24, INV-25, INV-26 | FAIL (binary --- no partial credit) |
+| **explainer** | INV-26 | Produces the explainer and quiz the invariant requires |
+| **/coherence** (deterministic, `paper_coherence.py`) | INV-5, INV-7, INV-11, INV-13, INV-23, INV-24 | Major findings block; minor findings block only under `--strict` |
+| **/coherence --deep** (reasoning) | INV-7, INV-8, INV-11 | Advisory finding --- never blocks |
+| **lint hook** | INV-14, INV-15, INV-16, INV-19 | Advisory warning in the session; the git pre-commit gate blocks HIGH findings in staged analysis scripts |
 
-Note the overlap: INV-13 is checked by both the writer-critic (paper side) and coder-critic (code side). INV-9, INV-10, INV-14--16, and INV-19 are checked by both the coder-critic (with deductions) and the verifier (with a hard FAIL). This redundancy is intentional --- the critic catches issues during development; the verifier catches anything that slipped through at submission time.
+Note the overlap: INV-13 is checked by both the writer-critic (paper side) and coder-critic (code side). INV-9, INV-10, and INV-23--25 are checked by the writer-critic (with deductions) and the verifier (with a hard FAIL); INV-14--16 and INV-19 by the coder-critic and the verifier. This redundancy is intentional --- the critic catches issues during development; the verifier catches anything that slipped through at submission time. `/coherence` adds a deterministic check that costs nothing to run, so it can run before every commit.
 
 ---
 
 # Lifecycle Validation
 
-The Orchestrator runs two validation checks around every agent dispatch, defined in `lifecycle.md`.
+Two validation checks run around every agent dispatch, defined in `lifecycle.md`. Both are `scripts/pipeline.py` subcommands that read the agent's entry in `permissions.md` and the research journal; the Orchestrator calls them and acts on the result. Each condition prints PASS, FAIL, or MANUAL (a condition only judgment can settle, which the Orchestrator decides and explains).
 
-**PRE-dispatch:** Before launching any agent, the Orchestrator reads the agent's entry in `permissions.md` and verifies that all required input artifacts exist and contain the expected sections. If validation fails, the agent is not dispatched --- instead, the system reports what is missing and suggests which skill to run first.
+**PRE-dispatch:** `pipeline.py check-pre <agent>` verifies that the required inputs exist and that the critic scores or verdicts they depend on are logged. If it fails, the agent is not dispatched --- instead, the system reports what is missing and which skill produces it.
 
-**POST-completion:** After an agent finishes, the Orchestrator verifies that the expected output artifacts were created, that required sections are present in those outputs, and that the paired critic has produced a scored report logged in the research journal. If validation fails, the agent is re-dispatched with the specific gaps noted.
+**POST-completion:** `pipeline.py check-post <agent>` verifies that the expected output artifacts were created and contain their required sections. If it fails, the agent is re-dispatched with the specific gaps noted. A critic's result gates the *next* agent, so it is checked by that agent's `check-pre`.
 
 The principle is **fail fast**: never launch an agent with missing inputs and hope it works, and never advance past an agent with missing outputs. Every handoff between agents is validated.

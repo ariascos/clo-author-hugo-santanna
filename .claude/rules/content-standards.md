@@ -17,10 +17,11 @@ paths:
 
 ## 1. Table Standards
 
-**Target:** Publication-quality tables using standard economics formatting (booktabs rules, no vertical rules). Two approaches are supported:
+**Target:** Publication-quality tables using standard economics formatting (booktabs rules, no vertical rules).
 
-- **tabularray (`tblr` / `talltblr`)** — modern key-value interface. Preferred for hand-written tables in `main.tex`.
-- **`tabular` + `booktabs` + `threeparttable`** — traditional stack. Required for R/Python/Julia-generated output (scripts export bare `tabular`).
+Table 1, the table and figure wrappers, and float placement follow `.claude/rules/paper-organization.md`
+(house style). This section covers the tabular body: rules, coefficient display, labels, panels, and
+export. R/Python/Julia scripts export a bare `tabular`; `main.tex` wraps it.
 
 Journal-specific conventions (significance stars, note format) adapt to the target journal — see journal-profiles.md.
 
@@ -35,12 +36,7 @@ Journal-specific conventions (significance stars, note format) adapt to the targ
 
 Every table uses exactly three horizontal rules and **zero vertical lines**:
 
-**Traditional (R/Python/Julia output):**
 ```latex
-\begin{table}[htbp]
-\centering
-\begin{threeparttable}
-\caption{Effect of X on Y}\label{tab:main}
 \begin{tabular}{lcccc}
 \toprule
             & (1)     & (2)     & (3)     & (4)     \\
@@ -48,34 +44,15 @@ Every table uses exactly three horizontal rules and **zero vertical lines**:
 ...coefficients...
 \bottomrule
 \end{tabular}
-\begin{tablenotes}\small
-\item \textit{Notes:} Standard errors in parentheses.
-\end{tablenotes}
-\end{threeparttable}
-\end{table}
 ```
 
-**Modern (hand-written in main.tex):**
-```latex
-\begin{talltblr}[
-  caption = {Effect of X on Y},
-  label = {tab:main},
-  note{*} = {Standard errors in parentheses.},
-]{colspec = {lcccc}, rowsep = 4pt}
-\toprule
-            & (1)     & (2)     & (3)     & (4)     \\
-\midrule
-...coefficients...
-\bottomrule
-\end{talltblr}
-```
+The float, caption, and notes around this body come from the canonical wrapper in
+`paper-organization.md` §3.
 
 - `\toprule` above column headers
 - `\midrule` below column headers (and to separate panels)
 - `\bottomrule` at the very end
 - `\cmidrule(lr){2-4}` for partial rules spanning column groups
-- **R/Python/Julia output:** wrap with `threeparttable` for notes via `\begin{tablenotes}`
-- **Hand-written tables:** prefer `talltblr` with `note{}` keys — unifies caption, label, and notes
 - **Never** use `\hline`, `|`, or any vertical rules
 
 ### Coefficient Display
@@ -190,29 +167,18 @@ kbl(df, format = "latex", booktabs = TRUE, escape = FALSE,
 
 ```r
 # Write .tex fragment (no \begin{table} wrapper -- added in main.tex)
-writeLines(tex_output, file.path("paper/tables", "reg_main_specification.tex"))
+writeLines(tex_output, here("paper", "tables", "04_estimation", "reg_main_specification.tex"))
 ```
 
 - Output **bare `tabular` environment** (no `\begin{table}` float)
 - The paper's `main.tex` wraps it with `\begin{table}`, `\caption{}`, and `\input{}`
-- Write to `paper/tables/`
+- Write to `paper/tables/<producing script>/`
 
 ### File Naming
 
-```
-tables/
-├── descriptive/
-│   ├── sumstats_main_sample.tex
-│   └── balance_treatment_control.tex
-├── estimation/
-│   ├── reg_main_specification.tex
-│   ├── reg_heterogeneity_gender.tex
-│   └── did_event_study_coefficients.tex
-└── robustness/
-    └── reg_alternative_controls.tex
-```
+Folders follow the **Output Organization** setting in CLAUDE.md. The default, by-script, names each folder after the script that writes it (`tables/04_estimation/` for `scripts/R/04_estimation.R`), per `paper-organization.md` §6. With by-purpose (`tables/robustness/`), the script must name the file it writes, since `verify.py` traces an exhibit by folder name first and then by finding its filename in a script.
 
-Pattern: `{table_type}_{content_description}.tex`
+Within a folder: `{table_type}_{content_description}.tex`
 
 - `sumstats_` for summary statistics
 - `balance_` for balance / pre-treatment tests
@@ -237,7 +203,7 @@ Pattern: `{table_type}_{content_description}.tex`
 
 Use these as defaults. Adapt columns based on the paper's needs (e.g., add Min/Max, percentiles, or subgroup columns when substantively important).
 
-**Descriptive Statistics:**
+**Descriptive Statistics** (full-sample or appendix summary statistics; Table 1 follows `paper-organization.md` §2):
 ```
 \toprule
                         &  Mean   &  SD     \\
@@ -300,7 +266,7 @@ Observations            &  10,000 &  10,000 &  10,000 &  10,000 \\
 - Panel labels in italics, left-aligned, spanning all columns
 - Controls/FE/Observations rows appear once at the bottom (shared across panels)
 
-**Balance Table:**
+**Appendix balance tests** (not Table 1, which has only treated and control columns — INV-24):
 ```
 \toprule
 Variable                &  Treatment &  Control &  Difference &  SE     &  p-value \\
@@ -342,58 +308,9 @@ Female (\%)             &  47.8      &  48.6    &  -0.8       &  (1.2)  &  0.505
 
 ## 3. PDF Processing
 
-### The Safe Processing Workflow
-
-**Step 1: Receive PDF Upload**
-- User uploads PDF to `master_supporting_docs/supporting_papers/` or `supporting_slides/`
-- Claude DOES NOT attempt to read it directly
-
-**Step 2: Check PDF Properties**
-```bash
-pdfinfo paper_name.pdf | grep "Pages:"
-ls -lh paper_name.pdf
-```
-
-**Step 3: Create Subfolder and Split**
-```bash
-mkdir -p paper_name/
-
-for i in {0..9}; do
-  start=$((i*5 + 1))
-  end=$(((i+1)*5))
-  gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dSAFER \
-     -dFirstPage=$start -dLastPage=$end \
-     -sOutputFile="paper_name/paper_name_p$(printf '%03d' $start)-$(printf '%03d' $end).pdf" \
-     paper_name.pdf 2>/dev/null
-done
-```
-
-**Step 4: Process Chunks Intelligently**
-- Read chunks ONE AT A TIME using the Read tool
-- Extract key information from each chunk
-- Build understanding progressively
-- Don't try to hold all chunks in working memory
-
-**Step 5: Selective Deep Reading**
-- After scanning all chunks, identify the most relevant sections
-- Only read those sections in detail for slide development
-- Skip appendices, references, or less relevant sections unless needed
-
-### Error Handling Protocol
-
-**If a chunk fails to process:**
-1. Note the problematic chunk (e.g., "Chunk p021-025 failed")
-2. Try splitting into 1-2 page pieces
-3. If still failing, skip and document the gap
-
-**If splitting fails:**
-1. Check if Ghostscript is installed: `gs --version`
-2. Try alternative: `pdftk paper.pdf burst output paper_%03d.pdf`
-3. If all else fails, ask user to upload specific page ranges manually
-
-**If memory/token issues persist:**
-1. Process only 2-3 chunks per session
-2. Focus on specific sections user identifies as most important
+Read PDFs in `master_supporting_docs/` with the Read tool, passing `pages` ranges (up to 20 pages per
+call) for longer documents; charts and tables in the PDF are read directly. If a read fails, split
+the file with `gs` or `pdftk ... burst` and read the parts.
 
 ---
 

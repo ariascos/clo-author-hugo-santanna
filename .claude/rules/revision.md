@@ -1,3 +1,10 @@
+---
+paths:
+  - "paper/**"
+  - "quality_reports/reviews/**"
+  - "quality_reports/revisions/**"
+---
+
 # Revision Protocol — R&R Cycle
 
 **When referee reports arrive, `/revise` classifies each comment and routes it to the right agent.**

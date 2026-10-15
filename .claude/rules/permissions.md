@@ -1,8 +1,15 @@
+---
+paths:
+  - ".claude/agents/**"
+  - ".claude/skills/new-project/**"
+  - "quality_reports/**"
+---
+
 # Permission Registry: Agent Capabilities and Dependencies
 
-Every agent's capabilities, dependencies, and routing are declared here. The Orchestrator reads this file to determine dispatch rules, dependency graph, escalation routing, and quality weights. No other file hardcodes these relationships.
+Every agent's capabilities, dependencies, and routing are declared here. The Orchestrator reads this file, and `scripts/pipeline.py` checks REQUIRES/PRODUCES from it, to determine dispatch rules, dependency graph, and escalation routing. QUALITY_WEIGHT here mirrors `quality-gates.json`, which `scripts/score.py` reads.
 
-Adding a new agent: create the agent file in `.claude/agents/`, add an entry here. No other file needs to change.
+Adding a new agent: create the agent file in `.claude/agents/` and add an entry here. If the orchestrator dispatches it, add it to the orchestrator's `Agent(...)` roster; if it is weighted, add its component to `quality-gates.json` (`check_scaffold.py` fails when the two disagree).
 
 ---
 
@@ -51,7 +58,7 @@ Adding a new agent: create the agent file in `.claude/agents/`, add an entry her
 ## data-engineer
 - **PHASE:** Execution
 - **PARALLEL_GROUP:** execution-data
-- **REQUIRES:** `quality_reports/strategy/{project}/strategy_memo.md` AND strategist-critic score >= 80
+- **REQUIRES:** `quality_reports/strategy/{project}/strategy_memo.md` AND strategist-critic verdict SOUND or MINOR ISSUES
 - **PRODUCES:** `data/cleaned/`, `paper/figures/` (data visualization), data codebooks
 - **CRITIC:** coder-critic
 - **ESCALATION_TARGET:** strategist-critic — re-evaluates whether the data specification is tractable
@@ -60,11 +67,22 @@ Adding a new agent: create the agent file in `.claude/agents/`, add an entry her
 ## coder
 - **PHASE:** Execution
 - **PARALLEL_GROUP:** execution-code
-- **REQUIRES:** `quality_reports/strategy/{project}/strategy_memo.md` AND strategist-critic score >= 80
+- **REQUIRES:** `quality_reports/strategy/{project}/strategy_memo.md` AND strategist-critic verdict SOUND or MINOR ISSUES
 - **PRODUCES:** `scripts/`, `paper/tables/`, `paper/figures/`, `quality_reports/results_summary.md`
 - **CRITIC:** coder-critic
 - **ESCALATION_TARGET:** strategist-critic — re-evaluates whether the strategy memo is implementable
 - **QUALITY_WEIGHT:** 15% (code quality)
+
+## explainer
+- **PHASE:** Execution
+- **PARALLEL_GROUP:** execution-explain
+- **REQUIRES:** `scripts/` contains the target script AND coder-critic score >= 80
+- **PRODUCES:** `quality_reports/explainers/`
+  - Required files: `{script}_explainer.md`, `{script}_quiz.md`, `{script}_quiz_key.md`
+  - Required sections (explainer): Headline, Sample construction ledger, Variable construction, Judgment calls, What would change the answer, Open questions
+- **CRITIC:** None — the quiz is the verification, and the author is who it verifies
+- **ESCALATION_TARGET:** coder — the sample ledger came back `NOT INSTRUMENTED`, so the script must print drop counts before an honest explainer can exist
+- **QUALITY_WEIGHT:** None. Understanding is a gate, not a score (see `.claude/rules/understanding.md`) — a quiz result is a fact about the author, not the artifact.
 
 ## writer
 - **PHASE:** Execution
@@ -80,8 +98,8 @@ Adding a new agent: create the agent file in `.claude/agents/`, add an entry her
 - **PARALLEL_GROUP:** peer-review
 - **REQUIRES:** writer-critic score >= 80 AND coder-critic score >= 80
 - **PRODUCES:** `quality_reports/reviews/editorial_decision.md`
-  - Dispatches domain-referee and methods-referee (see below)
-  - Synthesizes referee reports into editorial decision
+  - Desk-reviews the paper and synthesizes the referee reports into an editorial decision
+  - The `/review --peer` skill dispatches domain-referee and methods-referee; the editor does not
 - **CRITIC:** None — the editor IS the review coordinator
 - **ESCALATION_TARGET:** User — editorial judgment calls
 - **QUALITY_WEIGHT:** None (manages the peer review process, not scored directly)
@@ -113,6 +131,36 @@ Adding a new agent: create the agent file in `.claude/agents/`, add an entry her
 - **ESCALATION_TARGET:** Writer — talk narrative issues stem from paper structure
 - **QUALITY_WEIGHT:** Advisory (reported, non-blocking)
 
+## coherence-finder
+- **PHASE:** Any — runs standalone wherever a manuscript exists
+- **PARALLEL_GROUP:** coherence-finders (one dispatch per check group, all concurrent)
+- **REQUIRES:** `quality_reports/coherence/slices/{group}.json`, produced by `scripts/paper_coherence.py --slices`
+- **PRODUCES:** candidate findings (JSON, in-memory) — no files
+- **CRITIC:** coherence-skeptic — one instance per group with findings, prompted to refute each
+- **ESCALATION_TARGET:** coherence-consolidator
+- **QUALITY_WEIGHT:** None — advisory layer, never blocks
+- **CONDITIONAL:** A group is skipped when its slice is empty. The theory group produces nothing on applied papers using off-the-shelf estimators, which is the correct result.
+
+## coherence-skeptic
+- **PHASE:** Any
+- **PARALLEL_GROUP:** coherence-verify (one instance per check group with findings)
+- **REQUIRES:** The candidate findings from one coherence-finder group
+- **PRODUCES:** A refutation verdict, optionally a corrected finding
+- **CRITIC:** None — this agent *is* the verification step
+- **ESCALATION_TARGET:** coherence-consolidator
+- **QUALITY_WEIGHT:** None
+- **NOTE:** Defaults to refuted when uncertain. Fan-out multiplies the false-positive surface; this stage is what pays for it.
+
+## coherence-consolidator
+- **PHASE:** Any
+- **PARALLEL_GROUP:** None — single merge stage, runs after the fan-out barrier
+- **REQUIRES:** Surviving findings from all finders, plus the Layer 1 deterministic findings
+- **PRODUCES:** `## Reasoning layer` section appended to `quality_reports/coherence/YYYY-MM-DD_report.md`
+  - Required content: funnel counts (candidates → survived → merged), ranked findings
+- **CRITIC:** None — infrastructure agent
+- **ESCALATION_TARGET:** User — prose and table disagree and only the author knows which is stale
+- **QUALITY_WEIGHT:** None. Coherence is a gate, not a score: Layer 1 findings block at zero tolerance rather than deducting points; reasoning findings never block.
+
 ## verifier
 - **PHASE:** Submission
 - **PARALLEL_GROUP:** submission
@@ -134,6 +182,7 @@ Agents in the same parallel group can run concurrently when their REQUIRES are m
 | strategy | strategist, theorist | After Discovery (literature OR data assessment) |
 | execution-data | data-engineer | After Strategy (approved strategy memo) |
 | execution-code | coder | After Strategy (approved strategy memo) |
+| execution-explain | explainer | After Code (approved code output) — parallel with execution-write |
 | execution-write | writer | After Code (approved code output) |
 | peer-review | editor, domain-referee, methods-referee | After Execution (approved paper + code) |
 | presentation | storyteller | After Write (approved paper) — can run parallel with Peer Review |

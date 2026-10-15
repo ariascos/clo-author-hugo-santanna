@@ -36,10 +36,10 @@ Append to `quality_reports/research_journal.md` whenever an agent completes work
 **Phase:** [Discovery/Strategy/Execution/Peer Review/Presentation]
 **Target:** [file or topic]
 **Score:** [XX/100 or PASS/FAIL or N/A]
-**Verdict:** [one line — key finding or decision]
+**Verdict:** [one line; the strategist-critic starts it with SOUND, MINOR ISSUES, MAJOR ISSUES, or CRITICAL ERRORS]
 **Report:** [path to full report]
 ```
-**Why it exists:** Agents read this to understand pipeline state — the editor checks what strategist-critic scored, the orchestrator checks which phases passed, the coder-critic checks what the coder built. It's the shared context across agents.
+**Why it exists:** `scripts/score.py` and `scripts/pipeline.py` compute scores, gates, and pipeline state from these entries, so a critic result that isn't logged here doesn't count. Agents also read it to understand pipeline state — the editor checks the strategist-critic verdict, the orchestrator checks which phases passed, the coder-critic checks what the coder built. It's the shared context across agents.
 
 Agent outputs (reports, scripts, memos, decisions) are saved to `quality_reports/` by the skills that produce them.
 
@@ -51,32 +51,16 @@ Structured pipeline state lives in `quality_reports/pipeline_state.json`.
 **Template:** `templates/pipeline-state.json`
 **Format:** JSON (machine-readable)
 
-**Triggers:**
-- Created when the first agent in a pipeline completes
-- Updated after every agent completion, critic score, or phase transition
-- Read as the first action in session recovery
+It is derived, not hand-maintained: `python3 scripts/pipeline.py status` rebuilds it from the
+research journal and the registry (completed agents with rounds and latest results, agents whose
+requirements now hold, the overall score, the first failing gate). Run it after each agent
+completes and before a phase transition. The journal is the record; the state file is a view of it.
 
-**Relationship to research journal:**
-- The research journal is narrative context for humans: "what happened and why"
-- The pipeline state is structured context for the orchestrator: "where are we and what's next"
-- They are complementary, not redundant
-
-**Execution traces:**
-After pipeline completion, the orchestrator generates an execution trace from the pipeline state and saves to `quality_reports/traces/`.
-
-### Trace Analysis
-
-After pipeline completion, read the execution trace and the last 5 traces (if available in `quality_reports/traces/`) to identify recurring patterns.
-
-Analysis covers:
-- Agents with first-pass >= 90 (HIGH-PERF)
-- Agents that hit 3 strikes (FRICTION)
-- Escalations to user (USER ESCALATION)
-- Agents whose scores improved most between rounds (learning curve)
-
-Save analysis to: `quality_reports/traces/analysis_{date}.md`
-
-The orchestrator uses this analysis for the Learning Loop (see `orchestrator.md` Section 9).
+**Execution traces:** `python3 scripts/pipeline.py traces` tabulates rounds, first-pass and final
+score per agent, and flags HIGH-PERF (first pass >= 90), FRICTION (3+ rounds without passing), and
+USER ESCALATION. After a multi-agent skill, save its output with a short reading of the patterns to
+`quality_reports/traces/YYYY-MM-DD_trace.md`; the orchestrator's learning loop (`orchestrator.md` §9)
+starts from it.
 
 ---
 

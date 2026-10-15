@@ -14,11 +14,13 @@
 
 ## Core Principles
 
-- **Plan first** -- enter plan mode before non-trivial tasks; save plans to `quality_reports/plans/`
-- **Verify after** -- compile and confirm output at the end of every task
+- **Approve before pipelines** -- before a multi-agent run or a change across many files, save a plan to `quality_reports/plans/` and get approval
+- **Verify after** -- after changing `.tex` or analysis code, compile or run it before reporting done
+- **Scope** -- deliver what was asked; report unrequested fixes or cleanups as follow-ups instead of making them
 - **Single source of truth** -- Paper `main.tex` is authoritative; talks and supplements derive from it
 - **Quality gates** -- weighted aggregate score; nothing ships below 80/100; see `quality.md`
 - **Worker-critic pairs** -- every creator has a paired critic; critics never edit files
+- **Understand before you ship** -- every script behind an exhibit gets an explainer and a quiz; `/submit` blocks without a passing attempt (`understanding.md`)
 - **Auto-memory** -- corrections and preferences are saved automatically via Claude Code's built-in memory system
 
 ---
@@ -26,8 +28,9 @@
 ## Getting Started
 
 1. Fill in the `[BRACKETED PLACEHOLDERS]` in this file
-2. Run `/discover interview [topic]` to build your research specification
-3. Or run `/new-project [topic]` for the full orchestrated pipeline
+2. Run `scripts/install-hooks.sh` once, so git runs the pre-commit checks
+3. Run `/discover interview [topic]` to build your research specification
+4. Or run `/new-project [topic]` for the full orchestrated pipeline
 
 ---
 
@@ -87,7 +90,7 @@ cd paper && latexmk -c
 | 95 | Submission | Aggregate + all components >= 80 |
 | -- | Advisory | Talks (reported, non-blocking) |
 
-See `quality.md` for weighted aggregation formula.
+`python3 scripts/score.py` computes the aggregate and every gate; see `quality.md`.
 
 ---
 
@@ -99,7 +102,9 @@ See `quality.md` for weighted aggregation formula.
 | `/discover [mode] [topic]` | Discovery: interview, literature, data, ideation |
 | `/strategize [mode] [question]` | Identification strategy, pre-analysis plan, or formal theory section (`theory` mode) |
 | `/analyze [dataset]` | End-to-end data analysis |
+| `/explain [script]` | Explainer + 5-question quiz for code an agent wrote (`--microworld`, `--status`) |
 | `/write [section]` | Draft paper sections + humanizer pass (`style-guide` mode extracts voice from prior papers) |
+| `/coherence [file]` | Internal-consistency audit: cross-refs, citation keys, claim numbers vs tables |
 | `/review [file/--flag]` | Quality reviews (routes by target: paper, code, peer) |
 | `/revise [report]` | R&R cycle: classify + route referee comments |
 | `/talk [mode] [format]` | Create, audit, or compile Beamer presentations |

@@ -1,23 +1,117 @@
 {
-  "description": "Phase transition quality gates for full pipeline",
+  "description": "Single source of numbers for scoring and gates. Read by scripts/score.py and scripts/pipeline.py; permissions.md QUALITY_WEIGHT fields must agree (check_scaffold.py verifies).",
+  "components": {
+    "literature": {
+      "source": "librarian-critic",
+      "weight": 10
+    },
+    "data": {
+      "source": "explorer-critic",
+      "weight": 10
+    },
+    "identification": {
+      "source": "strategist-critic",
+      "weight": 25,
+      "scored_by": "verdict"
+    },
+    "theory": {
+      "source": "theorist-critic",
+      "weight": 20,
+      "conditional": "only when the theorist ran"
+    },
+    "code": {
+      "source": "coder-critic",
+      "weight": 15
+    },
+    "manuscript": {
+      "source": "writer-critic",
+      "weight": 10
+    },
+    "referee_domain": {
+      "source": "domain-referee",
+      "weight": 12.5
+    },
+    "referee_methods": {
+      "source": "methods-referee",
+      "weight": 12.5
+    },
+    "replication": {
+      "source": "verifier",
+      "weight": 5,
+      "scored_by": "pass_fail"
+    }
+  },
+  "verdict_scores": {
+    "strategist-critic": {
+      "SOUND": 95,
+      "MINOR ISSUES": 85,
+      "MAJOR ISSUES": 65,
+      "CRITICAL ERRORS": 40
+    }
+  },
+  "gates": {
+    "commit": {
+      "overall": 80,
+      "allow_unscored": true
+    },
+    "pr": {
+      "overall": 90
+    },
+    "submission": {
+      "overall": 95,
+      "per_component": 80,
+      "require_all_scored": true,
+      "commands": [
+        {
+          "name": "understanding",
+          "rule": ".claude/rules/understanding.md",
+          "command": "python3 scripts/explainer_status.py --gate",
+          "pass_on_exit": 0,
+          "scored": false,
+          "comment": "INV-26: every script behind a paper exhibit needs a current explainer and a passing quiz attempt. Pass/fail, never weighted."
+        }
+      ]
+    }
+  },
   "discovery_to_strategy": {
     "required_score": null,
-    "required_artifacts": ["quality_reports/literature/", "quality_reports/data-assessment/"]
+    "required_artifacts": [
+      "quality_reports/literature/",
+      "quality_reports/data-assessment/"
+    ]
   },
   "strategy_to_execution": {
-    "required_score": 80,
-    "score_source": "strategist-critic",
-    "required_artifacts": ["quality_reports/strategy/strategy_memo.md"]
+    "required_verdict": [
+      "SOUND",
+      "MINOR ISSUES"
+    ],
+    "verdict_source": "strategist-critic",
+    "required_artifacts": [
+      "quality_reports/strategy/strategy_memo.md"
+    ]
   },
   "execution_to_peer_review": {
     "required_scores": {
       "coder-critic": 80,
       "writer-critic": 80
     },
-    "required_artifacts": ["paper/main.tex", "paper/tables/"]
+    "required_artifacts": [
+      "paper/main.tex",
+      "paper/tables/"
+    ]
   },
   "peer_review_to_submission": {
     "required_overall": 95,
-    "required_per_component": 80
+    "required_per_component": 80,
+    "required_gates": [
+      {
+        "name": "understanding",
+        "rule": ".claude/rules/understanding.md",
+        "command": "python3 scripts/explainer_status.py --gate",
+        "pass_on_exit": 0,
+        "scored": false,
+        "comment": "INV-26: every script behind a paper exhibit needs a current explainer and a passing quiz attempt. Pass/fail, never weighted."
+      }
+    ]
   }
 }

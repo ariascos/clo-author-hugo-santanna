@@ -3,7 +3,7 @@ title: "Customization"
 subtitle: "Configuring clo-author for your project, field, and voice"
 ---
 
-Eight configuration files control how the system behaves. This page walks through each one --- what it does, what to put in it, and how agents use it.
+A small set of configuration files control how the system behaves. This page walks through each one --- what it does, what to put in it, and how agents use it.
 
 ---
 
@@ -16,11 +16,12 @@ Eight configuration files control how the system behaves. This page walks throug
 | Section | Purpose |
 |---------|---------|
 | Project metadata | Name, institution, field, branch |
-| Core principles | 5--6 bullets (plan-first, quality gates, worker-critic pairs) |
+| Core principles | 8 bullets (approve before pipelines, verify after, scope, single source of truth, quality gates, worker-critic pairs, understand before you ship, auto-memory) |
+| Getting started | First steps: fill the placeholders, run `scripts/install-hooks.sh`, then `/discover interview` or `/new-project` |
 | Folder structure | Where data, scripts, paper, and reports live |
 | Compilation commands | `latexmk` invocations for paper and talks |
 | Quality thresholds | Commit (80), PR (90), submission (95) |
-| Skills quick reference | Table of 10 slash commands |
+| Skills quick reference | Table of 13 slash commands |
 | Beamer environments | Custom environments for your talk preamble |
 | Output organization | `by-script` (default) or `by-purpose` |
 | Current project state | Status of paper, data, replication, talk |
@@ -127,11 +128,11 @@ The **Referee pool** weights determine which dispositions the simulated editor d
 
 ## Pre-populated journals
 
-30 journals ship with profiles across five fields:
+34 journals ship with profiles across five fields:
 
 | Field | Journals |
 |-------|----------|
-| Economics | AER, Econometrica, JPE, QJE, REStud, AEJ:Applied, AEJ:Policy, JHR, JHE, RAND, JPubE, JLE, JDE, RESTAT, AER:Insights |
+| Economics | AER, Econometrica, JPE, QJE, REStud, AEJ:Applied, AEJ:Policy, JHR, JHE, RAND, JPubE, JLE, JDE, RESTAT, AER:Insights, Economics Letters, Journal of Econometrics, Health Economics, JUE, Journal of Economic Geography |
 | Finance | JF, JFE, RFS, JFQA |
 | Accounting | JAR, JAE, TAR, CAR |
 | Marketing | JMR, Marketing Science, JCR |
@@ -185,7 +186,7 @@ Point it at a directory containing one or more of your published papers (LaTeX s
 
 ## How the Writer uses it
 
-The style guide is a voice target. The Writer loads it at invocation and calibrates sentence length, word choice, paragraph openings, and hedging to match. It overrides the generic academic voice but never overrides content invariants (INV-1 through INV-21).
+The style guide is a voice target. The Writer loads it at invocation and calibrates sentence length, word choice, paragraph openings, and hedging to match. It overrides the generic academic voice but never overrides content invariants (INV-1 through INV-26).
 
 ## When to re-run
 
@@ -215,11 +216,62 @@ The Coder agent reads the relevant standards file before writing any code. The c
 
 ---
 
+# Quality Weights and Thresholds {#sec-quality-gates}
+
+Every number behind the score lives in one file: `.claude/skills/new-project/config/quality-gates.json`. `scripts/score.py` reads it; the `QUALITY_WEIGHT` fields in `permissions.md` mirror its weights for readers.
+
+| Key | What it sets |
+|-----|--------------|
+| `components` | Each scored component, its source critic, and its weight |
+| `verdict_scores` | The points the strategist-critic's verdict maps to (95 / 85 / 65 / 40) |
+| `gates` | Commit (80), PR (90), and submission (95, every component >= 80, plus the understanding gate's command) |
+| `discovery_to_strategy` and the other transition keys | What each phase transition requires |
+
+To reweight a component, change its `weight` here and the matching `QUALITY_WEIGHT` in `.claude/rules/permissions.md`. `scripts/check_scaffold.py` --- and the pre-commit hook that runs it --- fails when the two disagree. Weights need not sum to 100: components never scored are dropped and the rest renormalized. For the formula, see [Architecture](architecture.qmd#sec-scoring).
+
+---
+
+# LaTeX Preamble {#sec-preamble}
+
+The paper's packages and layout live in `paper/preambles/header.tex`, which `main.tex` loads right after `\documentclass` with `\input{preambles/header}`. Add your packages and notation macros there, not in `main.tex`. `/tools upgrade` copies `header.tex` only when the project has none, so your edits survive an upgrade.
+
+Table 1, the table and figure wrappers, and section order are specified once, in `.claude/rules/paper-organization.md`; `/paper-format` applies them. Where table and figure files go follows the `Output organization` setting in CLAUDE.md.
+
+---
+
+# Rules and the Context Budget {#sec-rules-budget}
+
+The 13 files in `.claude/rules/` load two ways. Six always load: content-invariants, logging, meta-governance, quality, understanding, workflow. The other seven carry `paths:` frontmatter and load only when Claude reads a matching file:
+
+```yaml
+---
+paths:
+  - "paper/**"
+  - "**/*.tex"
+---
+```
+
+That is `paper-organization.md`: it enters context when Claude opens a `.tex` file and stays out otherwise. CLAUDE.md plus the always-loaded rules ship at 679 lines, and `scripts/check_scaffold.py` fails above 700. When you add a rule, scope it with `paths:` unless it truly applies to every task. See [Rules & Invariants](rules.qmd#sec-rule-files) for what each file covers.
+
+---
+
 # Adding a New Agent {#sec-new-agent}
 
-Two files, two steps.
+Two files always; two more when they apply.
 
 **Step 1.** Create `.claude/agents/[name].md` following the pattern of existing agent files. The agent file defines identity, voice, and constraints --- not operational knowledge. If the agent is paired with a skill, move checklists, templates, and rubrics into the skill's `templates/` folder. The agent file keeps only: who it is, how it reasons, and what rules it follows.
+
+The frontmatter names the agent, its tools, and its model. Every shipped agent uses `model: inherit` (the session's model); `effort:` is optional. Critics get read-only tools.
+
+```yaml
+---
+name: [agent-name]
+description: [What it does and when to use it]
+tools: Read, Grep, Glob
+model: inherit
+effort: high            # optional: low, medium, high, xhigh, max
+---
+```
 
 **Step 2.** Add an entry to `.claude/rules/permissions.md` with all required fields:
 
@@ -234,7 +286,17 @@ Two files, two steps.
 - **QUALITY_WEIGHT:** [percentage of overall score, or Advisory]
 ```
 
-No other files need to change. The Orchestrator reads `permissions.md` to discover available agents, their dependencies, and their dispatch rules.
+The Orchestrator reads `permissions.md` for each agent's dependencies and dispatch rules.
+
+**Step 3 (if the orchestrator dispatches it).** Add the name to the `Agent(...)` roster on the `tools:` line of `.claude/agents/orchestrator.md`. The orchestrator can spawn only the agents listed there.
+
+**Step 4 (if it is weighted).** Add a component to `quality-gates.json` (see [Quality Weights and Thresholds](#sec-quality-gates)) whose weight matches the `QUALITY_WEIGHT` above.
+
+Then run `python3 scripts/check_scaffold.py`. It fails on a roster or registry entry with no agent file, a weight mismatch, or malformed frontmatter.
+
+## Effort per agent
+
+Each agent can set its own effort in frontmatter. The shipped settings put judgment-heavy roles at `high` (strategist, strategist-critic, theorist, theorist-critic, methods-referee, editor) and narrow checkers at `low` (coherence-finder, coherence-skeptic, librarian-critic, explorer-critic); the rest use the default. To change one, edit its `effort:` line.
 
 ---
 
@@ -244,7 +306,7 @@ A skill earns its own folder when a workflow pattern recurs across projects and 
 
 ## The steps
 
-**1. Create the folder.** `.claude/skills/[name]/` with at minimum two files: `SKILL.md` and `gotchas.md`.
+**1. Create the folder.** `.claude/skills/[name]/` with `SKILL.md` (required) and `gotchas.md` (recommended --- 13 of the 18 shipped skills have one).
 
 **2. Write `SKILL.md` with frontmatter.** The frontmatter is Level 1 metadata --- always loaded, always visible in the skill index. Keep it under 100 tokens.
 
@@ -253,14 +315,16 @@ A skill earns its own folder when a workflow pattern recurs across projects and 
 name: [skill-name]
 description: [One sentence. What does this skill do?]
 argument-hint: "[modes and arguments the user can pass]"
-allowed-tools: Read,Write,Edit,Bash,Grep,Glob
+allowed-tools: Read,Write,Edit,Bash,Grep,Glob,Agent,Task
 user-invocable: true
 ---
 ```
 
+If the skill dispatches agents, list `Agent` alongside `Task` (`Task` is the old name; `check_scaffold.py` fails on `Task` without `Agent`). Two optional keys: `disable-model-invocation: true` makes the skill run only when you type it, as `/new-project` and `/deepread` do, and `disallowed-tools: Edit` keeps it from editing files, as `/review` and `/deepread` do.
+
 The body of SKILL.md is Level 2 --- loaded only when the user invokes the command. It contains workflow steps, dispatch logic, mode routing, and a Bundled Resources table that tells agents which templates to read.
 
-**3. Create `gotchas.md`.** Seed it with known failure points --- even two or three lines to start. This file accumulates over time as real pipeline runs surface edge cases. It is the fastest-appreciating asset in the folder.
+**3. Create `gotchas.md` (recommended).** Seed it with known failure points --- even two or three lines to start. This file accumulates over time as real pipeline runs surface edge cases. It is the fastest-appreciating asset in the folder.
 
 **4. Create `templates/`.** Reusable artifacts the agent loads during execution. A strategy skill carries memo templates and checklist structures. A review skill carries scoring rubrics and report templates. A write skill carries paragraph-move patterns and section templates. Each template is a separate file --- the agent reads only what it needs.
 
@@ -330,11 +394,11 @@ explorations/
     └── abandoned_[name]/   # Documented why stopped
 ```
 
-## Fast-track vs. plan-first
+## Fast-track vs. production
 
 | Question | Answer | Workflow | Quality threshold |
 |----------|--------|----------|-------------------|
-| Will this ship? | Yes | Plan-first | 80/100 |
+| Will this ship? | Yes | Production (plan first if it is a pipeline run or spans many files) | 80/100 |
 | Am I testing an idea? | Yes | Fast-track | 60/100 |
 | Does this improve the project? | No | Do not build it | --- |
 

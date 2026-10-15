@@ -8,12 +8,23 @@
 
 ### Weighted Aggregation
 
-The overall project score that gates submission (>= 95) is a weighted aggregate. Each agent's QUALITY_WEIGHT is declared in `.claude/rules/permissions.md`.
+The overall project score is a weighted aggregate of the critics' results. Compute it with:
 
-The Orchestrator reads the registry to compute the weighted average:
-- Sum each agent's critic score multiplied by its declared weight
-- Theory weight applies only when the theorist agent was dispatched (see CONDITIONAL flag in `permissions.md`)
-- If a component hasn't been scored, exclude it and renormalize remaining weights
+```bash
+python3 scripts/score.py                     # component table and every gate's status
+python3 scripts/score.py --gate submission   # exit 1 unless the gate passes
+```
+
+Report its output; don't recompute by hand. It reads each critic's latest entry in
+`quality_reports/research_journal.md`, so log every critic result there (`logging.md`). Weights,
+the strategist verdict map, and the gate thresholds live in one file,
+`.claude/skills/new-project/config/quality-gates.json`; the QUALITY_WEIGHT fields in `permissions.md`
+mirror it for readers, and `scripts/check_scaffold.py` fails if the two disagree.
+
+Components that were never scored are excluded and the rest renormalized, and the output lists
+what was excluded. The theorist's 20% counts only when the theorist ran, so an applied paper's
+weights sum to 100% and a theory paper's are renormalized from 120%. The strategist-critic rules by
+verdict; the verdict maps to a score for this aggregate only.
 
 ### Minimum Per Component
 
@@ -21,26 +32,35 @@ No component can be below 80 for submission. A perfect literature review can't c
 
 ### Score Sources
 
-- Each critic produces a score from 0 to 100 based on its deduction table
-- Scores start at 100 and deduct for issues found
-- The verifier is pass/fail (mapped to 0 or 100)
-- Referee scores are averaged: `(domain-referee + methods-referee) / 2`
+- Each critic produces a score from 0 to 100 from its deduction table (the strategist-critic, a verdict)
+- The verifier is pass/fail (100 or 0)
+- The two referees carry 12.5% each, which is the same as averaging them into one 25% component
 
 ### Gate Thresholds
 
-| Gate | Overall Score | Per-Component Minimum | Action |
-|------|--------------|----------------------|--------|
-| Commit | >= 80 | None enforced | Allowed |
-| PR | >= 90 | None enforced | Allowed |
-| Submission | >= 95 | >= 80 per component | Allowed |
-| Below 80 | < 80 | — | Blocked |
+| Gate | Overall | Per component | Enforced by |
+|------|---------|---------------|-------------|
+| Commit | >= 80 | — | `/tools commit` runs `score.py --gate commit` once any critic has scored |
+| PR | >= 90 | — | `score.py --gate pr` before opening a PR |
+| Submission | >= 95 | >= 80, and every non-conditional component scored | `/submit final` runs `score.py --gate submission` (includes the understanding gate) |
 
-### When Components Are Missing
+Separately, the git pre-commit hook (`.githooks/pre-commit`, installed by `scripts/install-hooks.sh`)
+blocks every commit on scaffold integrity and on HIGH lint findings in staged analysis scripts, and
+prints paper-coherence findings as advice. It does not check the score: a new project has no critic
+scores yet, and a gate that fails every early commit gets bypassed.
 
-Not every project uses all components. If a component hasn't been scored:
-- It's excluded from the weighted average
-- Remaining weights are renormalized
-- Example: no literature review → weights become 11%, 28%, 17%, 28%, 11%, 6%
+### Gates That Are Not Scores
+
+Two checks sit outside the weighted aggregate entirely — they are pass/fail and never deduct:
+
+| Gate | Rule | Blocks at |
+|------|------|-----------|
+| Coherence (Layer 1) | `.claude/rules/content-invariants.md` | Zero tolerance, any phase |
+| Understanding (INV-26) | `.claude/rules/understanding.md` | `/submit` |
+
+The understanding gate is excluded from the score by design: a quiz result is a fact about the
+author, not the artifact. Folding it in would let good code compensate for an author who cannot
+explain it — which is the exact trade the gate exists to block.
 
 ---
 
@@ -64,8 +84,12 @@ The Orchestrator includes the severity level in the critic's prompt:
 
 ```
 You are reviewing at SEVERITY: HIGH (Execution phase).
-Flag all issues. Do not suggest "consider" — state what must change.
+State what must change, not what to "consider".
 ```
+
+Severity sets the register and the deduction scale below, not what gets reported. Critics report
+every issue they find at every phase, each with its severity; a critic told to be lenient under-reports,
+and an issue missed in Discovery comes back as a larger one in Execution.
 
 ### Deduction Scaling
 

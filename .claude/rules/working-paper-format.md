@@ -1,3 +1,9 @@
+---
+paths:
+  - "paper/**"
+  - "**/*.tex"
+---
+
 # Working Paper Format Standard
 
 All LaTeX papers generated or reviewed by this system must conform to the standard economics working paper format. This rule applies to the writer, writer-critic, and verifier agents.
@@ -12,127 +18,14 @@ All LaTeX papers generated or reviewed by this system must conform to the standa
 
 ## Reference Preamble
 
-The following preamble is the project standard. New papers should use this structure. The writer-critic checks against it.
+The project preamble is `paper/preambles/header.tex`. Every paper starts:
 
 ```latex
 \documentclass[12pt]{article}
-% ====== Page Layout and Basic Formatting ======
-\usepackage[left=1.0in,right=1.0in,top=1.0in,bottom=1.0in]{geometry}
-\usepackage{setspace}
-\doublespacing
-\usepackage{fancyhdr}
-\pagestyle{fancy}
-\fancyhf{}
-\fancyfoot[C]{\thepage}
-\renewcommand{\headrulewidth}{0pt}
-
-% ====== Typography and Fonts ======
-\usepackage{lmodern}
-\usepackage{microtype}
-\usepackage[normalem]{ulem}
-\usepackage[T1]{fontenc}
-
-% ====== Section Styling ======
-\usepackage{titlesec}
-\usepackage[title]{appendix}
-\usepackage{titling}
-\pretitle{\begin{center}\large\bfseries}
-\posttitle{\end{center}}
-\preauthor{\begin{center}\normalsize}
-\postauthor{\end{center}}
-\predate{\begin{center}\normalsize}
-\postdate{\end{center}}
-
-% ====== Math Packages ======
-\usepackage{amssymb, amsmath, amsfonts, mathtools}
-\usepackage{dsfont}
-\usepackage{amsthm}
-\newtheorem{theorem}{Theorem}
-\newtheorem{proposition}{Proposition}
-\newtheorem{corollary}{Corollary}
-\newtheorem{lemma}{Lemma}
-\newtheorem{definition}{Definition}
-\newtheorem{hyp}{Hypothesis}
-\DeclareMathOperator*{\argmax}{arg\,max}
-\DeclareMathOperator*{\argmin}{arg\,min}
-\newcommand{\norm}[1]{\left\lVert #1 \right\rVert}
-\newcommand{\1}[1]{\mathds{1}\left[#1\right]}
-
-% ====== Table Packages ======
-\usepackage{array, booktabs, makecell, cellspace}
-\usepackage{siunitx}
-\usepackage[flushleft]{threeparttable}
-\usepackage{rotating, tabularx}
-\usepackage{tabularray}
-\UseTblrLibrary{booktabs, siunitx}
-
-% ====== Figure and Caption Packages ======
-\usepackage{graphicx, subcaption}
-\usepackage{pdflscape, tikz}
-\usepackage{caption}
-\captionsetup{font=small, labelfont=bf, justification=justified}
-\captionsetup[figure]{labelfont=bf}
-\usepackage{float}
-
-% ====== List Formatting ======
-\usepackage{enumitem}
-
-% ====== Bibliography and Citation (biblatex + biber) ======
-\usepackage{xurl}
-\usepackage{xcolor}
-\definecolor{citationcolor}{RGB}{0, 127, 255}
-
-\usepackage[backend=biber,
-            style=authoryear,
-            maxcitenames=3,
-            mincitenames=1,
-            maxbibnames=99,
-            giveninits=true,
-            uniquename=false,
-            uniquelist=true,
-            dashed=false,
-            urldate=long,
-            url=true,
-            natbib=true]{biblatex}
-\addbibresource{references.bib}
-
-% Citation color settings
-\renewcommand*{\nameyeardelim}{\addcomma\space}
-\DeclareCiteCommand{\cite}
-  {\usebibmacro{prenote}}
-  {\usebibmacro{citeindex}%
-   \printtext[bibhyperref]{\color{citationcolor}\usebibmacro{cite}}}
-  {\multicitedelim}
-  {\usebibmacro{postnote}}
-\DeclareCiteCommand{\parencite}[\mkbibparens]
-  {\usebibmacro{prenote}}
-  {\usebibmacro{citeindex}%
-   \printtext[bibhyperref]{\color{citationcolor}\usebibmacro{cite}}}
-  {\multicitedelim}
-  {\usebibmacro{postnote}}
-
-% ====== Custom Column Types ======
-\newcolumntype{L}[1]{>{\raggedright\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
-\newcolumntype{C}[1]{>{\centering\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
-\newcolumntype{R}[1]{>{\raggedleft\let\newline\\arraybackslash\hspace{0pt}}m{#1}}
-
-% ====== Footnote Settings ======
-\interfootnotelinepenalty=10000
-\setlength{\footnotesep}{0.5cm}
-
-% ====== URL Bleeding Fixes ======
-\setcounter{biburllcpenalty}{7000}
-\setcounter{biburlucpenalty}{8000}
-\setcounter{biburlnumpenalty}{9000}
-
-% ====== Hyperref (loaded second-to-last) ======
-\usepackage[hidelinks, breaklinks, colorlinks=true,
-            linkcolor=citationcolor, citecolor=citationcolor,
-            urlcolor=citationcolor]{hyperref}
-
-% ====== Cleveref (loaded after hyperref) ======
-\usepackage[nameinlink]{cleveref}
+\input{preambles/header}
 ```
+
+New papers use it as is; the writer-critic checks the choices below against it.
 
 ## Key Design Decisions
 
@@ -143,8 +36,8 @@ The following preamble is the project standard. New papers should use this struc
 | `biblatex` + `biber` | Required | Replaces `natbib` + `bibtex`. More flexible, better Unicode, `natbib=true` preserves `\citet`/`\citep` |
 | `fancyhdr` | Required | Clean centered page numbers, no header rule |
 | `\doublespacing` | Required | Standard for working paper submissions |
-| `booktabs` + `threeparttable` | Required | Professional tables with proper notes — see content-standards.md |
-| `tabularray` | Required | Modern table engine with key-value interface. Use `tblr`/`talltblr` for new tables; `tabular` + `threeparttable` still accepted for R-generated output |
+| `booktabs` + `threeparttable` | Required | Professional tables with proper notes — canonical wrapper in `paper-organization.md` §3 |
+| `tabularray` | Loaded | Available for hand-written multi-panel tables (the variant in `paper-organization.md` §3) |
 | `hyperref` loaded second-to-last | Required | Avoids conflicts with other packages |
 | `cleveref` loaded after `hyperref` | Required | Auto-generates "Figure 1", "Table 2" from `\cref{}` — eliminates `Figure~\ref{}` boilerplate |
 | `lmodern` | Recommended | Clean Latin Modern font; Computer Modern also acceptable |
@@ -196,23 +89,11 @@ Abstract text here.
 
 ## Section Structure
 
-Standard economics paper order:
-1. Introduction
-2. Background / Institutional Setting (if needed)
-3. Literature Review (or combined with Introduction)
-4. Data
-5. Empirical Strategy / Methodology
-6. Results
-7. Discussion (if separate from Results)
-8. Robustness (if separate section)
-9. Conclusion
-
-Each section uses `\section{}` with `\label{sec:name}`. Subsections use `\subsection{}`.
+Section order follows `paper-organization.md` §5. Each section uses `\section{}` with `\label{sec:name}`. Subsections use `\subsection{}`.
 
 ## Tables and Figures
 
-- Tables and figures placed inline (modern standard)
-- **Hand-written tables:** prefer `tblr` / `talltblr` (tabularray) with key-value interface for captions, notes, and rules
+- Tables and figures are **collected at the end of `main.tex`** in dedicated TABLES and FIGURES blocks (after the bibliography), NOT inline — see `.claude/rules/paper-organization.md` (house style; it governs all float placement, Table 1, and the table/figure wrappers)
 - **R/Python/Julia-generated tables:** continue exporting bare `tabular` (booktabs rules). Wrap with `threeparttable` in `main.tex`
 - `\captionsetup` handles caption styling globally — no manual `\small` on captions
 - Use `booktabs` rules (`\toprule`, `\midrule`, `\bottomrule`) — never `\hline`

@@ -5,7 +5,7 @@ subtitle: "Common workflows and what to expect"
 
 ## A Typical Workflow
 
-**Every interaction follows the same loop: you describe, agents execute, critics score, you approve.** Claude plans the work, dispatches specialized agents, and presents results for your sign-off. For complex tasks, it asks 3--5 clarifying questions before committing to a plan.
+**Every interaction follows the same loop: you describe, agents execute, critics score, you approve.** Claude dispatches specialized agents and presents results for your sign-off. Before a multi-agent pipeline run (`/new-project`, `/analyze`, `/write full`, `/revise`) or a change across many files, it saves a plan to `quality_reports/plans/` and waits for your approval; smaller tasks go ahead without one. It asks clarifying questions only when different readings of your request would lead to materially different work.
 
 ```{mermaid}
 %%{init: {'theme': 'base', 'themeVariables': {'primaryColor': '#f0eee6', 'primaryTextColor': '#141413', 'primaryBorderColor': '#d1cfc5', 'lineColor': '#d97757', 'secondaryColor': '#faf9f5', 'tertiaryColor': '#e6e3da', 'edgeLabelBackground': '#faf9f5', 'clusterBkg': '#f0eee6', 'clusterBorder': '#d1cfc5'}}}%%
@@ -32,7 +32,7 @@ You can enter at any stage. Each phase produces structured output saved to `qual
 
 **What you type:** `/review --peer JHR paper/main.tex`
 
-**What happens behind the scenes:** The editor does a desk review --- checks scope, assigns each referee a disposition (Credibility, Policy, Skeptic, etc.) and pet peeves that shape their review personality. Two blind referees then review independently: a domain-referee (subject expertise) and a methods-referee (empirical methods). Neither sees the other's report.
+**What happens behind the scenes:** The editor does a desk review --- checks scope, assigns each referee a disposition (Credibility, Policy, Skeptic, etc.) and pet peeves that shape their review personality. Two blind referees then review independently: a domain-referee (subject expertise) and a methods-referee (empirical methods). Neither sees the other's report. In round 1 both read a fenced copy of the manuscript outside the repository, so earlier verdicts in `quality_reports/reviews/` can't anchor them.
 
 **What you see:** An editorial decision that classifies every concern as FATAL, ADDRESSABLE, or TASTE:
 
@@ -94,11 +94,34 @@ A cleanup pass then strips 24 known AI writing patterns (hedging, filler phrases
 2. **Strategy** --- the strategist classifies your paper type and designs the identification strategy. The strategist-critic runs a 4-phase adversarial review. You see a strategy memo with assumptions, pseudo-code, and a robustness plan.
 3. **Execution** --- the coder translates the strategy memo into numbered scripts; the writer drafts the manuscript from actual results. Both are reviewed by their paired critics. You see scripts, tables, figures, and LaTeX sections.
 4. **Review** --- the editor dispatches two blind referees. You see an editorial decision with classified concerns and action items.
-5. **Submission** --- the verifier runs a 10-check audit on the replication package. The final gate enforces score >= 95 with all components >= 80.
+5. **Submission** --- the verifier runs a 10-check audit on the replication package. The final gate enforces score >= 95 with all components >= 80, plus the understanding gate: a passing `/explain` quiz for every script behind a paper exhibit (see [Checking the Paper](#sec-checking)).
 
 **What you see:** At each gate, a summary with scores and the next decision point. The pipeline never advances without your approval.
 
 **What to do next:** Read the strategy memo carefully --- it becomes the contract the coder implements. Review referee reports as you would real ones. For details on any phase, see the [Command Reference](reference.qmd).
+
+---
+
+## Checking the Paper {#sec-checking}
+
+**The critics judge quality. Four more commands check what they don't: house style, internal consistency, a close technical read, and whether you can explain the code.**
+
+| Command | What it checks | When to run it |
+|---------|----------------|----------------|
+| `/paper-format` | House style: floats at the end of `main.tex`, Table 1 as pre-treatment characteristics, canonical table and figure wrappers (INV-23/24/25) | While building tables and figures |
+| `/coherence` | Cross-references, citation keys, claim numbers against the tables they cite | Before commits; always before submission |
+| `/deepread` | A referee-grade technical read of every section | On a near-final draft |
+| `/explain [script]` | Whether you understand the code an agent wrote | After `/analyze`; required before `/submit` |
+
+**`/paper-format`** audits by default and reports each violation with its invariant number. Its `scaffold` and `table1` modes build the end-of-paper float blocks and Table 1.
+
+**`/coherence`** runs a deterministic parser whose findings are checkable --- a reference resolves or it doesn't, a number appears in the cited table or it doesn't. Major findings block. `--deep` adds a reasoning pass: a coherence-finder per check group, a skeptic that tries to refute each group's findings, and a consolidator that merges the survivors. Reasoning findings are advisory. `--fix` applies only unambiguous mechanical fixes and never edits a claim number.
+
+**`/deepread`** fans commenters across every section, tries to refute each comment, and writes the survivors with an overall assessment to `quality_reports/deepread/`. It runs on Codex, so it costs no Claude tokens, and it needs the Codex CLI installed and signed in. It runs only when you type it. Start with `/deepread --dry-run` to see the projected cost.
+
+**`/explain [script]`** is the understanding gate (INV-26). The explainer agent writes a delta-explainer (what the code does beyond the strategy memo, with a ledger of every sample restriction) and a five-question quiz with a separate answer key. Pass is 4 of 5 with Q1 correct. `/submit` blocks until every script behind a paper exhibit has a current explainer and a passing attempt. When a script changes, its explainer goes stale and the gate reopens. The gate is pass/fail and never enters the quality score; `/explain --status` shows coverage.
+
+**`/dashboard`** puts the whole project on one page, `project_dashboard.html`: data, scripts, quality reports, plans, git history, literature. `scripts/generate_dashboard.py` writes the operational skeleton and Claude writes the research sections. `/dashboard refresh` updates it in place without overwriting what you wrote.
 
 ---
 
@@ -138,13 +161,13 @@ A cleanup pass then strips 24 known AI writing patterns (hedging, filler phrases
 
 ## Session Guards
 
-**Two commands protect you from expensive mistakes.** Both are session-scoped --- they reset when the conversation ends.
+**Two commands protect you from expensive mistakes.** Both write `.claude/state/session-guards.json`, and nothing clears that file automatically --- a guard stays on until you turn it off.
 
-`/freeze paper/` locks a directory from edits for the rest of the session. Use it when you are reviewing code but jotting notes about the paper --- the system will refuse to modify frozen paths, preventing accidental overwrites while your attention is elsewhere.
+`/freeze paper/` restricts edits to the directories you name --- here, only `paper/` --- and refuses to modify files anywhere else. Use it when you are polishing the paper and want scripts and data out of reach while your attention is there.
 
-`/careful` activates confirmation prompts before every file write. Use it before working on a critical branch, during final pre-submission edits, or any time the cost of a wrong edit exceeds the cost of an extra confirmation step.
+`/careful` blocks destructive shell commands: `rm -rf`, `git reset --hard`, `git push --force`, `git clean -f`, and similar. It does not prompt before file writes. Use it before working on a critical branch, during final pre-submission edits, or any time a wrong command would cost more than the guard does.
 
-Neither command persists across sessions. Start a new conversation and all guards are cleared.
+Both persist across conversations. Run `/freeze off` or `/careful off` when you are done --- an edit refused days later may be an old `/freeze` still in force.
 
 ---
 
@@ -154,15 +177,38 @@ Three thresholds govern what actions the system allows:
 
 | Gate | Score required | What it means |
 |------|---------------|---------------|
-| **Commit** | >= 80 | Work can be committed to the repository |
+| **Commit** | >= 80 | `/tools commit` commits (with a notice when nothing has been scored yet) |
 | **PR** | >= 90 | Work can be opened as a pull request |
-| **Submission** | >= 95 + all components >= 80 | Work can be submitted to a journal |
+| **Submission** | >= 95 + every component scored and >= 80 + the understanding gate | Work can be submitted to a journal |
 
-Scores are weighted aggregates of individual critic scores. Each critic starts at 100 and deducts for issues found. The system manages this automatically --- you will rarely think about it unless a score drops below 80, which blocks commits until the flagged issues are fixed.
+Scores are weighted aggregates of the critics' scores, computed by `scripts/score.py` from each critic's latest entry in the research journal. Most critics start at 100 and deduct for issues found. The strategist-critic gives a verdict instead (SOUND, MINOR ISSUES, MAJOR ISSUES, CRITICAL ERRORS), which maps to 95 / 85 / 65 / 40 for the aggregate. Components never scored drop out and the rest are renormalized. Only `/tools commit` blocks on the score; the git pre-commit hook checks the scaffold and lint, not the score.
 
-**Recovering from a low score:** Run `/review --all` to get a per-component breakdown. Fix critical issues first (they carry the largest deductions). Re-run the relevant review to update the score. For the full scoring formula and component weights, see [Rules & Invariants](rules.qmd#sec-gates).
+**Recovering from a low score:** Run `python3 scripts/score.py` to see the per-component table and every gate's status. Fix critical issues first (they carry the largest deductions). Re-run the relevant review to update the score. For the full scoring formula and component weights, see [Rules & Invariants](rules.qmd#sec-gates).
 
 ---
+
+## Managing Long Sessions
+
+### Compaction discipline
+
+Borrowed from Goldsmith-Pinkham's Claude Code for Economists workflow:
+
+- **Manual `/compact` before natural stopping points**, not at the threshold. You control what gets summarized.
+- **Aim for 5–10 turn focused sessions.** Long sessions drift; short, scoped sessions keep output sharp.
+- **Start fresh between phases.** Don't carry "discovery residue" into execution.
+- **Before `/compact` or session end, run `/checkpoint`.** That persists state to memory, SESSION_REPORT, and the research journal — so the next session reads real context, not an auto-summary.
+
+### Rewind, correct, compact, or clear
+
+Choose the right context management action:
+
+- **Rewind** when Claude took a wrong approach -- removes the failed attempt from context entirely. Re-prompt with constraints upfront. Strictly superior to correction when the entire approach was wrong.
+- **Correct** when the approach was right but a detail was wrong ("use state-level clustering") -- the context of the prior attempt is useful.
+- **Compact** when context is bloated but the current trajectory is correct.
+- **Clear** when you need a fresh start on a new task.
+
+Rewind keeps failed exploration out of context, saving tokens and avoiding confusion on subsequent turns.
+
 
 ## Troubleshooting
 
@@ -179,16 +225,17 @@ Scores are weighted aggregates of individual critic scores. Each critic starts a
 
 **Symptom:** No file protection or context survival.
 
-1. Check hooks are configured in `.claude/settings.json`
-2. Ensure Python 3 is available: `which python3`
-3. Check hook file permissions: `ls -la .claude/hooks/`
-4. Hook blocking an edit you want to make? See [Hooks & Automation](hooks.qmd#protect-files) for how to customize protected patterns.
+1. Read the session-start notice: `hook-health.py` reports hooks that point at missing files, logged errors, and hooks that never run (see [Hooks & Automation](hooks.qmd#hook-health))
+2. Check `.claude/state/hook-log.jsonl` --- every hook logs there
+3. Run `python3 scripts/test_hooks.py`
+4. Ensure Python 3 (`which python3`) and Claude Code 2.1.295 or later (`claude --version`)
+5. Hook blocking an edit you want to make? See [Hooks & Automation](hooks.qmd#protect-files) for how to customize protected patterns.
 
 ### Claude Ignores Rules
 
 **Symptom:** Claude doesn't follow conventions in `.claude/rules/`.
 
-1. Rules use `paths:` frontmatter --- check the path matches your files
+1. Seven of the 13 rule files use `paths:` frontmatter and load only when Claude reads a matching file; the other six always load. Check that the rule's paths match your files
 2. Too many rules? Claude follows ~150 instructions reliably. Consolidate.
 3. Try: "Read `.claude/rules/[rule].md` and follow it for this task"
 
@@ -197,14 +244,14 @@ Scores are weighted aggregates of individual critic scores. Each critic starts a
 **Symptom:** Claude forgets what you were working on.
 
 1. Point Claude to the plan: "Read `quality_reports/plans/[latest].md`"
-2. Check session log: "Read `quality_reports/session_logs/[latest].md`"
+2. Check the session report: "Read the latest entry in `SESSION_REPORT.md`"
 3. The `post-compact-restore.py` hook should print recovery info automatically. See [Hooks & Automation](hooks.qmd#post-compact-restore) for details.
 
 ### Quality Score Too Low
 
-**Symptom:** Score stuck below 80, can't commit.
+**Symptom:** Score stuck below 80, `/tools commit` refuses to commit.
 
-1. Run `/review --all` to get detailed issue breakdown
+1. Run `python3 scripts/score.py` to see each component's score and what was left out
 2. Fix critical issues first (they cost the most points)
 3. Check per-component scores --- one weak component can drag down the aggregate
 
@@ -212,10 +259,16 @@ Scores are weighted aggregates of individual critic scores. Each critic starts a
 
 ## Upgrading {#sec-upgrading}
 
-Run `/tools upgrade` to upgrade your project to the latest clo-author version. It replaces `.claude/` and `templates/`, preserving your paper, scripts, data, bibliography, and CLAUDE.md.
+Run `/tools upgrade` to upgrade your project to the latest clo-author version. It shows you the plan before changing anything, then:
+
+- replaces `.claude/`, keeping your domain profile, custom journal profiles, and `settings.local.json`; anything you added to `settings.json` moves into `settings.local.json`
+- replaces the scaffold scripts in `scripts/` (files marked `clo-author: infrastructure`) and `scripts/deepread_prompts/`
+- copies `.githooks/` and runs `scripts/install-hooks.sh`
+- copies `paper/preambles/header.tex` only if you have none, and adds new `templates/` files (asking before overwriting changed ones)
+- runs `python3 scripts/check_scaffold.py` and `python3 scripts/test_hooks.py`, then reports what changed
 
 ::: {.callout-note}
-**Your files are safe.** The upgrade only touches `.claude/` (the infrastructure) and `templates/`. Your paper, scripts, data, bibliography, and all research content are never modified or deleted.
+**Your files are safe.** The upgrade never touches your analysis scripts (anything without the infrastructure marker), `paper/` (beyond adding a missing `header.tex`), `data/`, `explorations/`, `quality_reports/`, CLAUDE.md, or your bibliography.
 :::
 
-**Manual alternative:** Download the [latest release](https://github.com/hugosantanna/clo-author/releases), delete your `.claude/` directory, and copy the new one in. Your CLAUDE.md stays yours --- the infrastructure reads whatever paths you have there.
+**Manual alternative:** Download the [latest release](https://github.com/hugosantanna/clo-author/releases), replace `.claude/`, `.githooks/`, and the marked scripts in `scripts/` with the new ones, then run `scripts/install-hooks.sh` and `python3 scripts/check_scaffold.py`. Your CLAUDE.md stays yours --- the infrastructure reads whatever paths you have there.

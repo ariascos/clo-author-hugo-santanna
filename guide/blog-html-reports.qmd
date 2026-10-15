@@ -65,7 +65,7 @@ Score breakdown as a radial gauge, paper-to-code traceability map, sanity check 
 
 ### Project dashboard
 
-A single page showing your entire research project: which paper sections exist, what data you have, what scripts have been written, what quality scores look like, what the last few commits changed. Run `/tools dashboard` or `/checkpoint` and it appears. (Not embedded here --- it scans a live project directory.)
+A single page showing your entire research project: which paper sections exist, what data you have, what scripts have been written, what quality scores look like, what the last few commits changed. Run `/dashboard` or `/checkpoint` and it appears. (Not embedded here --- it scans a live project directory.)
 
 ## The design
 
@@ -112,7 +112,7 @@ python3 scripts/generate_html_report.py peer-review \
 # Or just run a skill --- the HTML is automatic
 # /review --peer
 # /discover lit
-# /tools dashboard
+# /dashboard
 ```
 
 The demo files in `quality_reports/demo/` let you see all six report types without running the full pipeline. They ship with every clo-author install.

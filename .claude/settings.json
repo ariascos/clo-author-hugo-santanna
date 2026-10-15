@@ -41,19 +41,13 @@
       "Bash(for *)",
       "Bash(gs *)",
       "Bash(pdftk *)",
-      "Bash(mkdir *)",
-      "Bash(do if:*)",
-      "Bash(then echo:*)",
-      "Bash(fi)",
-      "Bash(find ~/Desktop -iname *ABDC* -o -iname *abdc*)",
-      "Edit(/.claude/skills/review/**)",
-      "Bash(mkdir -p .claude/references)",
-      "Bash(mv .claude/rules/journal-profiles.md .claude/references/journal-profiles.md)",
-      "Bash(echo \"meta-governance.md: 252 -> 20 lines \\(saved 232\\)\")"
+      "Bash(mkdir *)"
     ],
-    "additionalDirectories": [
-      "/Users/hsantanna/repos/clo-author/.claude/rules/archive",
-      "/Users/hsantanna/repos/clo-author/.claude/rules"
+    "deny": [
+      "Bash(git push upstream*)",
+      "Bash(git push --force*)",
+      "Bash(git reset --hard*)",
+      "Bash(rm -rf *)"
     ]
   },
   "hooks": {
@@ -63,8 +57,9 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.sh",
-            "timeout": 5
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.py",
+            "timeout": 5,
+            "onFailure": "block"
           }
         ]
       },
@@ -74,7 +69,8 @@
           {
             "type": "command",
             "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-guard.py",
-            "timeout": 5
+            "timeout": 5,
+            "onFailure": "block"
           }
         ]
       }
@@ -92,6 +88,16 @@
     ],
     "SessionStart": [
       {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/hook-health.py",
+            "timeout": 5
+          }
+        ]
+      },
+      {
         "matcher": "compact|resume",
         "hooks": [
           {
@@ -108,7 +114,7 @@
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-edit-lint.sh",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-edit-lint.py",
             "timeout": 10
           }
         ]

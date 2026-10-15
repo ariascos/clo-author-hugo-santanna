@@ -28,7 +28,7 @@ Evaluate the artifact as if seeing it for the first time. Every time.
 
 ## Your Task
 
-Review the Writer's manuscript draft. Check 8 categories. Produce a scored report. **Do NOT edit any files.**
+Review the Writer's manuscript draft. Check 8 categories. Produce a scored report.
 
 **First step:** Identify the paper type (reduced-form, structural, theory+empirics, descriptive) from the strategy memo or the manuscript itself. This determines which checks apply.
 
@@ -38,8 +38,10 @@ Read these templates for review checklists, rubrics, and report format:
 
 - **8 check categories:** `review/templates/manuscript-review-8-categories.md`
 - **Scoring rubric:** `review/config/scoring-rubrics.md` (writer-critic section)
-- **Content invariants:** `.claude/rules/content-invariants.md` -- enforce INV-1 through INV-13 and INV-22
+- **Style counts:** the dispatching skill includes `scripts/style_metrics.py` output (AI-vocabulary and hedging hits, em dashes per page, sentence-length median and spread). Use those counts for the countable deductions rather than estimating; judge the patterns that need reading (significance inflation, rule of three, summary repetition) yourself.
+- **Content invariants:** `.claude/rules/content-invariants.md` -- enforce the invariants listed for writer-critic in its "How Agents Use This File" table
 - **Format rules:** `.claude/rules/working-paper-format.md` -- enforce all Required items
+- **House style:** `.claude/rules/paper-organization.md` -- float placement, Table 1, wrappers, section order (INV-23/24/25)
 
 ## Standalone Mode
 
@@ -51,12 +53,11 @@ When invoked via `/review --all` or `/review --peer`, run all 8 categories.
 
 Strike 3 -> escalates to **Orchestrator**: "The manuscript has structural issues beyond prose polish. The problem is: [specific issues]. Consider re-drafting [section] or revisiting [strategy/results]."
 
-## What You Do NOT Do
+## How You Review
 
-1. **NEVER edit manuscript files.** Report only.
-2. **NEVER rewrite sections.** Only identify issues.
-3. **Be specific.** Quote exact sentences, line numbers, file paths.
-4. **Cite invariants.** Every deduction references the invariant it enforces (e.g., "violates INV-11").
-5. **Paper-type aware.** Don't penalize a descriptive paper for missing identification, or a structural paper for missing event study pre-trends.
-6. **Voice fidelity is scored ONLY when the style guide has real content.** If it's still the template, report that fact and skip the category.
-7. **Claim-source traceability is non-negotiable.** Every numerical claim must trace to a script and output file (INV-22).
+1. **Your tools are read-only; the scored report is your deliverable.** Recommend fixes; don't draft them (separation of powers, `.claude/rules/agents.md`).
+2. **Be specific.** Quote exact sentences, line numbers, file paths.
+3. **Cite invariants.** Every deduction references the invariant it enforces (e.g., "violates INV-11").
+4. **Paper-type aware.** Don't penalize a descriptive paper for missing identification, or a structural paper for missing event study pre-trends.
+5. **Voice fidelity is scored ONLY when the style guide has real content.** If it's still the template, report that fact and skip the category.
+6. **Claim-source traceability is non-negotiable.** Every numerical claim must trace to a script and output file (INV-22).

@@ -1,3 +1,10 @@
+---
+paths:
+  - ".claude/agents/**"
+  - ".claude/skills/**"
+  - "quality_reports/**"
+---
+
 # Agents: Pairs, Separation of Powers, and Escalation
 
 ---
@@ -30,7 +37,7 @@ Peer Review uses a different structure — the Orchestrator dispatches two indep
 ### Enforcement
 
 - The Orchestrator checks: if a creator artifact exists without a critic score, it is **not approved**
-- No artifact advances to the next phase without its critic's score >= 80
+- No artifact advances to the next phase without passing its critic: score >= 80, or for the strategist-critic a verdict of SOUND or MINOR ISSUES
 - Critics produce scores; creators produce artifacts — never the reverse
 
 ---
@@ -72,13 +79,29 @@ A creator cannot evaluate the quality of its own work. The score always comes fr
 
 ### Enforcement
 
-The Orchestrator flags violations:
-- If a critic invocation produces a file in `scripts/`, `paper/`, or `paper/talks/` → flag
-- If a creator reports its own score → discard, dispatch critic
+- Critics' tool lists are read-only, so a critic cannot write to `scripts/`, `paper/`, or `paper/talks/`.
+- A creator's self-reported score counts for nothing: `score.py` reads only each critic's own journal entry. Dispatch the critic.
 
 ---
 
-## 3. Three Strikes Escalation
+## 3. Effort per Agent
+
+Every agent runs on the session's model (`model: inherit`); `effort:` in its frontmatter sets how
+much it thinks. Effort, not prose like "think harder", is the control on current models, and Opus
+5.5's default is `medium`.
+
+| Effort | Agents | Why |
+|--------|--------|-----|
+| `high` | strategist, strategist-critic, theorist, theorist-critic, methods-referee, editor | Identification, proof validity, and editorial judgment: errors here propagate through every later phase |
+| `low` | coherence-finder, coherence-skeptic, librarian-critic, explorer-critic | Narrow, well-specified checks over pre-filtered input |
+| session default | everyone else | |
+
+These are starting points. If an agent at `low` misses what it should catch, raise it; if one at
+`high` is slow on routine work without better output, lower it.
+
+---
+
+## 4. Three Strikes Escalation
 
 **If a worker-critic pair fails to converge after 3 rounds, the Orchestrator escalates.**
 

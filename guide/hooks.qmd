@@ -15,24 +15,46 @@ Hooks serve two purposes: **guardrails** (blocking operations that would damage 
 |-------|--------------|-----------|----------|
 | `PreToolUse` | Before Claude calls a tool (Edit, Write, Bash, etc.) | Yes --- exit 2 blocks the tool call | Protect files from accidental edits |
 | `PostToolUse` | After a tool call completes | No --- advisory only | Lint code after edits |
-| `PreCompact` | Before context compaction | Yes --- exit 2 shows a message | Capture session state before memory loss |
+| `PreCompact` | Before context compaction | No --- a `systemMessage` shows the user a reminder | Capture session state before memory loss |
 | `SessionStart` | When a new session begins (including after compaction) | No --- advisory only | Restore context from prior session |
 
-## Exit Code Semantics
+## Exit Codes and Output
 
-Every hook communicates its result through its exit code:
+Claude Code reads a hook's exit code and any JSON it prints on stdout:
 
-- **Exit 0** --- pass. The operation proceeds (or the advisory message is silent).
-- **Exit 2** --- block or message. For `PreToolUse`, this **blocks** the tool call and shows the hook's stderr as an error message. For `PreCompact`, this shows the hook's stdout as a visible message in the transcript but does not prevent compaction.
+- **Exit 0** --- success. JSON on stdout is honored: `permissionDecision: "deny"` blocks a tool call, `additionalContext` puts text in front of Claude, and `systemMessage` shows the user a warning. Plain stdout reaches Claude only on `SessionStart` (and `UserPromptSubmit`); for other events it goes to the debug log. Stderr on exit 0 is never shown.
+- **Exit 2** --- blocking error. For `PreToolUse` it blocks the tool call and shows stderr.
+- **Any other non-zero exit, a timeout, or a script that can't start** --- a hook failure. By default the action proceeds and the transcript shows the hook's name with the first line of stderr. A hook that sets `"onFailure": "block"` (Claude Code 2.1.295+) turns a failure into a block instead.
 
-Any other exit code is treated as a hook failure and ignored.
+One trap: when `python3` can't find the script file it exits 2, so a hook whose `.py` file is missing or renamed already blocks every matching tool call, with or without `onFailure`.
+
+## How clo-author Hooks Fail: Loudly
+
+Every hook here runs through `.claude/hooks/_hooklib.py`, which gives each run one of three outcomes:
+
+| Outcome | When | What you see |
+|---------|------|--------------|
+| **acted** | The hook did its job (linted a file, blocked an edit, restored context) | Its output |
+| **skipped** | Nothing to do (a `.txt` edit, no guard active) | Nothing |
+| **error** | The hook could not do its job | A one-line notice in the transcript: `clo-author hook <name>: <reason>` |
+
+What an error does to the action depends on the hook:
+
+- **Advisory hooks** (lint, restore, health, pre-compact) keep the default. The action proceeds and you see the notice.
+- **Guards** (`protect-files.py`, `session-guard.py`) set `"onFailure": "block"`. A guard that cannot answer blocks the action, because a guard that fails open lets through exactly what it exists to stop. In a test, a corrupted `/careful` state file let writes through silently under the old setting; with `"block"` the write stopped and the error named the file.
+
+The cost of failing closed: a broken guard also blocks the edit that would fix it. Fix it by hand in your editor --- the error message and `hook-health.py` name the file. `scripts/test_hooks.py` and `scripts/check_scaffold.py` both fail if a `PreToolUse` hook in `settings.json` lacks `"onFailure": "block"`.
+
+**A payload missing a field the hook depends on is an error, not a skip.** Two hooks in this template once sat dead for months because they read a field Claude Code never sends, found it empty, and exited cleanly as if there were nothing to do. `require()` in `_hooklib.py` turns that case into a visible failure.
+
+Every outcome is appended to `.claude/state/hook-log.jsonl` (gitignored). At session start, [`hook-health.py`](#hook-health) reads that log and speaks up when something is wrong. `python3 scripts/test_hooks.py` feeds every hook synthetic payloads and checks all three outcomes.
 
 ## Configuration
 
 Hooks are registered in `.claude/settings.json` under the `hooks` key. Each event type maps to an array of hook groups, where each group has:
 
 - **`matcher`** --- a regex pattern for filtering. For `PreToolUse` and `PostToolUse`, it matches tool names (e.g., `"Edit|Write"`). For `SessionStart`, it matches session types (e.g., `"compact|resume"`). Omit the matcher to fire on every event of that type.
-- **`hooks`** --- an array of hook definitions, each with `type`, `command`, and `timeout` (in seconds).
+- **`hooks`** --- an array of hook definitions, each with `type`, `command`, `timeout` (in seconds), and optionally `onFailure` (`"continue"`, the default, or `"block"`).
 
 ```json
 {
@@ -43,8 +65,9 @@ Hooks are registered in `.claude/settings.json` under the `hooks` key. Each even
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.sh",
-            "timeout": 5
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.py",
+            "timeout": 5,
+            "onFailure": "block"
           }
         ]
       }
@@ -57,11 +80,11 @@ The environment variable `$CLAUDE_PROJECT_DIR` resolves to the project root at r
 
 ---
 
-# The Seven Hooks
+# The Hooks
 
-## 1. protect-files.sh {#protect-files}
+## 1. protect-files.py {#protect-files}
 
-**Event:** `PreToolUse` (matcher: `Edit|Write`) | **Timeout:** 5s | **Blocking:** Yes
+**Event:** `PreToolUse` (matcher: `Edit|Write`) | **Timeout:** 5s | **Blocking:** Yes | **On failure:** blocks
 
 ### What it does
 
@@ -71,58 +94,46 @@ When Claude attempts an Edit or Write operation, the hook extracts the target fi
 
 ### Protected patterns (default)
 
-```bash
-PROTECTED_PATTERNS=(
-  "settings.json"
-  "strategy-memo-*.md"
-  "referee-report-*.md"
-  "quality-score-*.json"
-)
+```python
+PROTECTED_PATTERNS = [
+    "settings.json",
+    "strategy-memo-*.md",
+    "referee-report-*.md",
+    "quality-score-*.json",
+]
 ```
 
 These defaults protect:
 
 - **`settings.json`** --- the hook configuration itself. Accidental edits here could disable all hooks.
-- **`strategy-memo-*.md`** --- approved strategy memos. The strategist-critic scores these; Claude should not modify them after approval.
+- **`strategy-memo-*.md`** --- approved strategy memos. The strategist-critic reviews these; Claude should not modify them after approval.
 - **`referee-report-*.md`** --- real referee reports. These are external inputs that Claude classifies and responds to, never rewrites.
 - **`quality-score-*.json`** --- critic scores. Separation of powers: creators cannot edit their own scores.
 
 ### How it works
 
-1. Reads the tool input JSON from stdin
-2. Extracts the `file_path` from the tool's input parameters
-3. Compares the basename against each protected pattern using bash glob matching
-4. If a pattern matches, prints an error message to stderr and exits with code 2 (blocking the edit)
-5. If no pattern matches, exits with code 0 (allowing the edit)
+1. Reads the tool input JSON from stdin and requires `tool_input.file_path` (a missing path is a visible error)
+2. Compares the basename against each protected pattern with shell-style glob matching (`fnmatch`)
+3. If a pattern matches, prints a `permissionDecision: "deny"` with the reason, which blocks the edit
+4. If no pattern matches, exits silently and the edit proceeds
 
 ### Exit behavior
 
-- **Exit 0** --- file is not protected, edit proceeds
-- **Exit 2** --- file is protected, edit is blocked with the message: `"Protected file: <filename>. Edit manually or remove protection in .claude/hooks/protect-files.sh"`
+Exits 0 in both cases; the deny decision travels as JSON. The block message reads: `"Protected file: <filename>. Edit it by hand, or remove the pattern '<pattern>' from .claude/hooks/protect-files.py."`
 
 ### Customizing
 
-Add or remove entries in the `PROTECTED_PATTERNS` array. The matching uses bash glob syntax on the **basename** only (not the full path), so `"*.bib"` would protect all `.bib` files regardless of directory.
-
-For path-specific protection, replace the basename check with a full-path match:
-
-```bash
-# Protect a specific file by full path
-if [[ "$FILE" == */paper/main.tex ]]; then
-  echo "Protected: main.tex. Edit manually." >&2
-  exit 2
-fi
-```
+Add or remove entries in `PROTECTED_PATTERNS`. Matching is on the **basename** only (not the full path), so `"*.bib"` would protect all `.bib` files regardless of directory. For path-specific protection, compare `hook.require("tool_input.file_path")` against a full path in `body()`.
 
 ---
 
 ## 2. session-guard.py {#session-guard}
 
-**Event:** `PreToolUse` (matcher: `Edit|Write|Bash`) | **Timeout:** 5s | **Blocking:** Yes
+**Event:** `PreToolUse` (matcher: `Edit|Write|Bash`) | **Timeout:** 5s | **Blocking:** Yes | **On failure:** blocks
 
 ### What it does
 
-Two guards in one hook, both session-scoped and both opt-in. When neither guard is active, the hook reads a single JSON file, finds nothing, and exits --- zero overhead in the common case.
+Two guards in one hook, both opt-in. When neither guard is active, the hook reads a single JSON file, finds nothing, and exits --- zero overhead in the common case.
 
 **Freeze** locks edits to a set of allowed directories. Invoke `/freeze paper/` and every Write or Edit targeting a file outside `paper/` gets blocked. The `.claude/` directory is always exempt (we cannot freeze ourselves out of configuration changes).
 
@@ -181,7 +192,7 @@ When `careful.active` is `true` and the tool is Bash:
 
 ### Exit behavior
 
-The hook always exits 0. Blocking is communicated through stdout JSON (`{"decision": "block", "reason": "..."}`) rather than exit codes --- this is the newer Claude Code hook protocol for Python hooks.
+When it can answer, the hook exits 0, and blocking is communicated through stdout JSON (`hookSpecificOutput.permissionDecision: "deny"` with a `permissionDecisionReason`) rather than exit codes --- the current Claude Code protocol for `PreToolUse` decisions. When it cannot (for example, `session-guards.json` is not valid JSON), it exits 1, and `"onFailure": "block"` makes Claude Code block the call. Delete or fix the state file by hand to recover.
 
 ### Activating and deactivating
 
@@ -193,11 +204,11 @@ The hook always exits 0. Blocking is communicated through stdout JSON (`{"decisi
 | `/careful` | Block destructive commands |
 | `/careful off` | Deactivate careful mode |
 
-Both guards are session-scoped. They reset when the conversation ends.
+Both guards stay on until you turn them off --- across conversations too, since `.claude/state/session-guards.json` persists and nothing clears it automatically. If edits are blocked and you don't remember freezing, check that file or run `/freeze off`.
 
 ---
 
-## 3. post-edit-lint.sh {#post-edit-lint}
+## 3. post-edit-lint.py {#post-edit-lint}
 
 **Event:** `PostToolUse` (matcher: `Edit|Write`) | **Timeout:** 10s | **Blocking:** No (advisory)
 
@@ -207,10 +218,11 @@ The coder-critic catches prohibited patterns, but it runs later in the pipeline.
 
 ### How it works
 
-1. Reads the edited file path from the `CLAUDE_TOOL_ARG_FILE_PATH` environment variable (set by Claude Code)
+1. Reads the edited file path from the JSON payload Claude Code sends on stdin (`tool_input.file_path`)
 2. Filters by extension --- only runs on `.R`, `.py`, and `.jl` files
 3. Skips files inside `.claude/` (hooks, agents, and other configuration scripts should not be linted as analysis code)
 4. Delegates to `lint-scripts.sh` for the actual analysis
+5. Returns any findings as `hookSpecificOutput.additionalContext`, which is how a `PostToolUse` hook puts text in front of Claude (plain stdout only reaches the transcript)
 
 ### Exit behavior
 
@@ -220,7 +232,7 @@ Always exits 0. Lint findings appear in Claude's context as advisory information
 
 ## 4. lint-scripts.sh {#lint-scripts}
 
-**Not a hook itself** --- this is the linter that `post-edit-lint.sh` calls. It can also be run standalone via `/tools lint`.
+**Not a hook itself** --- this is the linter that `post-edit-lint.py` calls. It can also be run standalone via `/tools lint`.
 
 ### Usage
 
@@ -314,7 +326,7 @@ Compaction is the single biggest source of context loss in long sessions. This h
 ### What it captures
 
 1. **Active plan** --- finds the most recent non-completed plan in `quality_reports/plans/`, extracts its status (draft/approved/in-progress) and the first unchecked task
-2. **Recent decisions** --- scans the most recent session log for decision markers (lines containing "Decision:", "Decided:", "Chose:", or bullet points) and captures the last 3
+2. **Recent decisions** --- the last three bullets under **Decisions:** in the newest `SESSION_REPORT.md` entry
 3. **Compaction timestamp** --- records when compaction occurred
 
 ### Where it saves
@@ -323,7 +335,6 @@ State is written to a JSON file at `~/.claude/sessions/<project-hash>/pre-compac
 
 ### Side effects
 
-- Appends a compaction note to the most recent session log in `quality_reports/session_logs/`, documenting when compaction happened
 - Prints a context survival checklist to the transcript as a reminder:
 
 ```
@@ -335,7 +346,7 @@ Context Survival Checklist:
 
 ### Exit behavior
 
-Always exits 2, which makes the message visible in the transcript. This is intentional --- the checklist serves as a reminder to run `/checkpoint` before compaction if you have not already.
+Always exits 0, so compaction is never blocked. The checklist reaches you as a `systemMessage` (stderr on exit 0 would go only to the debug log). It is a reminder to run `/checkpoint` before compaction if you have not already.
 
 ---
 
@@ -349,27 +360,14 @@ Restores context after compaction by reading the state saved by `pre-compact.py`
 
 ### How it works
 
-1. Checks the session type --- only runs when the session type is `"compact"` (not on fresh starts)
+1. Reads the `source` field of the SessionStart payload and runs only for `compact` or `resume` (not on fresh starts)
 2. Reads and deletes the `pre-compact-state.json` file (one-time consumption)
-3. Independently finds the most recent plan and session log (as a fallback if the state file is missing)
-4. Prints a restoration message with:
-   - Pre-compaction state (plan path, current task, recent decisions)
-   - Active plan file and status
-   - Session log location
-   - Recovery action steps
-
-### Recovery actions printed
-
-```
-Recovery Actions:
-  1. Read the active plan to understand current objectives
-  2. Check git status/diff for uncommitted changes
-  3. Continue from where you left off
-```
+3. Finds the active plan, summarizes `quality_reports/pipeline_state.json`, and reads the newest `SESSION_REPORT.md` entry's status
+4. Prints a plain-text restoration message (no terminal color codes, since SessionStart stdout goes straight into Claude's context) ending with: read the active plan and check `git status` before continuing
 
 ### Exit behavior
 
-Always exits 0. The restoration message appears in Claude's context as informational output.
+Exits 0 when it restores (or has nothing to restore). An error exits 1 with a one-line notice; session start proceeds either way, since the hook keeps the default `onFailure`.
 
 ### Why the pair exists
 
@@ -377,11 +375,44 @@ Without these hooks, Claude resumes after compaction with no memory of the activ
 
 ---
 
-## 7. post-merge.sh {#post-merge}
+## 7. hook-health.py {#hook-health}
 
-**Event:** Git post-merge (not a Claude Code hook) | **Timeout:** N/A | **Blocking:** No
+**Event:** `SessionStart` (matcher: `startup|resume`) | **Timeout:** 5s | **Blocking:** No (silent when healthy)
 
 ### What it does
+
+Catches the failure a hook cannot report about itself: never running at all. At session start it checks three things and stays silent unless one fails:
+
+1. Every hook command in `.claude/settings.json` and `settings.local.json` points at a file that exists (and, for shell scripts, is executable).
+2. Errors logged in `.claude/state/hook-log.jsonl` since the last check.
+3. Liveness: a hook on `PreToolUse` or `PostToolUse` that has logged nothing across three or more logged sessions is configured but not running.
+
+### Exit behavior
+
+Always exits 0. Problems go to you as a `systemMessage` and to Claude as `additionalContext`, with an instruction to mention them before other work.
+
+---
+
+## 8. Git hooks: pre-commit and post-merge {#post-merge}
+
+These are git hooks, not Claude Code hooks. They live in `.githooks/`; `scripts/install-hooks.sh`
+points git at that folder (`git config core.hooksPath .githooks`) once per clone.
+
+**pre-commit** runs on every commit, including ones made outside Claude:
+
+- blocks when `scripts/check_scaffold.py` finds a broken reference, a missing hook file, or a
+  weight that disagrees between `permissions.md` and `quality-gates.json`
+- blocks when `.claude/hooks/` or settings changed and `scripts/test_hooks.py` fails, or when
+  enforcement scripts changed and `scripts/test_scripts.py` fails
+- blocks on HIGH lint findings in staged analysis scripts (`setwd()`, absolute paths, ...)
+- prints paper-coherence findings for staged `.tex` files as advice; they block at `/submit`
+
+Bypass with `SKIP_GATE=1 git commit ...` and say why in the message. It does not check the quality
+score; `/tools commit` does that once critics have scored.
+
+**post-merge**
+
+**Event:** Git post-merge | **Blocking:** No
 
 A standard Git hook (not a Claude Code hook) that prints a reminder after any `git merge` or `git pull` to update the session report.
 
@@ -391,12 +422,6 @@ echo "=== SESSION MERGED TO MAIN ==="
 echo ""
 echo "Remember to append a summary to SESSION_REPORT.md if you haven't already."
 ```
-
-### How it works
-
-Git hooks live in `.git/hooks/` by default, but this script is stored in `.claude/hooks/` alongside the Claude Code hooks for organizational convenience. To activate it, symlink or copy it to `.git/hooks/post-merge`.
-
-### Why it exists
 
 Merges to main are significant project events that should be logged. This hook is a simple reminder --- it does not enforce logging, just nudges.
 
@@ -415,8 +440,9 @@ The full hooks section of `.claude/settings.json` for this project:
         "hooks": [
           {
             "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.sh",
-            "timeout": 5
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/protect-files.py",
+            "timeout": 5,
+            "onFailure": "block"
           }
         ]
       },
@@ -426,19 +452,8 @@ The full hooks section of `.claude/settings.json` for this project:
           {
             "type": "command",
             "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/session-guard.py",
-            "timeout": 5
-          }
-        ]
-      }
-    ],
-    "PostToolUse": [
-      {
-        "matcher": "Edit|Write",
-        "hooks": [
-          {
-            "type": "command",
-            "command": "\"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-edit-lint.sh",
-            "timeout": 10
+            "timeout": 5,
+            "onFailure": "block"
           }
         ]
       }
@@ -456,12 +471,34 @@ The full hooks section of `.claude/settings.json` for this project:
     ],
     "SessionStart": [
       {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/hook-health.py",
+            "timeout": 5
+          }
+        ]
+      },
+      {
         "matcher": "compact|resume",
         "hooks": [
           {
             "type": "command",
             "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-compact-restore.py",
             "timeout": 5
+          }
+        ]
+      }
+    ],
+    "PostToolUse": [
+      {
+        "matcher": "Edit|Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "python3 \"$CLAUDE_PROJECT_DIR\"/.claude/hooks/post-edit-lint.py",
+            "timeout": 10
           }
         ]
       }
@@ -473,12 +510,13 @@ The full hooks section of `.claude/settings.json` for this project:
 ### Structure breakdown
 
 - **Top-level keys** are event names: `PreToolUse`, `PostToolUse`, `PreCompact`, `SessionStart`.
-- Each event maps to an **array of hook groups**. Multiple groups on the same event fire sequentially.
+- Each event maps to an **array of hook groups**. All hooks that match an event run in parallel, so one hook cannot rely on another having run first.
 - Each group has an optional **`matcher`** (regex) and a required **`hooks`** array.
 - Each hook in the array specifies:
   - `type` --- always `"command"` for shell/Python scripts
   - `command` --- the script to execute, quoted to handle spaces in paths
   - `timeout` --- maximum execution time in seconds; the hook is killed if it exceeds this
+  - `onFailure` --- `"block"` on the two guards, so a crash, timeout, or unexpected exit code blocks the call; omitted (default `"continue"`) on advisory hooks
 
 ### Matcher behavior
 
@@ -502,7 +540,7 @@ chmod +x .claude/hooks/my-custom-hook.sh
 
 ## Step 2: Write the logic
 
-The script receives the tool input as JSON on stdin (for `PreToolUse` and `PostToolUse`). For `PostToolUse`, the edited file path is also available in `$CLAUDE_TOOL_ARG_FILE_PATH`.
+The script receives the tool input as JSON on stdin (for `PreToolUse` and `PostToolUse`); the edited file path is `tool_input.file_path`. To show Claude a message from a `PostToolUse` hook, print JSON with `hookSpecificOutput.additionalContext`.
 
 Here is an example hook that warns when a LaTeX file is edited without compiling:
 
@@ -510,7 +548,7 @@ Here is an example hook that warns when a LaTeX file is edited without compiling
 #!/bin/bash
 # warn-latex-compile.sh --- Advisory reminder after LaTeX edits
 
-FILE="${CLAUDE_TOOL_ARG_FILE_PATH:-}"
+FILE=$(python3 -c 'import json,sys; print(json.load(sys.stdin).get("tool_input",{}).get("file_path",""))')
 [[ -z "$FILE" ]] && exit 0
 
 # Only fire on .tex files
@@ -519,8 +557,8 @@ case "$FILE" in
   *) exit 0 ;;
 esac
 
-echo "LaTeX file edited: $FILE"
-echo "Remember to compile with: cd paper && latexmk main.tex"
+MSG="LaTeX file edited: $FILE. Compile with: cd paper && latexmk main.tex"
+python3 -c 'import json,sys; print(json.dumps({"hookSpecificOutput":{"hookEventName":"PostToolUse","additionalContext":sys.argv[1]}}))' "$MSG"
 
 exit 0
 ```
@@ -547,14 +585,14 @@ Add an entry under the appropriate event type:
 ```
 
 ::: {.callout-important}
-`settings.json` is a protected file by default. Edit it manually --- the `protect-files.sh` hook will block Claude from modifying it.
+`settings.json` is a protected file by default. Edit it manually --- the `protect-files.py` hook will block Claude from modifying it.
 :::
 
 ## Step 4: Test
 
 The simplest test is to trigger the event. For a `PostToolUse` hook on `Edit|Write`, just ask Claude to edit a file matching your hook's filter. Watch for the hook's output in the transcript.
 
-For standalone testing of the script itself:
+For standalone testing of the script itself (and add a case to `scripts/test_hooks.py` so it stays tested):
 
 ```bash
 echo '{"tool_name": "Edit", "tool_input": {"file_path": "paper/main.tex"}}' \
@@ -562,9 +600,13 @@ echo '{"tool_name": "Edit", "tool_input": {"file_path": "paper/main.tex"}}' \
 echo "Exit code: $?"
 ```
 
-## Example: Pre-commit quality check
+## Example: Lint before Claude commits
 
-A hook that runs the linter before every `git commit` command:
+::: {.callout-note}
+You don't need this for clo-author itself: the git pre-commit gate in `.githooks/pre-commit` (see [Git hooks](#post-merge)) already blocks HIGH lint findings on every commit, including commits made outside Claude. The example shows how a Claude-side `PreToolUse` hook on `Bash` works.
+:::
+
+A hook that runs the linter before every `git commit` command Claude issues:
 
 ```bash
 #!/bin/bash
