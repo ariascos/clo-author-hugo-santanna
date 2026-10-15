@@ -1,12 +1,12 @@
 ---
 name: deepread
 description: >
-disable-model-invocation: true
   Deep technical read of a paper, run on Codex. Fans commenters across every
   section — each reading the prose together with the tables, notes, and equations
   it cites — then verifies each comment adversarially, merges duplicates, and
   writes an overall assessment. Produces referee-grade comments anchored to exact
   quotes, at no Claude token cost. Use on a near-final draft, before submission.
+disable-model-invocation: true
 argument-hint: "[--dry-run | --segment segNN | --skeptic | path/to/section.tex]"
 allowed-tools: Read,Grep,Glob,Bash,Write
 disallowed-tools: Edit

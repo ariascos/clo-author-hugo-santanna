@@ -222,9 +222,15 @@ def test_check_scaffold():
     gates.write_text(json.dumps(g))
     with (root / ".claude/rules/logging.md").open("a") as fh:
         fh.write("\nSee `scripts/does_not_exist.py`.\n")
+    (root / ".claude/skills/zz-broken").mkdir()
+    (root / ".claude/skills/zz-broken/SKILL.md").write_text(
+        "---\nname: zz-broken\ndescription: >\ndisable-model-invocation: true\n"
+        "  Folded text that meant to be the description.\n---\nBody.\n")
     code, out, _ = run("check_scaffold.py", "--quiet", root=root)
     check("weight disagreement caught", "permissions.md says 15%, quality-gates.json says 20%" in out, out[-600:])
     check("phantom path caught", "does_not_exist.py" in out, out[-600:])
+    check("empty block-scalar description caught", "zz-broken/SKILL.md: 'description: >' has no indented body" in out, out[-900:])
+    check("boolean key that swallowed text caught", "'disable-model-invocation' must be true or false" in out, out[-900:])
     check("exit 1 on errors", code == 1)
 
 

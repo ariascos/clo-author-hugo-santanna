@@ -11,7 +11,8 @@ a weight. This script makes that drift a commit-time failure. The pre-commit
 gate runs it.
 
 Checks:
-  frontmatter   agents have name + description; skills have description
+  frontmatter   agents have name + description; skills have description; no empty block
+                scalars (`description: >` with nothing indented below); boolean keys are booleans
   tools         agent `tools:` entries are real tools; Agent(...) rosters name real agents;
                 skills that list Task also list Agent (its current name)
   paths         backticked .claude/ scripts/ templates/ paths in the scaffold exist
@@ -66,14 +67,40 @@ def frontmatter(text: str) -> dict:
     return out
 
 
+BOOL_KEYS = ("disable-model-invocation", "user-invocable", "background", "omitClaudeMd")
+
+
+def frontmatter_problems(text: str) -> List[str]:
+    """Shapes a YAML loader reads differently from how they look. A block scalar (`key: >`)
+    followed directly by another key is empty, and the indented lines meant for it fold into
+    whatever key came last; a boolean key that swallowed them is a string, not true."""
+    m = re.match(r"^---\n(.*?)\n---", text, re.DOTALL)
+    if not m:
+        return []
+    lines = m.group(1).splitlines()
+    out = []
+    for i, line in enumerate(lines):
+        kv = re.match(r"^([A-Za-z_-]+):\s*([>|][+-]?)\s*$", line)
+        if kv and (i + 1 == len(lines) or not lines[i + 1].startswith((" ", "\t"))):
+            out.append(f"'{kv.group(1)}: {kv.group(2)}' has no indented body directly below it, so it is empty")
+    fm = frontmatter(text)
+    for key in BOOL_KEYS:
+        if key in fm and fm[key] not in ("true", "false"):
+            out.append(f"'{key}' must be true or false, but reads as {fm[key][:40]!r}...")
+    return out
+
+
 def check(root: Path) -> List[Problem]:
     probs: List[Problem] = []
     claude = root / ".claude"
 
     # frontmatter + tools
     for agent in sorted((claude / "agents").glob("*.md")):
-        fm = frontmatter(agent.read_text(errors="replace"))
+        text = agent.read_text(errors="replace")
+        fm = frontmatter(text)
         rel = agent.relative_to(root)
+        for msg in frontmatter_problems(text):
+            probs.append(("ERROR", "frontmatter", f"{rel}: {msg}"))
         for key in ("name", "description"):
             if not fm.get(key) or fm.get(key) == ">":
                 probs.append(("ERROR", "frontmatter", f"{rel}: missing '{key}'"))
@@ -93,8 +120,10 @@ def check(root: Path) -> List[Problem]:
         text = skill.read_text(errors="replace")
         fm = frontmatter(text)
         rel = skill.relative_to(root)
-        if not fm.get("description"):
+        if not fm.get("description") or fm.get("description") in (">", "|"):
             probs.append(("ERROR", "frontmatter", f"{rel}: missing 'description'"))
+        for msg in frontmatter_problems(text):
+            probs.append(("ERROR", "frontmatter", f"{rel}: {msg}"))
         n = text.count("\n") + 1
         if n > SKILL_MAX_LINES:
             probs.append(("ERROR", "size", f"{rel}: {n} lines (limit {SKILL_MAX_LINES}; move detail into reference files)"))
