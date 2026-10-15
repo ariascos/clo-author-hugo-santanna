@@ -7,9 +7,9 @@ paths:
 
 # Permission Registry: Agent Capabilities and Dependencies
 
-Every agent's capabilities, dependencies, and routing are declared here. The Orchestrator reads this file to determine dispatch rules, dependency graph, escalation routing, and quality weights. No other file hardcodes these relationships.
+Every agent's capabilities, dependencies, and routing are declared here. The Orchestrator reads this file, and `scripts/pipeline.py` checks REQUIRES/PRODUCES from it, to determine dispatch rules, dependency graph, and escalation routing. QUALITY_WEIGHT here mirrors `quality-gates.json`, which `scripts/score.py` reads.
 
-Adding a new agent: create the agent file in `.claude/agents/`, add an entry here. No other file needs to change.
+Adding a new agent: create the agent file in `.claude/agents/` and add an entry here. If the orchestrator dispatches it, add it to the orchestrator's `Agent(...)` roster; if it is weighted, add its component to `quality-gates.json` (`check_scaffold.py` fails when the two disagree).
 
 ---
 

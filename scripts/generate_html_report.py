@@ -7,7 +7,7 @@ clo-author: infrastructure (not analysis code; explainer_status.py skips it)
 Subcommands:
     peer-review   Combine domain + methods referee + editorial decision
     code-audit    Interactive code audit report
-    strategy      Strategy review with phase accordion
+    strategy-review  Strategy review with phase accordion
     quality-gate  Quality gate dashboard
     literature    Filterable annotated bibliography
 

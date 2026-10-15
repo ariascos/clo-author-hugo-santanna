@@ -79,9 +79,8 @@ A creator cannot evaluate the quality of its own work. The score always comes fr
 
 ### Enforcement
 
-The Orchestrator flags violations:
-- If a critic invocation produces a file in `scripts/`, `paper/`, or `paper/talks/` → flag
-- If a creator reports its own score → discard, dispatch critic
+- Critics' tool lists are read-only, so a critic cannot write to `scripts/`, `paper/`, or `paper/talks/`.
+- A creator's self-reported score counts for nothing: `score.py` reads only each critic's own journal entry. Dispatch the critic.
 
 ---
 

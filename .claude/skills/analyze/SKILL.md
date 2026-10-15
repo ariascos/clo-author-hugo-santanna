@@ -40,7 +40,7 @@ Before writing any code, the Coder must output a structured report proving it re
 Proceeding to implementation.
 ```
 
-If the strategy memo is missing, the Coder proceeds with the user's description — but flags that no memo was found and strategic alignment checks (coder-critic categories 1-3) cannot be verified.
+If the strategy memo is missing, the Coder proceeds with the user's description — but flags that no memo was found and strategic alignment checks (coder-critic categories 1-4) cannot be verified.
 
 ### Step 2: Data Preparation (if needed)
 If raw data provided, dispatch **Data-engineer** first:
@@ -68,23 +68,7 @@ The Coder follows these principles:
 - **saveRDS everything.** Every computed object (estimates, model fits, data frames, summary statistics) gets serialized to `.rds` for downstream use by the writer and other agents.
 
 ### Step 4: Code Review
-Dispatch **coder-critic** agent — run the full 12-category checklist:
-
-**Strategic (categories 1-3):**
-1. **Code-strategy alignment** — Does the code implement the strategy memo faithfully? Correct dependent variable, treatment, controls, fixed effects, sample restrictions?
-2. **Sanity checks** — Are summary statistics printed before regressions? Do coefficient signs match economic intuition? Are sample sizes reasonable?
-3. **Robustness sufficiency** — Are required robustness checks present? Alternative specifications, placebo tests, sensitivity analysis per strategy memo?
-
-**Code Quality (categories 4-12):**
-4. **Structure** — Does the script follow the standard template? Clear section headers, logical flow from setup to export?
-5. **Console hygiene** — No spurious `print()` statements polluting output. Intentional output only.
-6. **Reproducibility** — `set.seed()` at top if any stochastic elements. No absolute paths. All packages loaded at top. Directory creation with `showWarnings = FALSE`.
-7. **Functions** — Repeated logic extracted into functions. No copy-paste code blocks with minor variations.
-8. **Figure quality** — Publication-ready: proper axis labels, titles, legends, font sizes. Consistent theme across all figures.
-9. **RDS pattern** — Every computed object (models, data frames, summary stats) saved via `saveRDS()` for downstream use. Not just final outputs — intermediate objects too.
-10. **Comments** — Section headers present. Non-obvious code commented. No commented-out dead code left behind.
-11. **Error handling** — Graceful handling of missing files, empty data subsets, convergence failures. Informative error messages.
-12. **Polish** — Consistent naming conventions. No magic numbers. Clean whitespace. Professional quality ready for replication package.
+Dispatch **coder-critic** agent — run the full 16-category checklist in `review/templates/code-review-16-categories.md`: categories 1–4 check strategic alignment (code vs. strategy memo, paper-to-code naming, sanity checks, robustness), 5–16 code quality and numerical discipline.
 
 If strategy memo exists, cross-reference code against stated design.
 Save report to `quality_reports/[script]_code_review.md`.

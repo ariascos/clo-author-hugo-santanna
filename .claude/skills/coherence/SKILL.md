@@ -222,7 +222,7 @@ tables could not be parsed, not that the paper is sound; say so plainly.
 
 | Context | Rule |
 |---|---|
-| Commit | Blocking findings must be zero |
+| Commit | Advisory: the git pre-commit gate prints findings for staged `.tex` files but does not block; fix blocking ones before the PR |
 | PR | Blocking zero; minor reported |
 | `/submit final` | Run with `--strict`; blocking and minor both zero |
 | Talks | Advisory (INV-21 traceability still applies) |

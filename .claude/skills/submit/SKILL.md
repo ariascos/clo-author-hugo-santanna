@@ -60,6 +60,7 @@ Full verification + score enforcement + submission checklist.
 Workflow:
 1. Run comprehensive review if not done recently
 2. Run replication audit
+2b. Run `/coherence --strict` (deterministic layer): blocking and minor findings must both be zero
 3. Check the submission gate — aggregate >= 95, every component >= 80, every non-conditional
    component scored, and the understanding gate (INV-26), which `score.py` runs as a pass/fail command:
 ```bash

@@ -2,7 +2,7 @@
 """
 Session Guard Hook -- PreToolUse
 
-Enforces session-scoped guards:
+Enforces the opt-in guards (on until turned off; the state file persists across conversations):
 - freeze: blocks Edit/Write outside allowed directories
 - careful: blocks destructive Bash commands
 
